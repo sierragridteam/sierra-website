@@ -36,6 +36,7 @@ fmt-check: ## Verify formatting
 
 test: ## Unit tests (data layer) via bun
 	bun test src/
+	node --test scripts/desk-editor-gate.test.mjs
 
 test-browser: ## A11y + smoke tests (Playwright)
 	npm run test:visual

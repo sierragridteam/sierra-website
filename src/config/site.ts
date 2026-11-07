@@ -47,7 +47,7 @@ export const site = {
 
   /**
    * Contact-form endpoint — the Lambda Function URL that forwards submissions to
-   * the contact email via SES (provisioned in the terraform/project-hub repo; the
+   * the contact email via SES (provisioned separately; the
    * contract is docs/architecture/contact-form.md). The form does a native POST
    * here and the Lambda 303-redirects back to /contact/thanks or /contact?error=1.
    */

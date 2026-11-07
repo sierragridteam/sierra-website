@@ -9,7 +9,7 @@ https://data.sierragridteam.org
 ersn.net is now a consuming site, "powered by S.I.E.R.R.A".)
 
 Repository:
-https://github.com/dpup/sierra-data
+https://github.com/sierragridteam/sierra-data
 (Renamed 2026-07-06 from github.com/dpup/info.ersn.net/server — internal identity only,
 no effect on the HTTP API.)
 

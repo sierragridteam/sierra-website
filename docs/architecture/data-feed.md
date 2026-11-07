@@ -5,7 +5,7 @@
 > request** against `github.com/dpup/sierra-data` and shown as a clearly-labeled
 > **placeholder** in the UI (never faked).
 
-- Repo: https://github.com/dpup/sierra-data
+- Repo: https://github.com/sierragridteam/sierra-data
 - Base URL: `https://data.sierragridteam.org/api/v1`
 - **2026-07-06 migration:** the service rebranded `info.ersn.net` → The Grid and moved to
   `data.sierragridteam.org` (info.ersn.net stays a supported CNAME alias), and its one

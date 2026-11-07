@@ -1,7 +1,6 @@
 # Contact-form backend — spec & handoff
 
-**Status: live.** The AWS side is provisioned in the `terraform/project-hub` repo
-(us-east-1) and the form posts to its Function URL (`site.contactFormEndpoint` in
+**Status: live.** The AWS side is provisioned separately in us-east-1 and the form posts to its Function URL (`site.contactFormEndpoint` in
 `src/config/site.ts`). This document remains the contract both sides implement.
 
 ## Goal

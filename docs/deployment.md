@@ -1,105 +1,66 @@
 # Deployment — sierragridteam.org
 
-The site is a **fully static** Astro build (`dist/`). It is host-agnostic; the
-configured target is **AWS S3 + CloudFront**, with DNS managed at **Hostinger**.
+The site is a fully static Astro build (`dist/`), deployed by GitHub Actions to
+the existing AWS S3 bucket and CloudFront distribution. Moving the source to
+`sierragridteam/sierra-website` does not move the AWS resources or change the domain.
 
-## One-time setup
+## Infrastructure ownership
 
-> The AWS infra (bucket, CloudFront, OAC, ACM cert, deploy IAM user) is provisioned by a
-> **separate Terraform project**. This doc only covers wiring the deploy + DNS.
+Production infrastructure is managed separately from this source repository.
+The deployment requires a wildcard ACM certificate, Route 53 DNS, a dedicated
+deploy IAM user, and a KMS-encrypted, versioned S3 bucket behind CloudFront
+Origin Access Control. A CloudFront function rewrites extensionless paths to
+`index.html`. The contact form is a separate Lambda/SES integration and is not
+deployed by this site's workflow. Contact a deployment administrator for the
+current resource inventory and infrastructure change procedure.
 
-### 1. AWS (provisioned via Terraform)
+Hostinger is the registrar; the infrastructure source configures Route 53 as the
+DNS host. Confirm live nameserver delegation before making DNS changes. Older
+instructions to add individual website records at Hostinger are superseded by
+this infrastructure configuration. Do not provision replacement infrastructure
+as part of a source-repository transfer.
 
-- **S3 bucket** (`sierragridteam.org-n01ckq`) for the static files. Block public
-  access and serve via CloudFront with Origin Access Control (recommended), or
-  enable static website hosting if you prefer.
-- **CloudFront distribution** in front of the bucket:
-  - Default root object: `index.html`.
-  - **Clean-URL rewrite (required).** The build emits `live/index.html` /
-    `about/index.html` (Astro `build.format: 'directory'`), but the site links to
-    extensionless URLs like `/live`. An OAC (S3 REST) origin has no index-document logic,
-    so without a rewrite every sub-page returns **403**. Attach a **CloudFront Function
-    (viewer-request)** that resolves a directory / extensionless path to its `index.html`:
+## GitHub configuration
 
-    ```js
-    function handler(event) {
-      var req = event.request;
-      var uri = req.uri;
-      if (uri.endsWith('/'))
-        req.uri += 'index.html'; // /live/ -> /live/index.html
-      else if (!uri.split('/').pop().includes('.')) req.uri += '/index.html'; // /live -> /live/index.html
-      return req;
-    }
-    ```
+Preserve the `production` environment and its restrictions. Allow production
+deployments only from `main`. Repository/environment configuration is:
 
-    If you already run a viewer-request function (e.g. the apex-canonical redirect),
-    fold this into it.
+| Name                    | Kind     | Purpose                                 |
+| ----------------------- | -------- | --------------------------------------- |
+| `AWS_ACCESS_KEY_ID`     | Secret   | Dedicated website deploy user           |
+| `AWS_SECRET_ACCESS_KEY` | Secret   | Deploy user's secret key                |
+| `AWS_REGION`            | Variable | Existing AWS region                     |
+| `AWS_ACCOUNT_ID`        | Variable | Expected account; checked before upload |
+| `S3_BUCKET_NAME`        | Variable | Existing website bucket                 |
+| `CF_DISTRO_ID`          | Variable | Existing CloudFront distribution        |
 
-  - **Error pages.** A missing object on a private (OAC) origin returns **403**, not 404,
-    so set CloudFront custom error responses for BOTH: **403 → `/403.html`** and **404 →
-    `/404.html`**, each with **response code 404**. Both are the same on-brand not-found
-    page (`/403.html` is a build-time copy of `/404.html` — see `astro.config.mjs`). They
-    run _after_ the rewrite above, so real pages still resolve.
-  - Attach an ACM certificate (us-east-1) for `sierragridteam.org` +
-    `www.sierragridteam.org`.
-  - Compress objects automatically (gzip/brotli).
+Use the existing infrastructure outputs for configuration; do not copy values
+from old documentation examples. GitHub cannot return the plaintext of stored
+secrets. Preserve them during transfer and recover replacements from the provider
+or approved credential store when necessary.
 
-- **IAM deploy user** — an IAM user with an access key, least-privilege:
-  `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` on the bucket and
-  `cloudfront:CreateInvalidation` on the distribution. Export its access key +
-  secret as GitHub secrets (below).
+## Deployment and verification
 
-### 2. GitHub repo secrets / variables
+`.github/workflows/deploy.yml` runs after a successful CI **push** on `main` from
+this repository, or by manual dispatch on `main`. Automatic deployments check out
+the exact commit CI tested. A fork PR with a branch named `main` cannot authorize
+a production deployment. The workflow verifies the AWS account, builds, syncs
+immutable assets and revalidated HTML/manifests, then invalidates CloudFront.
 
-Set under **Settings → Secrets and variables → Actions**. Following the
-`dpup/ersn.net` convention, **only the access keys are Secrets**; the rest are
-non-sensitive **Variables** (Terraform outputs all of them):
+After a transfer, verify the environment, secret names, variables, organization
+Actions policy, and a successful CI run before deploying. Test the home page,
+extensionless routes, a missing page, and the contact form. Keep the existing
+AWS account, bucket, distribution, DNS and credentials until a separately planned
+infrastructure migration.
 
-| Name                    | Kind         | Example                     |
-| ----------------------- | ------------ | --------------------------- |
-| `AWS_ACCESS_KEY_ID`     | **Secret**   | `AKIA…`                     |
-| `AWS_SECRET_ACCESS_KEY` | **Secret**   | `…`                         |
-| `AWS_REGION`            | **Variable** | `us-east-1`                 |
-| `AWS_ACCOUNT_ID`        | **Variable** | `230964283885`              |
-| `S3_BUCKET_NAME`        | **Variable** | `sierragridteam.org-n01ckq` |
-| `CF_DISTRO_ID`          | **Variable** | `E2M7XGNO0BYU06`            |
-
-The deploy job runs `sts get-caller-identity` and **aborts if the authenticated
-account ≠ `AWS_ACCOUNT_ID`**, so a mis-scoped key can't push to the wrong account.
-
-### 3. Hostinger DNS
-
-Point the domain at CloudFront:
-
-- `sierragridteam.org` → CloudFront (ALIAS/ANAME, or A/AAAA via Hostinger's
-  CNAME-flattening at the apex) to `d3j7seetfd6zbh.cloudfront.net`.
-- `www` → CNAME → `d3j7seetfd6zbh.cloudfront.net` (or redirect www→apex at CloudFront).
-
-## How deploys run
-
-- **Automatic (on merge):** `.github/workflows/deploy.yml` triggers when **CI**
-  succeeds on `main`. It verifies the AWS account, builds, syncs `dist/` to S3
-  (hashed assets cached immutably; HTML revalidated), then invalidates CloudFront.
-- **Manual:** trigger the **Deploy** workflow via _Run workflow_, or deploy
-  locally:
-  ```sh
-  make build
-  aws s3 sync dist/ s3://sierragridteam.org-n01ckq --delete \
-    --exclude "*.html" --cache-control "public,max-age=31536000,immutable"
-  aws s3 sync dist/ s3://sierragridteam.org-n01ckq \
-    --exclude "*" --include "*.html" --cache-control "public,max-age=0,must-revalidate"
-  aws cloudfront create-invalidation --distribution-id E2M7XGNO0BYU06 --paths "/*"
-  ```
+To roll back website code, revert the change through a reviewed PR and deploy the
+previous behavior. A contact-form or DNS failure may require an infrastructure
+fix; redeploying this frontend does not change those resources.
 
 ## Data freshness
 
-`/live` is rendered entirely in the browser from data.sierragridteam.org (re-fetched every
-90s); nothing stale is baked in, and if the feed is unreachable it shows the official
-sources — so its freshness is independent of deploys.
-
-The home operational-status tiles and the site-wide emergency banner also fetch no feed
-data at build time: they SSR an honest placeholder/hidden shell and a client island fills
-them live on load (staying on the placeholder if the feed is unreachable). The checked-in
-`src/data/*.json` are **test fixtures only** (the screenshot harness mocks the feed with
-them) — never baked into a page. `make snapshot` refreshes those fixtures from the live
-feed (needs direct network; it can't run behind the Moat proxy).
+Live operational data is fetched in the browser from `data.sierragridteam.org`.
+The home status tiles and emergency banner render placeholders until their
+client code receives data. Checked-in `src/data/*.json` files are test fixtures,
+not production snapshots embedded in pages. Deployment does not refresh or move
+the Grid service.
