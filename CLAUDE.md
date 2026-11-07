@@ -309,7 +309,7 @@ pick up a new OpenFreeMap build).
   episode start; each update bumps `updatedDate`. All Grid data is untrusted input.
 - **Package manager:** npm (`bun install` hangs behind some proxies; `bun` is used
   only as a test/script runner). Use `make install`.
-- **Deploy:** AWS S3 + CloudFront, DNS at Hostinger — see `docs/deployment.md`.
+- **Deploy:** AWS S3 + CloudFront, DNS configured in Route 53; Hostinger is the registrar — see `docs/deployment.md`.
 - **Third-party embeds (/donate, Zeffy):** their script mounts a React app into OUR
   document, not just a cross-origin iframe, so its markup is inside our a11y surface. It
   ships an untitled payment `<iframe>` and an unlabelled logo `<a>`; `ZeffyEmbed.astro`
@@ -325,5 +325,5 @@ pick up a new OpenFreeMap build).
   footer. A partner's logo is used **unmodified** (their brand is not ours to recolor), which
   makes partner logos the one sanctioned place non-palette color appears. Only list an organization once the relationship is real and they have agreed to be
   named, and don't characterize what they gave unless we actually know.
-- **Pre-launch tracking** lives outside this repo (the project-hub repo); don't add
+- **Pre-launch tracking** lives outside this repo; don't add
   a checklist here. Repo-local TODOs are inline comments at the relevant code.

@@ -37,7 +37,7 @@ jobs:
         run: npm run fmt:check
 
       - name: Unit tests (bun)
-        run: bun test src/
+        run: make test
 
       - name: Build
         run: npm run build

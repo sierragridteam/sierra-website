@@ -173,12 +173,15 @@ confirm the runner can reach the MCP before relying on the `grid_*` tools.
 `.github/workflows/desk-editor.yml` closes the loop for light editing and corrections:
 **reply to a desk PR and the post gets revised in place.** It handles both desks' PRs.
 
-1. **Trigger** — `issue_comment` on any open PR. It's the one workflow that runs off a
-   comment, so the security gate is strict: it acts only when the commenter is a **trusted
-   member** (`author_association` ∈ OWNER/MEMBER/COLLABORATOR — an outside contributor or a
-   drive-by can never spend the token), the comment isn't the bot's own reply (no
-   comment→edit→comment loop), and — checked in "Resolve PR" via `gh` — the PR is **open**
-   on a `news-desk/*` or `fire-desk/*` branch that touches a post. Anything else exits green.
+1. **Trigger** — a comment on an open desk PR by someone with repository write,
+   maintain, or admin permission. Organization membership alone is insufficient.
+   The PR must target `main`, come from the same repository, and have been opened
+   by `github-actions[bot]` or a user with repository write access. Its tree must
+   differ from the trusted default-branch checkout by exactly one regular Markdown
+   post in `src/content/blog/`; executable code, prompt changes, symlinks, and fork
+   PRs are rejected. Refresh stale desk branches from `main` before requesting an
+   edit. The editor checks out the exact commit that passed this gate; if another
+   push advances the branch during editing, the final push fails safely.
 2. **Editor** (`.github/prompts/desk-editor.md`, `EDITOR_MODEL`) — checks out the PR branch,
    reads the comment (passed via env, never interpolated into the shell) plus the governing
    brief, and edits **only** that post file. The brief's hard rules still bind and win: it
