@@ -36,6 +36,7 @@ const schema = {
 </BaseLayout>
 
 <script>
+  import type * as GeoJSON from 'geojson';
   // /mesh is live-only: fetch the topology + the monitor archive in the browser, render
   // every region, and refresh on an interval. maplibre is imported HERE (a client script),
   // never from Astro frontmatter.

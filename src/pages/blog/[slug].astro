@@ -47,7 +47,9 @@ const postSchema = {
     <div class="post-layout">
       <aside class="post-rail">
         <nav class="post-back" aria-label="Breadcrumb">
-          <a href="/blog"><span aria-hidden="true">&larr;</span> {blog.post.backLink}</a>
+          <a href="/blog">
+            <span aria-hidden="true">&larr;</span> {blog.post.backLink}
+          </a>
         </nav>
         <PostMeta
           date={post.data.pubDate}
@@ -58,18 +60,20 @@ const postSchema = {
         {post.data.author && <p class="post-rail__byline">By {post.data.author}</p>}
       </aside>
 
-      {
-        /* #timeline is the fold link's landing target from the feed (a live bulletin's
-        "Read the full situation →"). Harmless on normal posts. */
-      }
+      {/* #timeline is the fold link's landing target from the feed (a live bulletin's
+        "Read the full situation →"). Harmless on normal posts. */}
       <article class="post" id="timeline">
-        <h1 id="post-title" class="post__title">{post.data.title}</h1>
+        <h1 id="post-title" class="post__title">
+          {post.data.title}
+        </h1>
         <Prose class="post__body">
           <Content />
         </Prose>
         <PostNotes desk={post.data.author === colophon.deskName} />
         <div class="post__foot">
-          <Button variant="secondary" href="/blog" arrow>{blog.archiveLink}</Button>
+          <Button variant="secondary" href="/blog" arrow>
+            {blog.archiveLink}
+          </Button>
         </div>
       </article>
     </div>

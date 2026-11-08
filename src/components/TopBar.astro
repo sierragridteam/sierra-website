@@ -30,17 +30,15 @@ const isActive = (href: string) => path === href || path === `${href}/`;
   <Container>
     <div class="topbar__inner">
       <div class="topbar__brand">
-        {
-          hideBrand ? (
-            <a class="sr-only" href="/">
-              {site.name} home
-            </a>
-          ) : (
-            <a class="topbar__brandlink" href="/" aria-label={`${site.name} home`}>
-              <Logo variant="mark" height={30} />
-            </a>
-          )
-        }
+        {hideBrand ? (
+          <a class="sr-only" href="/">
+            {site.name} home
+          </a>
+        ) : (
+          <a class="topbar__brandlink" href="/" aria-label={`${site.name} home`}>
+            <Logo variant="mark" height={30} />
+          </a>
+        )}
       </div>
 
       <button
@@ -85,25 +83,27 @@ const isActive = (href: string) => path === href || path === `${href}/`;
       <div class="topbar__menu" id="primary-nav" data-nav-panel>
         <nav class="topbar__nav" aria-label="Primary">
           <ul class="topbar__links">
-            {
-              nav.map((item) => (
-                <li>
-                  <a
-                    href={item.href}
-                    class:list={['topbar__link', { 'is-active': isActive(item.href) }]}
-                    aria-current={isActive(item.href) ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))
-            }
+            {nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['topbar__link', { 'is-active': isActive(item.href) }]}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
-        <a href={donate.href} class="topbar__donate">{donate.label}</a>
+        <a href={donate.href} class="topbar__donate">
+          {donate.label}
+        </a>
       </div>
 
-      <span class="topbar__clock"><LocalClock /></span>
+      <span class="topbar__clock">
+        <LocalClock />
+      </span>
     </div>
   </Container>
 </header>

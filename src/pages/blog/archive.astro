@@ -56,34 +56,34 @@ const pageSchema = {
       rest={blog.archive.headline.rest}
     >
       <p class="archive-back">
-        <a href="/blog"><span aria-hidden="true">&larr;</span> {blog.archive.backLink}</a>
+        <a href="/blog">
+          <span aria-hidden="true">&larr;</span> {blog.archive.backLink}
+        </a>
       </p>
     </PageHead>
 
     {posts.length === 0 && <p class="archive-empty">{blog.emptyNote}</p>}
 
     <div class="archive">
-      {
-        [...years.entries()].map(([year, months]) => (
-          <section class="archive-year" aria-labelledby={`year-${year}`}>
-            <h2 id={`year-${year}`} class="archive-year__label">
-              {year}
-            </h2>
-            {[...months.entries()].map(([m, group]) => (
-              <div class="archive-month">
-                <h3 class="archive-month__label">{group.label}</h3>
-                <ul class="archive-month__list">
-                  {group.posts.map((post) => (
-                    <li>
-                      <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </section>
-        ))
-      }
+      {[...years.entries()].map(([year, months]) => (
+        <section class="archive-year" aria-labelledby={`year-${year}`}>
+          <h2 id={`year-${year}`} class="archive-year__label">
+            {year}
+          </h2>
+          {[...months.entries()].map(([m, group]) => (
+            <div class="archive-month">
+              <h3 class="archive-month__label">{group.label}</h3>
+              <ul class="archive-month__list">
+                {group.posts.map((post) => (
+                  <li>
+                    <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      ))}
     </div>
   </Section>
 </BaseLayout>

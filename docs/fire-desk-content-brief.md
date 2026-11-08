@@ -146,6 +146,6 @@ the post links `/live` and Cal OES / Genasys for evacuation zones.
    severity / status / evacuation level / fire-weather and the allowlisted source link.
 3. Find the open `Fire Update` bulletin, if any, and read its `grid-state` stamp.
 4. Decide create / update / close / nothing (§5).
-5. Write or edit exactly the one bulletin file; run `make verify` and `npm run build`
+5. Write or edit exactly the one bulletin file; run `make verify` and `pnpm run build`
    (prettier-format your file); write your run notes. Do not commit, push, or touch git —
    the workflow opens the pull request for member review.

@@ -27,11 +27,21 @@ const roleOptions = contact.roles.map((r) => r.name);
 
   <div class="cform__row">
     <div class="cform__field">
-      <label for="cf-name">Name <span class="cform__req" aria-hidden="true">*</span></label>
+      <label for="cf-name">
+        Name{' '}
+        <span class="cform__req" aria-hidden="true">
+          *
+        </span>
+      </label>
       <input id="cf-name" name="name" type="text" required autocomplete="name" />
     </div>
     <div class="cform__field">
-      <label for="cf-email">Email <span class="cform__req" aria-hidden="true">*</span></label>
+      <label for="cf-email">
+        Email{' '}
+        <span class="cform__req" aria-hidden="true">
+          *
+        </span>
+      </label>
       <input id="cf-email" name="email" type="email" required autocomplete="email" />
     </div>
   </div>
@@ -49,38 +59,47 @@ const roleOptions = contact.roles.map((r) => r.name);
         spellcheck="false"
         aria-describedby="cf-callsign-help"
       />
-      <p id="cf-callsign-help" class="cform__help">If you hold an amateur radio license.</p>
+      <p id="cf-callsign-help" class="cform__help">
+        If you hold an amateur radio license.
+      </p>
     </div>
     <div class="cform__field">
-      <label for="cf-role">Area of interest <span class="cform__optional">(optional)</span></label>
+      <label for="cf-role">
+        Area of interest <span class="cform__optional">(optional)</span>
+      </label>
       <select id="cf-role" name="role">
         <option value="">No preference</option>
-        {roleOptions.map((r) => <option value={r}>{r}</option>)}
+        {roleOptions.map((r) => (
+          <option value={r}>{r}</option>
+        ))}
       </select>
     </div>
   </div>
 
   <div class="cform__field">
-    <label for="cf-message"
-      >How would you like to help? <span class="cform__req" aria-hidden="true">*</span></label
-    >
+    <label for="cf-message">
+      How would you like to help?{' '}
+      <span class="cform__req" aria-hidden="true">
+        *
+      </span>
+    </label>
     <textarea id="cf-message" name="message" rows="5" required></textarea>
   </div>
 
   <div class="cform__actions">
-    <Button variant="primary" type="submit" arrow>Send Message</Button>
+    <Button variant="primary" type="submit" arrow>
+      Send Message
+    </Button>
     <p class="cform__fallback">
       Prefer to write directly? Email
       <a href={`mailto:${site.email}`}>{site.email}</a>.
     </p>
-    {
-      site.emailIsPlaceholder && (
-        <p class="cform__help">
-          Our email inbox is being established — the P.O. Box is the most reliable way to reach us
-          right now.
-        </p>
-      )
-    }
+    {site.emailIsPlaceholder && (
+      <p class="cform__help">
+        Our email inbox is being established — the P.O. Box is the most reliable way to reach us
+        right now.
+      </p>
+    )}
   </div>
 
   <p class="cform__privacy">{contact.formPrivacyNote}</p>

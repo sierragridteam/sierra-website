@@ -8,7 +8,7 @@
 // model (Sonnet) scores, so the judge doesn't share the writer's blind spots. Tools that
 // could mutate the repo are disabled during generation — everything is provided inline.
 //
-// Usage:  npm run eval:generate
+// Usage:  pnpm run eval:generate
 //         node evals/generate.mjs --prompt=/abs/path/variant-writer.md   (A/B a variant)
 //         node evals/generate.mjs --json
 //   env:  EVAL_GEN_MODEL (writer, default opus), EVAL_JUDGE_MODEL (judge, default sonnet),

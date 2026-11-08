@@ -7,7 +7,7 @@
 // the voice judge scores the result. PR #62's critic reported "zero epigrams" on a draft the
 // judge counts a dozen tells in — this is the check that would have caught that.
 //
-// Usage:  npm run eval:critic
+// Usage:  pnpm run eval:critic
 //         node evals/critic.mjs --json
 //   env:  EVAL_CRITIC_MODEL (default sonnet — the pipeline's critic),
 //         EVAL_VOICE_MODEL (voice judge, default opus), EVAL_SAMPLES (edits per fixture, default 1)

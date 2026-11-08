@@ -22,12 +22,18 @@ const { number, id, title, intro, focusTarget = false } = Astro.props;
 
 <div class="report-sec-head">
   <div class="report-sec-head__title">
-    <span class="report-sec-head__num" aria-hidden="true">{number}</span>
-    <h2 class="report-sec-head__h2" id={id} tabindex={focusTarget ? -1 : undefined}>{title}</h2>
+    <span class="report-sec-head__num" aria-hidden="true">
+      {number}
+    </span>
+    <h2 class="report-sec-head__h2" id={id} tabindex={focusTarget ? -1 : undefined}>
+      {title}
+    </h2>
   </div>
   <div class="report-sec-head__row">
     {intro ? <p class="report-sec-head__intro">{intro}</p> : <slot name="intro" />}
-    <div class="report-sec-head__controls"><slot name="controls" /></div>
+    <div class="report-sec-head__controls">
+      <slot name="controls" />
+    </div>
   </div>
 </div>
 

@@ -27,12 +27,16 @@ import { site } from '@config/site';
         rest={contact.thanks.headline.rest}
       >
         <Fragment slot="lede">
-          {contact.thanks.body}{' '}<a href={`mailto:${site.email}`}>{site.email}</a>.
+          {contact.thanks.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
         </Fragment>
       </PageHead>
       <div class="thanks__actions">
-        <Button variant="primary" href="/" arrow>Back to the Homepage</Button>
-        <Button variant="secondary" href="/live">View the Live Feed</Button>
+        <Button variant="primary" href="/" arrow>
+          Back to the Homepage
+        </Button>
+        <Button variant="secondary" href="/live">
+          View the Live Feed
+        </Button>
       </div>
     </div>
   </Section>

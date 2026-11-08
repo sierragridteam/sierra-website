@@ -31,18 +31,20 @@ const pageSchema = {
     />
   </Section>
 
-  {
-    /* The two forms come first: they are what most people arrive to do, and burying them
+  {/* The two forms come first: they are what most people arrive to do, and burying them
     under explanatory cards asked people to read before they could act. Side by side where
     there is room — giving and joining are alternatives, not a sequence, so stacking one
-    above the other implied an order that isn't there. Each is its own landmark. */
-  }
+    above the other implied an order that isn't there. Each is its own landmark. */}
   <Section surface="page" as="div">
     <div class="donate-forms">
       <section class="donate-form" aria-labelledby="give-title">
-        <h2 id="give-title" class="donate-h2">{donate.giveHeading}</h2>
+        <h2 id="give-title" class="donate-h2">
+          {donate.giveHeading}
+        </h2>
         <p class="donate-note">{donate.giveNote}</p>
-        <noscript><p class="donate-note">{donate.embedFallback}</p></noscript>
+        <noscript>
+          <p class="donate-note">{donate.embedFallback}</p>
+        </noscript>
         <ZeffyEmbed
           formUrl="/embed/donation-form/donate-to-support-sierra"
           title="Donation form powered by Zeffy"
@@ -50,7 +52,9 @@ const pageSchema = {
       </section>
 
       <section class="donate-form" aria-labelledby="member-title">
-        <h2 id="member-title" class="donate-h2">{donate.memberHeading}</h2>
+        <h2 id="member-title" class="donate-h2">
+          {donate.memberHeading}
+        </h2>
         <p class="donate-note">{donate.memberNote}</p>
         <ZeffyEmbed
           formUrl="/embed/ticketing/signal-integrity-emergency-radio-response-alliances-memberships"
@@ -62,16 +66,16 @@ const pageSchema = {
   </Section>
 
   <Section surface="page" labelledby="ways-title">
-    <h2 id="ways-title" class="donate-h2">{donate.waysHeading}</h2>
+    <h2 id="ways-title" class="donate-h2">
+      {donate.waysHeading}
+    </h2>
     <div class="donate-ways">
-      {
-        donate.ways.map((w) => (
-          <Card class="donate-way">
-            <p class="donate-way__name">{w.name}</p>
-            <p class="donate-way__desc">{w.desc}</p>
-          </Card>
-        ))
-      }
+      {donate.ways.map((w) => (
+        <Card class="donate-way">
+          <p class="donate-way__name">{w.name}</p>
+          <p class="donate-way__desc">{w.desc}</p>
+        </Card>
+      ))}
     </div>
 
     <div class="donate-tax">
@@ -82,15 +86,13 @@ const pageSchema = {
   </Section>
 </BaseLayout>
 
-{
-  /* Loaded ONCE for both embeds. `is:inline` keeps Astro from bundling it — it is a
+{/* Loaded ONCE for both embeds. `is:inline` keeps Astro from bundling it — it is a
     third-party script that must run from Zeffy's own origin.
 
     The `onerror` is Zeffy's: if their bundle fails to load (blocked, offline, an outage),
     it reveals each fallback block and copies `data-zeffy-embed-src` onto the iframe's `src`,
     so giving still works as a plain iframe. Kept as an inline handler because it has to fire
-    on the tag's own error event. */
-}
+    on the tag's own error event. */}
 <script
   is:inline
   src="https://www.zeffy.com/embed/v2/zeffy-embed.js"

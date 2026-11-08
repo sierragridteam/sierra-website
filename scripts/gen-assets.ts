@@ -1,6 +1,6 @@
 /**
  * Generates raster brand/SEO assets from the master logo, deterministically.
- * Run: `npm run gen-assets` (or `bun run scripts/gen-assets.ts`).
+ * Run: `pnpm run gen-assets` (or `bun run scripts/gen-assets.ts`).
  *
  * Outputs (committed to public/):
  *  - brand/sierra-mark.png   the mark only (mountain + arcs), cropped + trimmed

@@ -27,30 +27,26 @@ const showUpdated = updatedDate && updatedDate.valueOf() > date.valueOf();
 
 <p class:list={['post-meta', className]}>
   <time datetime={iso(date)}>{fmt(date)}</time>
-  {
-    showUpdated && (
-      <>
-        <span class="post-meta__sep" aria-hidden="true">
-          ·
-        </span>
-        {/* "Updated" is real text (not aria-hidden) so the published-vs-updated
+  {showUpdated && (
+    <>
+      <span class="post-meta__sep" aria-hidden="true">
+        ·
+      </span>
+      {/* "Updated" is real text (not aria-hidden) so the published-vs-updated
           distinction is announced, and the value is its own <time>. */}
-        <time class="post-meta__updated" datetime={iso(updatedDate!)}>
-          Updated {fmt(updatedDate!)}
-        </time>
-      </>
-    )
-  }
-  {
-    tag && (
-      <>
-        <span class="post-meta__sep" aria-hidden="true">
-          ·
-        </span>
-        <span class="post-meta__tag">{tag}</span>
-      </>
-    )
-  }
+      <time class="post-meta__updated" datetime={iso(updatedDate!)}>
+        Updated {fmt(updatedDate!)}
+      </time>
+    </>
+  )}
+  {tag && (
+    <>
+      <span class="post-meta__sep" aria-hidden="true">
+        ·
+      </span>
+      <span class="post-meta__tag">{tag}</span>
+    </>
+  )}
 </p>
 
 <style>

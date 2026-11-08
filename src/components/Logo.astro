@@ -24,53 +24,47 @@ const fullH = height ?? 90;
 const alt = `${site.name} — ${site.legalName}`;
 ---
 
-{
-  variant === 'full' && (
-    <img
-      class:list={['logo', 'logo--full', className]}
-      src="/brand/sierra-logo-full.png"
-      alt={alt}
-      height={fullH}
-      width={Math.round((fullH * 294) / 248)}
-      style={`height: ${fullH}px`}
-      loading="lazy"
-      decoding="async"
-    />
-  )
-}
+{variant === 'full' && (
+  <img
+    class:list={['logo', 'logo--full', className]}
+    src="/brand/sierra-logo-full.png"
+    alt={alt}
+    height={fullH}
+    width={Math.round((fullH * 294) / 248)}
+    style={`height: ${fullH}px`}
+    loading="lazy"
+    decoding="async"
+  />
+)}
 
-{
-  variant === 'mark' && (
+{variant === 'mark' && (
+  <img
+    class:list={['logo', 'logo--mark', className]}
+    src="/brand/sierra-mark.png"
+    alt={alt}
+    height={markH}
+    width={Math.round((markH * 271) / 154)}
+    style={`height: ${markH}px`}
+    decoding="async"
+  />
+)}
+
+{variant === 'compact' && (
+  <span class:list={['logo', 'logo--compact', className]}>
     <img
-      class:list={['logo', 'logo--mark', className]}
+      class="logo__mark"
       src="/brand/sierra-mark.png"
-      alt={alt}
+      alt=""
       height={markH}
       width={Math.round((markH * 271) / 154)}
       style={`height: ${markH}px`}
       decoding="async"
+      aria-hidden="true"
     />
-  )
-}
-
-{
-  variant === 'compact' && (
-    <span class:list={['logo', 'logo--compact', className]}>
-      <img
-        class="logo__mark"
-        src="/brand/sierra-mark.png"
-        alt=""
-        height={markH}
-        width={Math.round((markH * 271) / 154)}
-        style={`height: ${markH}px`}
-        decoding="async"
-        aria-hidden="true"
-      />
-      <span class="logo__wordmark">{site.name}</span>
-      <span class="sr-only">{site.legalName}</span>
-    </span>
-  )
-}
+    <span class="logo__wordmark">{site.name}</span>
+    <span class="sr-only">{site.legalName}</span>
+  </span>
+)}
 
 <style>
   .logo {

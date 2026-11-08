@@ -1,5 +1,5 @@
 # S.I.E.R.R.A site — developer + CI entrypoints.
-# `make help` lists targets. Install deps with `make install` (uses npm; bun is
+# `make help` lists targets. Install deps with `make install` (uses pnpm; bun is
 # only used as a script/test runner — `bun install` hangs behind this proxy).
 
 .DEFAULT_GOAL := help
@@ -10,51 +10,51 @@ help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install dependencies (npm — proxy-safe)
-	npm install --no-audit --no-fund
+install: ## Install dependencies (pnpm)
+	pnpm install
 
 dev: ## Start the dev server
-	npm run dev
+	pnpm run dev
 
 build: ## Build the static site to dist/
-	npm run build
+	pnpm run build
 
 preview: ## Preview the built site
-	npm run preview
+	pnpm run preview
 
 check: ## Type-check (astro check)
-	npm run check
+	pnpm run check
 
 lint: ## Lint CSS/design tokens (stylelint guardrails)
-	npm run lint
+	pnpm run lint
 
 fmt: ## Format with prettier
-	npm run fmt
+	pnpm run fmt
 
 fmt-check: ## Verify formatting
-	npm run fmt:check
+	pnpm run fmt:check
 
 test: ## Unit tests (data layer) via bun
 	bun test src/
 	node --test scripts/desk-editor-gate.test.mjs
 
 test-browser: ## A11y + smoke tests (Playwright)
-	npm run test:visual
+	pnpm run test:visual
 
 screenshots: ## Capture deterministic screenshots → tests/screenshots
-	npm run screenshots
+	pnpm run screenshots
 
 screenshots-live: ## Capture /live + home against the REAL feed → tests/screenshots/_live (needs preview)
-	npm run screenshots:live
+	pnpm run screenshots:live
 
 scenarios: ## Screenshot /live under synthetic hazard configs (needs a running preview)
 	node scripts/scenario-shots.mjs
 
 snapshot: ## Refresh the checked-in data.sierragridteam.org data snapshot
-	npm run snapshot
+	pnpm run snapshot
 
 gen-assets: ## Regenerate favicons / OG image / logo mark from the master logo
-	npm run gen-assets
+	pnpm run gen-assets
 
 verify: check lint fmt-check test ## Fast pre-commit checks (no browser)
 

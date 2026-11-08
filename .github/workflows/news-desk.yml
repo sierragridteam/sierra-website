@@ -152,22 +152,24 @@ jobs:
           REASON: ${{ steps.guard.outputs.reason }}
         run: gh issue comment "$ISSUE" --body "🗒️ **News Desk** — ${REASON:-Not drafting this run; kept as a candidate.}"
 
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.guard.outputs.skip == 'false'
         with:
-          node-version: 22
-          cache: npm
+          node-version: '26.13.0'
+          cache: pnpm
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         if: steps.guard.outputs.skip == 'false'
         with:
-          bun-version: latest
+          bun-version: '1.4.4'
 
       - name: Install dependencies
         if: steps.guard.outputs.skip == 'false'
         run: |
-          npm ci --no-audit --no-fund
-          npm install -g @anthropic-ai/claude-code
+          pnpm install --frozen-lockfile
+          pnpm add --global @anthropic-ai/claude-code@2.1.319
           mkdir -p /tmp/news-desk
 
       # Runtime context appended to the writer's brief: any operator-suggested topic, the
@@ -364,7 +366,7 @@ jobs:
         if: steps.guard.outputs.skip == 'false' && steps.final.outputs.exists == 'true'
         run: |
           make verify
-          npm run build
+          pnpm run build
 
       - name: Open pull request for member review
         if: steps.guard.outputs.skip == 'false' && steps.final.outputs.exists == 'true'

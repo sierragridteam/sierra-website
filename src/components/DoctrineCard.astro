@@ -20,7 +20,9 @@ const { number, kicker, title, class: className } = Astro.props;
     <span class="doctrine__kicker">{kicker}</span>
   </div>
   <h3 class="doctrine__title">{title}</h3>
-  <p class="doctrine__body"><slot /></p>
+  <p class="doctrine__body">
+    <slot />
+  </p>
 </article>
 
 <style>

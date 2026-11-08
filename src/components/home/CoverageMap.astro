@@ -42,52 +42,46 @@ const ariaLabel =
 <div class="coverage" role="img" aria-label={ariaLabel}>
   <svg class="coverage__svg" width="1320" height="811" viewBox="0 0 1320 811" aria-hidden="true">
     <g class="coverage__links">
-      {
-        corridors.map((c) => (
-          <path
-            d={corridorPath(c.path)}
-            class:list={['coverage__link', { 'is-dashed': c.kind === 'dashed' }]}
-          />
-        ))
-      }
+      {corridors.map((c) => (
+        <path
+          d={corridorPath(c.path)}
+          class:list={['coverage__link', { 'is-dashed': c.kind === 'dashed' }]}
+        />
+      ))}
     </g>
 
-    {
-      markers.map(
-        (m) =>
-          m.halo && (
-            <circle
-              class={`coverage__halo coverage__halo--${m.halo.tone}`}
-              cx={m.x.toFixed(1)}
-              cy={m.y.toFixed(1)}
-              r={m.halo.r}
-              stroke-width={m.halo.width}
-              stroke-opacity={m.halo.opacity}
-            />
-          )
-      )
-    }
+    {markers.map(
+      (m) =>
+        m.halo && (
+          <circle
+            class={`coverage__halo coverage__halo--${m.halo.tone}`}
+            cx={m.x.toFixed(1)}
+            cy={m.y.toFixed(1)}
+            r={m.halo.r}
+            stroke-width={m.halo.width}
+            stroke-opacity={m.halo.opacity}
+          />
+        )
+    )}
 
-    {
-      markers.map((m, i) => (
-        <g
-          class={`coverage__marker coverage__marker--${m.role}`}
-          transform={`translate(${m.x.toFixed(1)} ${m.y.toFixed(1)})`}
+    {markers.map((m, i) => (
+      <g
+        class={`coverage__marker coverage__marker--${m.role}`}
+        transform={`translate(${m.x.toFixed(1)} ${m.y.toFixed(1)})`}
+      >
+        <circle class="coverage__ping" r="7" style={`animation-delay:${(i * 0.4).toFixed(2)}s`} />
+        <circle class="coverage__dot" r="6.5" />
+        <text
+          class="coverage__label"
+          x={m.labelSide === 'left' ? -14 : 13}
+          y="3.5"
+          text-anchor={m.labelSide === 'left' ? 'end' : 'start'}
         >
-          <circle class="coverage__ping" r="7" style={`animation-delay:${(i * 0.4).toFixed(2)}s`} />
-          <circle class="coverage__dot" r="6.5" />
-          <text
-            class="coverage__label"
-            x={m.labelSide === 'left' ? -14 : 13}
-            y="3.5"
-            text-anchor={m.labelSide === 'left' ? 'end' : 'start'}
-          >
-            {m.name}
-            {m.role === 'hq' ? ' · HQ' : ''}
-          </text>
-        </g>
-      ))
-    }
+          {m.name}
+          {m.role === 'hq' ? ' · HQ' : ''}
+        </text>
+      </g>
+    ))}
   </svg>
 </div>
 

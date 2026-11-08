@@ -165,8 +165,8 @@ out"): four merged posts already open that way (idea well, "Two ruts").
 - If this post drew on a member's proposal (a **Proposed now** or **Topic backlog** issue
   in the run context), write that issue's number — digits only — to
   `/tmp/news-desk/used-issue`, so the PR links and closes it.
-- Run `make verify` and `npm run build`; fix anything they flag (prettier formats
-  markdown — run `npx prettier --write` on your file).
+- Run `make verify` and `pnpm run build`; fix anything they flag (prettier formats
+  markdown — run `pnpm exec prettier --write` on your file).
 - Write `/tmp/news-desk/writer-notes.md`: one line `DECISION: POST`, the headline and
   pillar, a list of every source URL used, 3–6 bullets on why this clears the publish
   bar today, and the slate (step 4) with a line on why each one you didn't pick lost.

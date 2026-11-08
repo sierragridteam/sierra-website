@@ -21,7 +21,7 @@ export default defineConfig({
   webServer: process.env.BASE_URL
     ? undefined
     : {
-        command: 'npm run build && node_modules/.bin/astro preview --port 4321 --host',
+        command: 'pnpm run build && node_modules/.bin/astro preview --port 4321 --host',
         url: 'http://localhost:4321',
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

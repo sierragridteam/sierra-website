@@ -44,24 +44,28 @@ const contactSchema = {
     <div class="contact-grid">
       <div class="contact-aside">
         <section aria-labelledby="roles-title">
-          <h2 id="roles-title" class="contact-h2">{contact.rolesHeading}</h2>
+          <h2 id="roles-title" class="contact-h2">
+            {contact.rolesHeading}
+          </h2>
           <ul class="roles">
-            {
-              contact.roles.map((r) => (
-                <li class="role">
-                  <span class="role__name">{r.name}</span>
-                  <span class="role__desc">{r.desc}</span>
-                </li>
-              ))
-            }
+            {contact.roles.map((r) => (
+              <li class="role">
+                <span class="role__name">{r.name}</span>
+                <span class="role__desc">{r.desc}</span>
+              </li>
+            ))}
           </ul>
         </section>
 
         <section class="address" aria-labelledby="address-title">
-          <h2 id="address-title" class="contact-h2">By mail</h2>
+          <h2 id="address-title" class="contact-h2">
+            By mail
+          </h2>
           <address class="address__body">
-            {site.name}<br />
-            {site.address.poBox}<br />
+            {site.name}
+            <br />
+            {site.address.poBox}
+            <br />
             {site.address.city}, {site.address.state}
             {site.address.zip}
           </address>
@@ -73,7 +77,9 @@ const contactSchema = {
       </div>
 
       <div class="contact-main">
-        <h2 class="contact-h2" id="form-title">{contact.formHeading}</h2>
+        <h2 class="contact-h2" id="form-title">
+          {contact.formHeading}
+        </h2>
         <div class="contact-form-wrap">
           <ContactForm />
         </div>

@@ -17,7 +17,7 @@
 //  - Human-in-the-loop: the winner is written to a *.candidate.md for review, NEVER merged
 //    or written over the live prompt.
 //
-// Usage:  npm run eval:autotune            (3 rounds)
+// Usage:  pnpm run eval:autotune            (3 rounds)
 //         node evals/autotune.mjs --rounds=5
 //   env:  EVAL_GEN_MODEL, EVAL_JUDGE_MODEL, EVAL_OPT_MODEL, EVAL_VOTES
 //

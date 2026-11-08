@@ -31,17 +31,15 @@ const pageSchema = {
     />
 
     <div class="colophon">
-      {
-        colophon.sections.map((s) => (
-          <section class="colophon__section">
-            <h2 class="colophon__heading">{s.heading}</h2>
-            <p class="colophon__body">{s.body}</p>
-          </section>
-        ))
-      }
+      {colophon.sections.map((s) => (
+        <section class="colophon__section">
+          <h2 class="colophon__heading">{s.heading}</h2>
+          <p class="colophon__body">{s.body}</p>
+        </section>
+      ))}
 
       <p class="colophon__brief">
-        {colophon.briefNote}{' '}<a href={colophon.briefUrl}>{colophon.briefLabel}</a>.
+        {colophon.briefNote} <a href={colophon.briefUrl}>{colophon.briefLabel}</a>.
       </p>
     </div>
   </Section>

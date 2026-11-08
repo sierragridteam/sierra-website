@@ -7,7 +7,7 @@
  * These checked-in JSON are TEST FIXTURES ONLY — the screenshot harness mocks the feed
  * with them. Nothing is fetched at build time; pages render live in the browser.
  *
- * Run: `npm run snapshot`  (or `bun run scripts/snapshot.ts`)
+ * Run: `pnpm run snapshot`  (or `bun run scripts/snapshot.ts`)
  */
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

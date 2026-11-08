@@ -38,56 +38,55 @@ const profileSchema = {
 <BaseLayout title={person.name} description={person.summary} path={path} schema={profileSchema}>
   <Section surface="page" labelledby="profile-title">
     <nav class="profile-back" aria-label="Breadcrumb">
-      <a href="/about"><span aria-hidden="true">&larr;</span> {about.profile.backLabel}</a>
+      <a href="/about">
+        <span aria-hidden="true">&larr;</span> {about.profile.backLabel}
+      </a>
     </nav>
 
     <div class="profile">
       <div class="profile__media">
-        {
-          person.photo ? (
-            <Image
-              src={person.photo}
-              alt={person.photoAlt ?? `Portrait of ${person.name}`}
-              widths={[400, 800]}
-              sizes="(max-width: 760px) 90vw, 360px"
-              class="profile__photo"
-              loading="eager"
-            />
-          ) : (
-            <div class="profile__monogram" aria-hidden="true">
-              {person.initials}
-            </div>
-          )
-        }
+        {person.photo ? (
+          <Image
+            src={person.photo}
+            alt={person.photoAlt ?? `Portrait of ${person.name}`}
+            widths={[400, 800]}
+            sizes="(max-width: 760px) 90vw, 360px"
+            class="profile__photo"
+            loading="eager"
+          />
+        ) : (
+          <div class="profile__monogram" aria-hidden="true">
+            {person.initials}
+          </div>
+        )}
       </div>
 
       <div class="profile__body">
         <header class="profile__head">
-          <Kicker>{person.role}</Kicker>{
-            person.callsign && (
-              <span class="profile__callsign">
-                {' · '}
-                {person.callsign}
-              </span>
-            )
-          }
-          <h1 id="profile-title" class="profile__name">{person.name}</h1>
+          <Kicker>{person.role}</Kicker>
+          {person.callsign && (
+            <span class="profile__callsign">
+              {' · '}
+              {person.callsign}
+            </span>
+          )}
+          <h1 id="profile-title" class="profile__name">
+            {person.name}
+          </h1>
           <p class="profile__intro">{person.intro}</p>
         </header>
 
-        {
-          person.bio.map((section) => (
-            <section class="profile__section">
-              {section.heading && <h2 class="profile__heading">{section.heading}</h2>}
-              {section.paragraphs.map((para) => (
-                <p class="profile__para">
-                  {para.lead && <strong class="profile__lead">{para.lead}:</strong>}
-                  {para.text}
-                </p>
-              ))}
-            </section>
-          ))
-        }
+        {person.bio.map((section) => (
+          <section class="profile__section">
+            {section.heading && <h2 class="profile__heading">{section.heading}</h2>}
+            {section.paragraphs.map((para) => (
+              <p class="profile__para">
+                {para.lead && <strong class="profile__lead">{para.lead}:</strong>}
+                {para.text}
+              </p>
+            ))}
+          </section>
+        ))}
       </div>
     </div>
   </Section>
@@ -96,8 +95,12 @@ const profileSchema = {
     <div class="profile-cta__inner">
       <p class="profile-cta__note">{about.profile.ctaNote}</p>
       <div class="profile-cta__actions">
-        <Button variant="secondary" href="/about">{about.profile.ctaTeam}</Button>
-        <Button variant="primary" href="/contact" arrow>{about.profile.ctaVolunteer}</Button>
+        <Button variant="secondary" href="/about">
+          {about.profile.ctaTeam}
+        </Button>
+        <Button variant="primary" href="/contact" arrow>
+          {about.profile.ctaVolunteer}
+        </Button>
       </div>
     </div>
   </aside>

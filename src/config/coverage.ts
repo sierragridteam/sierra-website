@@ -9,7 +9,7 @@
  * SAFE TO EDIT: names, deployment-zone list.
  * Coordinates are geographic truth — only change them to fix the map's geography. A town
  * outside the hero's frame (roughly Angels Camp to Bear Valley) needs a new projection, and
- * then the map must be regenerated to match (`npm run hero-map`).
+ * then the map must be regenerated to match (`pnpm run hero-map`).
  * See docs/architecture/information-architecture.md (Home hero · map honesty rule).
  */
 

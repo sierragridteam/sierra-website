@@ -5,8 +5,8 @@ ports:
   www: 4321
 
 dependencies:
-  - node
-  - bun
+  - node@26.13.0
+  - bun@1.4.4
   - git
   - make
   - gh
@@ -16,11 +16,11 @@ dependencies:
 # both are baked into the image here. Keep the pinned version in step with @playwright/test
 # in package.json: each Playwright release expects its own browser build.
 hooks:
-  post_build_root: npx -y playwright@1.61.1 install-deps chromium
-  post_build: npx -y playwright@1.61.1 install chromium
+  post_build_root: npm install --global pnpm@12.18.0 && pnpm dlx playwright@1.65.0 install-deps chromium
+  post_build: pnpm dlx playwright@1.65.0 install chromium
   # Self-heals a Playwright bump before the image is rebuilt: a no-op when the browser that
   # the repo's own Playwright expects is already present.
-  pre_run: if [ -d node_modules/playwright-core ]; then npx playwright install chromium >/dev/null; fi
+  pre_run: if [ -d node_modules/playwright-core ]; then pnpm exec playwright install chromium >/dev/null; fi
 
 grants:
   - claude

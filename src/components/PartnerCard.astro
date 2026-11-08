@@ -31,7 +31,8 @@ const host = new URL(partner.url).hostname.replace(/^www\./, '');
     <h2 class="partner-card__name">{partner.name}</h2>
     <p class="partner-card__desc">{partner.description}</p>
     <a class="partner-card__link" href={partner.url} target="_blank" rel="noopener external">
-      {`${copy.visitLabel} ${host}`}<span aria-hidden="true"> &#8599;</span>
+      {`${copy.visitLabel} ${host}`}
+      <span aria-hidden="true"> &#8599;</span>
     </a>
   </div>
 </article>

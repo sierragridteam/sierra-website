@@ -39,13 +39,13 @@ argued. Three loops, in increasing autonomy, plus a check on the critic:
 ## Running
 
 ```sh
-npm run eval:desk                    # judge the fixed corpus (Opus judge, 1 vote/case)
+pnpm run eval:desk                    # judge the fixed corpus (Opus judge, 1 vote/case)
 node evals/judge.mjs --votes=3       # majority of 3 — stabilises borderline cases
-npm run eval:generate                # generate-then-judge (Opus writer, Sonnet judge)
+pnpm run eval:generate                # generate-then-judge (Opus writer, Sonnet judge)
 node evals/generate.mjs --prompt=/abs/path/variant-writer.md   # A/B a writer-prompt variant
 node evals/generate.mjs --json       # machine-readable (includes the generated drafts)
-npm run eval:autotune                # auto-learn (3 rounds); writes a candidate prompt
-npm run eval:critic                  # critic voice pass on the cases/voice fixtures
+pnpm run eval:autotune                # auto-learn (3 rounds); writes a candidate prompt
+pnpm run eval:critic                  # critic voice pass on the cases/voice fixtures
 node evals/autotune.mjs --rounds=5   # more rounds = more attempts (run in the background)
 ```
 
@@ -224,7 +224,7 @@ Auto-tuning against an LLM judge is easy to break, so the loop is fenced:
   review**. It is never applied to the live prompt or merged automatically.
 
 ```sh
-npm run eval:autotune              # 3 rounds
+pnpm run eval:autotune              # 3 rounds
 node evals/autotune.mjs --rounds=5 # more attempts
 EVAL_OPT_MODEL=claude-opus-5-5 EVAL_VOTES=3 node evals/autotune.mjs   # steadier signal
 ```

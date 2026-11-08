@@ -60,19 +60,15 @@ const schema = {
 ---
 
 <BaseLayout title={copy.title} description={description} path="/live" schema={schema}>
-  {
-    /* Show the loader (and hide the body + failure panel + footer) before the page paints
-      — set here, not in deferred JS, so the failure panel never flashes on a normal load. */
-  }
+  {/* Show the loader (and hide the body + failure panel + footer) before the page paints
+      — set here, not in deferred JS, so the failure panel never flashes on a normal load. */}
   <script is:inline>
     document.documentElement.dataset.liveBoot = 'loading';
   </script>
 
   <Section surface="page" labelledby="live-title">
-    {
-      /* The shared page head. The h1 is real in the SSR HTML (and is all a crawler or a
-        failed load sees); its two lines are generated from the stream. */
-    }
+    {/* The shared page head. The h1 is real in the SSR HTML (and is all a crawler or a
+        failed load sees); its two lines are generated from the stream. */}
     <PageHead
       kicker={copy.kicker}
       id="live-title"
@@ -86,40 +82,40 @@ const schema = {
       <span class="live-loader__text">{copy.loading}</span>
     </div>
 
-    {
-      /* Failure / no-JS / crawler state — never stale feed data, just an honest pointer to
-        the official sources. Visible by default (no JS) and when the live fetch fails. */
-    }
+    {/* Failure / no-JS / crawler state — never stale feed data, just an honest pointer to
+        the official sources. Visible by default (no JS) and when the live fetch fails. */}
     <section class="live-fail" data-live-fail aria-labelledby="fail-title">
-      <h2 id="fail-title" class="live-fail__head">{copy.failHeading}</h2>
+      <h2 id="fail-title" class="live-fail__head">
+        {copy.failHeading}
+      </h2>
       <p class="live-fail__body">{copy.failBody}</p>
       <ul class="live-fail__sources">
-        {
-          failSources.map((s) => (
-            <li>
-              <a class="live-fail__link" href={s.href} target="_blank" rel="noopener external">
-                {s.label}
-                <span class="live-fail__arrow" aria-hidden="true">
-                  &#8599;
-                </span>
-              </a>
-            </li>
-          ))
-        }
+        {failSources.map((s) => (
+          <li>
+            <a class="live-fail__link" href={s.href} target="_blank" rel="noopener external">
+              {s.label}
+              <span class="live-fail__arrow" aria-hidden="true">
+                &#8599;
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
     </section>
 
     {/* Live body — an empty skeleton; the client fills every region from the live feed. */}
     <div class="live-view" data-live-body>
       <p class="live-status">
-        <StatusPill tone="muted" blink={false} data-live-pill>—</StatusPill>
-        <span class="live-status__sync"><span data-live-synced>—</span> · {copy.autoRefresh}</span>
+        <StatusPill tone="muted" blink={false} data-live-pill>
+          —
+        </StatusPill>
+        <span class="live-status__sync">
+          <span data-live-synced>—</span> · {copy.autoRefresh}
+        </span>
       </p>
 
-      {
-        /* Four figures on /mesh's pattern. Each count links down to the alert stream when it
-          has something there to show (live-view.ts renderFigures). */
-      }
+      {/* Four figures on /mesh's pattern. Each count links down to the alert stream when it
+          has something there to show (live-view.ts renderFigures). */}
       <div class="live-figures" data-live-figures></div>
 
       <aside class="live-evac" aria-label="Evacuation maps">
@@ -134,7 +130,9 @@ const schema = {
           rel="noopener external"
         >
           {copy.evacLinkLabel}
-          <span class="live-evac__arrow" aria-hidden="true">&#8599;</span>
+          <span class="live-evac__arrow" aria-hidden="true">
+            &#8599;
+          </span>
         </a>
       </aside>
 
@@ -162,17 +160,15 @@ const schema = {
             </figcaption>
           </figure>
           <ul class="hazard-legend" aria-label="Map key">
-            {
-              legend.map((l) => (
-                <li class="hazard-legend__item">
-                  <span
-                    class:list={['hazard-legend__swatch', `hazard-legend__swatch--${l.key}`]}
-                    aria-hidden="true"
-                  />
-                  {l.label}
-                </li>
-              ))
-            }
+            {legend.map((l) => (
+              <li class="hazard-legend__item">
+                <span
+                  class:list={['hazard-legend__swatch', `hazard-legend__swatch--${l.key}`]}
+                  aria-hidden="true"
+                />
+                {l.label}
+              </li>
+            ))}
           </ul>
         </section>
 
@@ -220,42 +216,38 @@ const schema = {
         intro={copy.resourcesIntro}
       />
       <ul class="live-resources live-sec-body">
-        {
-          resources.map((r) => (
-            <li>
-              <a class="resource" href={r.href} target="_blank" rel="noopener external">
-                <span class="resource__label">
-                  {r.label}
-                  <span class="resource__arrow" aria-hidden="true">
-                    &#8599;
-                  </span>
+        {resources.map((r) => (
+          <li>
+            <a class="resource" href={r.href} target="_blank" rel="noopener external">
+              <span class="resource__label">
+                {r.label}
+                <span class="resource__arrow" aria-hidden="true">
+                  &#8599;
                 </span>
-                <span class="resource__desc">{r.desc}</span>
-              </a>
-            </li>
-          ))
-        }
+              </span>
+              <span class="resource__desc">{r.desc}</span>
+            </a>
+          </li>
+        ))}
       </ul>
     </Section>
   </div>
 
-  {
-    /* Standing legal notice. Deliberately quiet fine print at the foot of the page — part
+  {/* Standing legal notice. Deliberately quiet fine print at the foot of the page — part
       of the page (it qualifies THIS page's data), not the site footer. Gated like the
       footer so it doesn't sit under the loader, but it stays visible in the failure /
-      no-JS state, where the page is still making claims about what it can't show. */
-  }
+      no-JS state, where the page is still making claims about what it can't show. */}
   <div class="live-legal" data-live-legal>
     <Section surface="page">
       <p class="live-legal__note" role="note">
-        <span class="live-legal__label">{copy.disclaimerHeading}:</span>{' '}
-        {copy.disclaimerBody}
+        <span class="live-legal__label">{copy.disclaimerHeading}:</span> {copy.disclaimerBody}
       </p>
     </Section>
   </div>
 </BaseLayout>
 
 <script>
+  import type * as GeoJSON from 'geojson';
   // /live is live-only: re-fetch data.sierragridteam.org in the browser, render every region from the
   // empty skeleton, then reveal in one paint. On the FIRST-load failure it shows the failure
   // panel (official sources) — never a stale build snapshot. A later poll that fails keeps
@@ -690,12 +682,10 @@ const schema = {
   }
 </style>
 
-{
-  /* Boot gate. States via data-live-boot: (unset = no-JS/crawler) | loading | ready | failed.
+{/* Boot gate. States via data-live-boot: (unset = no-JS/crawler) | loading | ready | failed.
      Defaults (no attr) show the failure panel and hide the loader + body — we never bake
      stale feed data into the page, so "no JS" degrades to the same honest official-sources
-     panel as a failed fetch. The header + nav are always present. */
-}
+     panel as a failed fetch. The header + nav are always present. */}
 <style is:global>
   [data-live-loader] {
     display: none;
