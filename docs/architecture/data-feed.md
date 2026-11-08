@@ -2,7 +2,7 @@
 
 > **Directive:** **The Grid** (`data.sierragridteam.org`, the S.I.E.R.R.A data service) is
 > THE live data feed for this site. Any data it does not provide is filed as a **feature
-> request** against `github.com/dpup/sierra-data` and shown as a clearly-labeled
+> request** against `github.com/sierragridteam/sierra-data` and shown as a clearly-labeled
 > **placeholder** in the UI (never faked).
 
 - Repo: https://github.com/sierragridteam/sierra-data
