@@ -118,8 +118,8 @@ edits — just answer it briefly in your notes.
 
 ## Finish
 
-- If you edited: run `make verify` and `npm run build`; fix anything they flag
-  (`npx prettier --write` your file if formatting is flagged) and confirm both pass.
+- If you edited: run `make verify` and `pnpm run build`; fix anything they flag
+  (`pnpm exec prettier --write` your file if formatting is flagged) and confirm both pass.
 - Write `/tmp/desk-editor/editor-notes.md`: first line `EDIT: APPLIED` or `EDIT: NONE`,
   then a short, plain bullet list of exactly what you changed (or what you declined /
   answered, and why). **This text is posted back to the reviewer as your reply — write it

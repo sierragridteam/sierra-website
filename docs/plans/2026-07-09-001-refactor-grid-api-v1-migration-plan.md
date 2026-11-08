@@ -152,7 +152,7 @@ the user's).
   - **Drop** the `/weather/alerts?zones=`, `/roads`, and `/weather` fetches and the
     `NWS_ZONES` import. Keep the `Promise.all` + per-region re-render structure.
 - **Files:** modify `src/pages/live.astro` (script island + imports).
-- **Verification:** `npm run build`; manual — `/live` renders live against the real API.
+- **Verification:** `pnpm run build`; manual — `/live` renders live against the real API.
 
 ### U4 — `/live` view rendering (`src/lib/live-view.ts`)
 
@@ -186,7 +186,7 @@ duration_minutes,distance_km}` + `status`/`headline`/`area_label`. Chains cell: 
   `/conditions` for `fireWeather.state` + `lastUpdated`. Replace `json('/weather')` →
   `json('/conditions')` and `/hazards/${area}/…` → `/places/${area}/map/…`.
 - **Files:** modify `src/components/home/OperationalStatus.astro`.
-- **Verification:** `npm run build`; manual — homepage tiles populate; agree with `/live`.
+- **Verification:** `pnpm run build`; manual — homepage tiles populate; agree with `/live`.
 
 ### U6 — Emergency banner (`src/components/EmergencyBanner.astro`)
 
@@ -202,7 +202,7 @@ duration_minutes,distance_km}` + `status`/`headline`/`area_label`. Chains cell: 
   - Keep the "only evacuation or wildfire arms the band; never trust region-wide rollup
     severity" contract and the change-signature guard.
 - **Files:** modify `src/components/EmergencyBanner.astro`.
-- **Verification:** `npm run build`; scenario screenshot with an active wildfire/evac fixture
+- **Verification:** `pnpm run build`; scenario screenshot with an active wildfire/evac fixture
   still shows the band; calm fixture keeps it hidden.
 
 ### U7 — Snapshot refresh script + fixtures (`scripts/snapshot.ts`, `src/data/*.json`)

@@ -17,12 +17,12 @@ import { BASEMAP_ATTRIBUTION } from '@lib/basemap';
 
 <figure class="meshmap map-frame" data-mesh-map>
   <div class="meshmap__canvas" data-mesh-canvas>
-    {
-      /* Shown when JS/WebGL can't run, and until the layers are added. The roster in the
+    {/* Shown when JS/WebGL can't run, and until the layers are added. The roster in the
         panel carries the same information as a list, so this is a degradation, not a
-        dead end. */
-    }
-    <p class="meshmap__fallback" data-mesh-fallback>{mesh.mapFallback}</p>
+        dead end. */}
+    <p class="meshmap__fallback" data-mesh-fallback>
+      {mesh.mapFallback}
+    </p>
   </div>
 
   <div class="meshmap__loading" data-mesh-loading role="status" aria-live="polite">

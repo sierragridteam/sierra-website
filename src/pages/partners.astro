@@ -37,16 +37,22 @@ const pageSchema = {
     />
 
     <div class="partners-list">
-      {partners.map((partner) => <PartnerCard partner={partner} />)}
+      {partners.map((partner) => (
+        <PartnerCard partner={partner} />
+      ))}
     </div>
   </Section>
 
   <aside class="partners-cta" aria-labelledby="partners-cta-title">
     <div class="partners-cta__inner">
-      <h2 id="partners-cta-title" class="partners-cta__title">{copy.cta.title}</h2>
+      <h2 id="partners-cta-title" class="partners-cta__title">
+        {copy.cta.title}
+      </h2>
       <p class="partners-cta__body">{copy.cta.body}</p>
       <div class="partners-cta__actions">
-        <Button variant="primary" href="/contact" arrow>{copy.cta.label}</Button>
+        <Button variant="primary" href="/contact" arrow>
+          {copy.cta.label}
+        </Button>
       </div>
     </div>
   </aside>

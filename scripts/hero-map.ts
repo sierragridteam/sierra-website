@@ -1,7 +1,7 @@
 /**
  * Regenerates src/assets/hero-map.svg — the county + highway linework behind the homepage
  * hero — and src/assets/service-counties.json, the same Calaveras + Tuolumne outlines as
- * lon/lat GeoJSON for the /mesh map's service-area tint. Run `npm run hero-map` (network
+ * lon/lat GeoJSON for the /mesh map's service-area tint. Run `pnpm run hero-map` (network
  * required); both outputs are checked in, so a build never fetches. Sources: US Census TIGERweb (county polygons) and the Caltrans State Highway
  * Network (routes), both public.
  *

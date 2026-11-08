@@ -4,7 +4,7 @@
  * Left: brand lockup (mark + S.I.E.R.R.A + full-name definition), two-tone
  * headline, subhead, two buttons. Behind it, full bleed: a faint real map of the
  * Calaveras & Tuolumne foothills (src/assets/hero-map.svg — county tints, county lines,
- * state highways; regenerate with `npm run hero-map`) with the CoverageMap town network on
+ * state highways; regenerate with `pnpm run hero-map`) with the CoverageMap town network on
  * top at true geographic positions. Map and network share one coordinate system, the
  * centered 1320px column, so they stay aligned at any width; below 1320px the column pins
  * to the window's left edge and the right side crops. On tablet and below both are dropped.
@@ -28,10 +28,8 @@ const roleClass: Record<string, string> = {
 
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero__stage">
-    {
-      /* Background, bottom to top: green wash, county map, a fade that keeps the copy legible,
-        then the town network. All anchored to the 1320px column (see --hero-col). */
-    }
+    {/* Background, bottom to top: green wash, county map, a fade that keeps the copy legible,
+        then the town network. All anchored to the 1320px column (see --hero-col). */}
     <div class="hero__glow" aria-hidden="true"></div>
     <HeroMap class="hero__map" aria-hidden="true" focusable="false" />
     <div class="hero__fade" aria-hidden="true"></div>
@@ -70,14 +68,12 @@ const roleClass: Record<string, string> = {
     <Container>
       <div class="legend">
         <ul class="legend__roles">
-          {
-            legend.map((l) => (
-              <li class="legend__item">
-                <span class:list={['legend__dot', roleClass[l.role]]} aria-hidden="true" />
-                {l.label}
-              </li>
-            ))
-          }
+          {legend.map((l) => (
+            <li class="legend__item">
+              <span class:list={['legend__dot', roleClass[l.role]]} aria-hidden="true" />
+              {l.label}
+            </li>
+          ))}
         </ul>
         <span class="legend__region">Calaveras &amp; Tuolumne foothills</span>
       </div>

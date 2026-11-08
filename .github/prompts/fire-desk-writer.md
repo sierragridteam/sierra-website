@@ -37,7 +37,7 @@ the brief's allowlist (`fire.ca.gov`, `caloes.ca.gov`, `protect.genasys.com`).
    - Active fire, no open bulletin → **create** (below).
    - Open bulletin, ≥1 fire still active → **update** (below).
    - Open bulletin, all tracked fires resolved → **close** (below).
-5. Run `make verify` and `npm run build`; fix anything they flag (`npx prettier --write`
+5. Run `make verify` and `pnpm run build`; fix anything they flag (`pnpm exec prettier --write`
    your file). Write your run notes to `/tmp/fire-desk/writer-notes.md`.
 
 Follow the brief's §8 post structure exactly: frontmatter (`title` per §7, `description`,

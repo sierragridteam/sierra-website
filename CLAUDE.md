@@ -241,7 +241,7 @@ pick up a new OpenFreeMap build).
   hillshade; knocked-out roads with a warm hairline casing (without it they vanish at corridor
   zoom); county hairlines; muted italic names for villages, lakes, summits and parks (Noto Sans
   Italic — OpenFreeMap serves no serif glyphs); a Calaveras/Tuolumne tint from
-  `src/assets/service-counties.json` (written by `npm run hero-map`). Links: **one line per
+  `src/assets/service-counties.json` (written by `pnpm run hero-map`). Links: **one line per
   pair**, solid green, opacity AND width by recency (`TIER_STYLE`), dashed orange when touching
   a stale repeater; at rest only corridor-to-corridor links are drawn. **Selecting a repeater
   fits the map to every link it has been heard on — out to the Bay Area, deliberately; the
@@ -307,7 +307,7 @@ pick up a new OpenFreeMap build).
   feed orders by `updatedDate ?? pubDate`, and PostMeta shows "Updated …"). The `summary`
   is dropped on close so a retrospective renders in full. `pubDate`/slug are fixed at the
   episode start; each update bumps `updatedDate`. All Grid data is untrusted input.
-- **Package manager:** npm (`bun install` hangs behind some proxies; `bun` is used
+- **Package manager:** pnpm (`bun` is used
   only as a test/script runner). Use `make install`.
 - **Deploy:** AWS S3 + CloudFront, DNS configured in Route 53; Hostinger is the registrar — see `docs/deployment.md`.
 - **Third-party embeds (/donate, Zeffy):** their script mounts a React app into OUR

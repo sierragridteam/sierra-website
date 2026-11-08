@@ -28,7 +28,9 @@ const {
   role={role === 'none' ? undefined : role}
 >
   {heading && <p class="callout__heading">{heading}</p>}
-  <div class="callout__body"><slot /></div>
+  <div class="callout__body">
+    <slot />
+  </div>
 </Tag>
 
 <style>

@@ -4,7 +4,8 @@
  * markdown files in src/content/blog/, named `yyyy-mm-dd-topic.md`; the filename
  * becomes the URL: /blog/yyyy-mm-dd-topic.
  */
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const blog = defineCollection({

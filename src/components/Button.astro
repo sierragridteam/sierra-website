@@ -36,14 +36,14 @@ const tagProps = href ? { href } : { type };
   {...tagProps}
   {...rest}
 >
-  <span class="btn__label"><slot /></span>
-  {
-    arrow && (
-      <span class="btn__arrow" aria-hidden="true">
-        &rarr;
-      </span>
-    )
-  }
+  <span class="btn__label">
+    <slot />
+  </span>
+  {arrow && (
+    <span class="btn__arrow" aria-hidden="true">
+      &rarr;
+    </span>
+  )}
 </Tag>
 
 <style>

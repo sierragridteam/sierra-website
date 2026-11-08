@@ -1,3 +1,4 @@
+import type * as GeoJSON from 'geojson';
 /**
  * map-ground.ts — the runtime half of the basemap both maps share (/live hazards, /mesh
  * topology): read the palette from the CSS tokens, fetch Positron and restyle it
@@ -6,7 +7,7 @@
  *
  * Both maps call these so they stand on the same ground; neither builds its own.
  */
-import type maplibregl from 'maplibre-gl';
+import type * as maplibregl from 'maplibre-gl';
 import { BASEMAP_STYLE } from './basemap';
 import { restyleBasemap, ROUTE_PILL, type StyleDoc } from './basemap-style';
 
@@ -87,7 +88,7 @@ function addRoutePill(m: maplibregl.Map, C: MapColors) {
 
 /**
  * Call on the map's `load`: the shield pill, and the two service counties tinted under the
- * county lines (src/assets/service-counties.json, written by `npm run hero-map`) — Calaveras
+ * county lines (src/assets/service-counties.json, written by `pnpm run hero-map`) — Calaveras
  * green, Tuolumne brass, as on the hero map.
  */
 export function decorateBasemap(m: maplibregl.Map, C: MapColors, counties: GeoFC) {

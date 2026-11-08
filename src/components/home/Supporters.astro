@@ -24,48 +24,46 @@ import { partners as list } from '@config/partners';
 import { supporters as copy } from '@config/content';
 ---
 
-{
-  list.length > 0 && (
-    <aside class="supporters" aria-labelledby="supporters-title">
-      <Container>
-        <p class="supporters__kicker">{copy.kicker}</p>
-        <h2 class="supporters__title" id="supporters-title">
-          {copy.heading}
-        </h2>
-        <p class="supporters__note">{copy.note}</p>
+{list.length > 0 && (
+  <aside class="supporters" aria-labelledby="supporters-title">
+    <Container>
+      <p class="supporters__kicker">{copy.kicker}</p>
+      <h2 class="supporters__title" id="supporters-title">
+        {copy.heading}
+      </h2>
+      <p class="supporters__note">{copy.note}</p>
 
-        <ul class="supporters__list">
-          {list.map((s) => (
-            <li class="supporters__item">
-              <a
-                class="supporters__link"
-                href={s.url}
-                target="_blank"
-                rel="noopener external"
-                title={s.name}
-              >
-                <Image
-                  src={s.logo}
-                  alt={s.logoAlt}
-                  widths={[230, 460]}
-                  sizes="180px"
-                  class="supporters__logo"
-                  loading="lazy"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
+      <ul class="supporters__list">
+        {list.map((s) => (
+          <li class="supporters__item">
+            <a
+              class="supporters__link"
+              href={s.url}
+              target="_blank"
+              rel="noopener external"
+              title={s.name}
+            >
+              <Image
+                src={s.logo}
+                alt={s.logoAlt}
+                widths={[230, 460]}
+                sizes="180px"
+                class="supporters__logo"
+                loading="lazy"
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
 
-        <p class="supporters__cta">
-          <a class="supporters__cta-link" href={copy.ctaHref}>
-            {copy.ctaLabel}
-          </a>
-        </p>
-      </Container>
-    </aside>
-  )
-}
+      <p class="supporters__cta">
+        <a class="supporters__cta-link" href={copy.ctaHref}>
+          {copy.ctaLabel}
+        </a>
+      </p>
+    </Container>
+  </aside>
+)}
 
 <style>
   .supporters {

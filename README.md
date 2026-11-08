@@ -15,7 +15,7 @@ design-token system, and live hazard data rendered client-side from
 [The Grid](https://data.sierragridteam.org).
 
 ```
-make install     # install deps (npm — bun install hangs behind some proxies)
+make install     # install deps (pnpm)
 make dev         # local dev server
 make build       # static build → dist/
 make verify      # type-check + lint + format-check + unit tests (fast, no browser)

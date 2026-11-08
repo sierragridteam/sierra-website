@@ -6,7 +6,7 @@
 // gate + a rubric-tuning tool: edit the brief or the rubric, re-run, watch verdicts move.
 // To tune the *writer* instead of scoring existing posts, use evals/generate.mjs.
 //
-// Usage:  npm run eval:desk
+// Usage:  pnpm run eval:desk
 //         node evals/judge.mjs --votes=3     (majority of 3 — stabilises borderline cases)
 //         node evals/judge.mjs --json        (machine-readable results)
 //         EVAL_JUDGE_MODEL=claude-sonnet-5-5 node evals/judge.mjs

@@ -38,7 +38,11 @@ const src = `https://www.zeffy.com${formUrl}`;
 
   <div class="zeffy__fallback" data-zeffy-embed-fallback style="display: none">
     <div class="zeffy__frame" style={`height: ${height}px`}>
-      <iframe class="zeffy__iframe" title={title} data-zeffy-embed-src={src} allow="payment"
+      <iframe
+        class="zeffy__iframe"
+        title={title}
+        data-zeffy-embed-src={src}
+        allow="payment"
       ></iframe>
     </div>
   </div>

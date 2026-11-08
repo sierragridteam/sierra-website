@@ -32,15 +32,13 @@ const {
   id={id}
   aria-labelledby={labelledby}
 >
-  {
-    bleed ? (
+  {bleed ? (
+    <slot />
+  ) : (
+    <Container>
       <slot />
-    ) : (
-      <Container>
-        <slot />
-      </Container>
-    )
-  }
+    </Container>
+  )}
 </Tag>
 
 <style>

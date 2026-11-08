@@ -35,24 +35,21 @@ const hasLedeSlot = Astro.slots.has('lede');
 <header class="page-head">
   <Kicker as="p">{kicker}</Kicker>
   <h1 id={id} class="page-head__h1" {...h1Attrs}>
-    <span class="page-head__lead">{lead}</span>{
-      rest && (
-        <Fragment>
-          {' '}
-          <span class="page-head__rest">{rest}</span>
-        </Fragment>
-      )
-    }
+    <span class="page-head__lead">{lead}</span>
+    {rest && (
+      <Fragment>
+        {' '}
+        <span class="page-head__rest">{rest}</span>
+      </Fragment>
+    )}
   </h1>
-  {
-    hasLedeSlot ? (
-      <p class="page-head__lede">
-        <slot name="lede" />
-      </p>
-    ) : (
-      lede && <p class="page-head__lede">{lede}</p>
-    )
-  }
+  {hasLedeSlot ? (
+    <p class="page-head__lede">
+      <slot name="lede" />
+    </p>
+  ) : (
+    lede && <p class="page-head__lede">{lede}</p>
+  )}
   <slot />
 </header>
 

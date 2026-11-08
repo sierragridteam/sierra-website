@@ -40,7 +40,9 @@ const websiteSchema = {
     <div class="mission">
       <div class="mission__lead">
         <Kicker>{home.mission.kicker}</Kicker>
-        <h2 id="mission-title" class="mission__title">{home.mission.title}</h2>
+        <h2 id="mission-title" class="mission__title">
+          {home.mission.title}
+        </h2>
       </div>
       <p class="mission__body">{home.mission.body}</p>
     </div>
@@ -53,13 +55,11 @@ const websiteSchema = {
       headingId="doctrine-title"
     />
     <div class="doctrine-grid">
-      {
-        home.doctrine.cards.map((c) => (
-          <DoctrineCard number={c.number} kicker={c.kicker} title={c.title}>
-            {c.body}
-          </DoctrineCard>
-        ))
-      }
+      {home.doctrine.cards.map((c) => (
+        <DoctrineCard number={c.number} kicker={c.kicker} title={c.title}>
+          {c.body}
+        </DoctrineCard>
+      ))}
     </div>
   </Section>
 

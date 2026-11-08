@@ -29,14 +29,15 @@ const Tag = href ? 'a' : 'div';
   class:list={['stat', { 'stat--link': href }, className]}
   data-state={state}
   data-stat-key={key}
-  {...href ? { href } : {}}
+  {...(href ? { href } : {})}
 >
   <div class="stat__top">
     <span class="stat__dot" aria-hidden="true" data-stat-dot></span>
     <span class="stat__label">{label}</span>
   </div>
   <div class="stat__value" data-stat-value>
-    {value}{footnote && <span class="stat__footnote">{footnote}</span>}
+    {value}
+    {footnote && <span class="stat__footnote">{footnote}</span>}
   </div>
   <div class="stat__sub">{sublabel}</div>
 </Tag>

@@ -44,7 +44,7 @@ rationale are in `/tmp/fire-desk/writer-notes.md`.
 
 - **Publishable (possibly after your edits):** edit the bulletin file directly — tighten
   copy, fix a wrong figure, cut an unverifiable claim, correct the title or stamp. Then run
-  `make verify` and `npm run build` (prettier-format the file if flagged) and confirm both
+  `make verify` and `pnpm run build` (prettier-format the file if flagged) and confirm both
   pass.
 - **Unpublishable** (a hard-rule violation editing can't cure, a figure the official source
   contradicts, a link off the allowlist, an active fire framed as over): **veto.** Revert a

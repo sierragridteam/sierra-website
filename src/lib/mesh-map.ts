@@ -1,3 +1,4 @@
+import type * as GeoJSON from 'geojson';
 /**
  * mesh-map.ts — the /mesh topology map (MapLibre GL JS over a restyled OpenFreeMap Positron).
  * CLIENT-ONLY: it imports maplibre, so it must never be imported from Astro frontmatter —
@@ -21,7 +22,9 @@
  * Colours are read from the CSS tokens at runtime (tokens.css stays the source of truth);
  * MapLibre paint needs literal colours, so we can't hand it var(--…) directly.
  */
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+maplibregl.setWorkerUrl(workerUrl);
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { escapeHtml as esc } from './format';
 import { cardHtml, cardMetric as metric, createMapCard, DOCK_BELOW } from './map-card';
@@ -303,8 +306,11 @@ export function initMeshMap(figureEl: HTMLElement, opts: MeshMapOptions): MeshMa
       ['mesh-links-stale', true],
     ] as const) {
       map.setFilter(id, linkFilter(stale, state) as maplibregl.FilterSpecification);
-      for (const [prop, value] of Object.entries(linkPaint(stale, state))) {
-        map.setPaintProperty(id, prop, value);
+      const paint = linkPaint(stale, state) as NonNullable<
+        maplibregl.LineLayerSpecification['paint']
+      >;
+      for (const prop of Object.keys(paint) as (keyof typeof paint)[]) {
+        map.setPaintProperty(id, prop, paint[prop]);
       }
     }
     const f = selectedLinkFilter(state.link) as maplibregl.FilterSpecification;

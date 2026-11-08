@@ -64,7 +64,7 @@ Order, top to bottom:
    - **Background (2026-10):** a faint, full-bleed real map behind the whole band —
      Calaveras and Tuolumne as tints, county lines as hairlines, state highways knocked out
      with route markers (`src/assets/hero-map.svg`, US Census TIGERweb + Caltrans, regenerate
-     with `npm run hero-map`). Map and markers share one projection (`HERO_PROJECTION` in
+     with `pnpm run hero-map`). Map and markers share one projection (`HERO_PROJECTION` in
      `src/config/coverage.ts`) into the centered 1320px column, so they stay aligned at any
      width; below 1320px the column pins left and the right side crops; at ≤900px map and
      markers are dropped. A parchment fade keeps the copy legible. Replaced the grid + contours.

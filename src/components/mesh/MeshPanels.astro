@@ -23,7 +23,9 @@ import { mesh } from '@config/content';
     lead={mesh.heading}
     h1Attrs={{ 'data-mesh-headline': true }}
   >
-    <span slot="lede" data-mesh-lede aria-live="polite">{mesh.loading}</span>
+    <span slot="lede" data-mesh-lede aria-live="polite">
+      {mesh.loading}
+    </span>
     <div class="mesh-stats" data-mesh-stats></div>
   </PageHead>
 
@@ -34,7 +36,9 @@ import { mesh } from '@config/content';
       title={mesh.mapHeading}
       intro={mesh.mapIntro}
     >
-      <a slot="controls" class="mesh-about-link" href="/about#mesh">{mesh.aboutLink}</a>
+      <a slot="controls" class="mesh-about-link" href="/about#mesh">
+        {mesh.aboutLink}
+      </a>
     </ReportSectionHead>
     <MeshMap />
     <div data-mesh-legend></div>

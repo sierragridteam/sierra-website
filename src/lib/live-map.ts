@@ -1,3 +1,4 @@
+import type * as GeoJSON from 'geojson';
 /**
  * live-map.ts — the /live hazard map (MapLibre GL JS), extracted so the client controller can
  * build and refresh it. CLIENT-ONLY: it imports maplibre, so it must never be imported from
@@ -15,7 +16,9 @@
  * Colors are read from the CSS tokens at runtime (tokens.css stays the source of truth);
  * MapLibre paint needs literal colors, so we can't hand it var(--…) directly.
  */
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+maplibregl.setWorkerUrl(workerUrl);
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { escapeHtml as esc } from './format';
 import { cardHtml, createMapCard, DOCK_BELOW } from './map-card';

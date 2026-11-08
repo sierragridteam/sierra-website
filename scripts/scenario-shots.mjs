@@ -9,7 +9,7 @@
  * in the loop; the route mock is what drives the page.)
  *
  * Requires a running `astro preview` at BASE_URL (serves the built dist):
- *   npm run build && npm run preview &
+ *   pnpm run build && pnpm run preview &
  *   node scripts/scenario-shots.mjs
  */
 import { chromium } from 'playwright';

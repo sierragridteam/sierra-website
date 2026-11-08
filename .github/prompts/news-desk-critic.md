@@ -87,7 +87,7 @@ writer worked from — is appended to the end of these instructions.
 
 - **Publishable (possibly after your edits):** edit the post file directly — tighten
   copy, fix voice violations, cut unverifiable claims. Then run `make verify` and
-  `npm run build` (prettier-format the file if flagged) and confirm both pass.
+  `pnpm run build` (prettier-format the file if flagged) and confirm both pass.
 - **Unpublishable** (hard-rule violation that editing can't cure, unfolding incident,
   unverifiable premise, duplicate): **delete the post file.** Deletion is the veto.
 

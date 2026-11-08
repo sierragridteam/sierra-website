@@ -17,33 +17,30 @@ const { person } = Astro.props;
 
 <article class="person-card">
   <div class="person-card__media">
-    {
-      person.photo ? (
-        <Image
-          src={person.photo}
-          alt={person.photoAlt ?? `Portrait of ${person.name}`}
-          widths={[400, 800]}
-          sizes="(max-width: 520px) 90vw, (max-width: 860px) 45vw, 400px"
-          class="person-card__photo"
-        />
-      ) : (
-        <div class="person-card__monogram" aria-hidden="true">
-          {person.initials}
-        </div>
-      )
-    }
+    {person.photo ? (
+      <Image
+        src={person.photo}
+        alt={person.photoAlt ?? `Portrait of ${person.name}`}
+        widths={[400, 800]}
+        sizes="(max-width: 520px) 90vw, (max-width: 860px) 45vw, 400px"
+        class="person-card__photo"
+      />
+    ) : (
+      <div class="person-card__monogram" aria-hidden="true">
+        {person.initials}
+      </div>
+    )}
   </div>
   <div class="person-card__body">
     <p class="person-card__name">{person.name}</p>
     <p class="person-card__role">
-      {person.role}{
-        person.callsign && (
-          <span class="person-card__callsign">
-            {' · '}
-            {person.callsign}
-          </span>
-        )
-      }
+      {person.role}
+      {person.callsign && (
+        <span class="person-card__callsign">
+          {' · '}
+          {person.callsign}
+        </span>
+      )}
     </p>
     <p class="person-card__bio">{person.shortBio}</p>
     <a class="person-card__link" href={`/about/${person.slug}`}>

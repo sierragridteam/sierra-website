@@ -39,7 +39,7 @@ Desk has the morning) and on manual dispatch:
    and current conditions (data.sierragridteam.org), searches the web, builds a slate of
    candidates across several story shapes, and applies the brief's publish decision. Most runs it declines and
    writes only a rationale to `/tmp/news-desk/writer-notes.md`. When it publishes, it
-   creates one markdown file in `src/content/blog/` and runs `make verify` + `npm run build`.
+   creates one markdown file in `src/content/blog/` and runs `make verify` + `pnpm run build`.
 4. **Critic** (`claude -p` with `.github/prompts/news-desk-critic.md` **plus the same run
    context**, so it can check a commissioned post's facts against the proposal) —
    adversarial second pass: fetches and verifies every cited source, re-checks the hard
@@ -252,7 +252,7 @@ doesn't stack runs.
   `make screenshots`. CI does not diff them, so PRs stay green.
 - The Desk Editor pushes with `GITHUB_TOKEN`, so — like every bot commit — that push
   does **not** retrigger the PR's own `CI` check (GitHub's recursion guard). The editor
-  runs `make verify` + `npm run build` before pushing, which covers the fast gate but not
+  runs `make verify` + `pnpm run build` before pushing, which covers the fast gate but not
   the Playwright a11y/smoke pass (`test:visual`); for a copy edit that's rarely material,
   but re-run CI on the PR (or push an empty commit) if you want the full pass before merge.
 - The editor only revises the **one** post the PR touches — it won't split a post, add a

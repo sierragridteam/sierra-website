@@ -9,7 +9,7 @@
  *
  * Requires the built site served at BASE_URL (default http://localhost:4321). The build
  * bakes NO feed data — every page renders client-side from the mocked responses here:
- *   npm run build && npm run preview & npm run screenshots
+ *   pnpm run build && pnpm run preview & pnpm run screenshots
  * Optional: SCENARIO=redflag to render the alarm state.
  */
 import { chromium, type Route } from 'playwright';

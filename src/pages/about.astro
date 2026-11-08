@@ -37,38 +37,38 @@ const aboutSchema = {
     <div class="about-story">
       <div class="about-story__lead">
         <Kicker>{about.story.kicker}</Kicker>
-        <h2 id="story-title" class="about-story__title">{about.story.title}</h2>
+        <h2 id="story-title" class="about-story__title">
+          {about.story.title}
+        </h2>
       </div>
       <p class="about-story__body">{about.story.body}</p>
     </div>
   </Section>
 
-  {
-    /* The mesh explainer. It lived on /mesh until that page was reorganised around
+  {/* The mesh explainer. It lived on /mesh until that page was reorganised around
     monitoring; a reader needs it once, not on every visit to a status board. The /mesh
-    foot links straight to this anchor. */
-  }
+    foot links straight to this anchor. */}
   <Section surface="page" labelledby="mesh-title">
     <div class="about-mesh" id="mesh">
       <div class="about-mesh__lead">
         <Kicker>{about.mesh.kicker}</Kicker>
-        <h2 id="mesh-title" class="about-story__title">{about.mesh.title}</h2>
+        <h2 id="mesh-title" class="about-story__title">
+          {about.mesh.title}
+        </h2>
         <p class="about-mesh__intro">{about.mesh.intro}</p>
         <p>
-          <Button href={about.mesh.mapLink.href} variant="primary"
-            >{about.mesh.mapLink.label}</Button
-          >
+          <Button href={about.mesh.mapLink.href} variant="primary">
+            {about.mesh.mapLink.label}
+          </Button>
         </p>
       </div>
       <dl class="about-mesh__list">
-        {
-          about.mesh.sections.map((sec) => (
-            <div class="about-mesh__item">
-              <dt class="about-mesh__heading">{sec.heading}</dt>
-              <dd class="about-mesh__body">{sec.body}</dd>
-            </div>
-          ))
-        }
+        {about.mesh.sections.map((sec) => (
+          <div class="about-mesh__item">
+            <dt class="about-mesh__heading">{sec.heading}</dt>
+            <dd class="about-mesh__body">{sec.body}</dd>
+          </div>
+        ))}
       </dl>
       <p class="about-mesh__link">
         <a
@@ -77,7 +77,8 @@ const aboutSchema = {
           target="_blank"
           rel="noopener external"
         >
-          {about.mesh.meshcoreLabel}<span aria-hidden="true"> &#8599;</span>
+          {about.mesh.meshcoreLabel}
+          <span aria-hidden="true"> &#8599;</span>
         </a>
       </p>
     </div>
@@ -88,11 +89,15 @@ const aboutSchema = {
     <p class="about-team__note">{about.team.note}</p>
     <h3 class="about-team__group">{about.team.boardHeading}</h3>
     <div class="about-team">
-      {board.map((person) => <PersonCard person={person} />)}
+      {board.map((person) => (
+        <PersonCard person={person} />
+      ))}
     </div>
     <h3 class="about-team__group">{about.team.advisorsHeading}</h3>
     <div class="about-team">
-      {advisors.map((person) => <PersonCard person={person} />)}
+      {advisors.map((person) => (
+        <PersonCard person={person} />
+      ))}
     </div>
   </Section>
 
@@ -101,8 +106,12 @@ const aboutSchema = {
       <h2 class="about-cta__title">{about.cta.title}</h2>
       <p class="about-cta__body">{about.cta.body}</p>
       <div class="about-cta__actions">
-        <Button variant="primary" href="/contact" arrow>Volunteer</Button>
-        <Button variant="donate" href={donate.href}>{donate.label}</Button>
+        <Button variant="primary" href="/contact" arrow>
+          Volunteer
+        </Button>
+        <Button variant="donate" href={donate.href}>
+          {donate.label}
+        </Button>
       </div>
     </div>
   </aside>
