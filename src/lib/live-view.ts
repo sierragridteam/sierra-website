@@ -31,6 +31,7 @@ import {
   type GridSnapshot,
 } from './grid';
 import { cToF, kmToMi, kmhToMph, degreesToCompass } from './units';
+import { formatAlertBody } from './alert-text';
 import { escapeHtml as esc, formatPtTime, formatPtDayTime, formatPtDate } from './format';
 import { mapSites, serviceAreaBounds } from '../config/coverage';
 import { live as copy } from '../config/content';
@@ -398,7 +399,7 @@ function renderStream(items: HazardFeature[], now: number): string {
           `<span class="stream__meta">${source}<span class="stream__chevron" aria-hidden="true"></span></span></summary>` +
           `<div class="stream__body">` +
           (ex ? `<p class="stream__extra">${esc(ex)}</p>` : '') +
-          (p.description ? `<p class="stream__desc">${esc(p.description)}</p>` : '') +
+          formatAlertBody(p.description) +
           (moreUrl
             ? `<p class="stream__more"><a href="${esc(moreUrl)}" target="_blank" rel="noopener external">More information<span aria-hidden="true"> &#8599;</span></a></p>`
             : '') +

@@ -394,3 +394,28 @@ test('alerts are counted, and a SEVERE+ hazard turns the count orange', () => {
   expect(h).toContain('>1 alert<');
   expect(h).toContain('page-head__lead--alarm');
 });
+
+test('an expanded alert card unwraps NWS description; the collapsed summary is untouched', () => {
+  const f: HazardFeature = {
+    type: 'Feature',
+    geometry: null,
+    properties: {
+      id: 'wx:1',
+      layer: 'weather_alert',
+      kind: 'Weather alert',
+      severity: 'SEVERE',
+      severityRank: 3,
+      headline: 'Winter Storm Watch',
+      effective: '2026-08-13T00:00:00Z',
+      expires: '2026-08-14T04:00:00Z',
+      description: '* WHAT...Snow is expected\nabove 6000 feet.\n\n* WHEN...Friday.',
+    },
+  } as HazardFeature;
+  const html = buildView(snap({ weather_alert: fc([f]) }), emptyGrid, NOW).html.stream;
+  expect(html).toContain(
+    '<strong class="stream__desc-label">WHAT</strong> Snow is expected above 6000 feet.'
+  );
+  expect(html).toContain('<strong class="stream__desc-label">WHEN</strong> Friday.');
+  expect(html).not.toContain('\n');
+  expect(html).toContain('<span class="stream__title">Winter Storm Watch</span>');
+});

@@ -465,7 +465,27 @@
   font-size: var(--fs-small);
   line-height: var(--lh-body);
   color: var(--ink-body);
-  white-space: pre-line;
+}
+/* Alert text is unwrapped into one <p> per paragraph/section (alert-text.ts), so no pre-line. */
+.live-view .stream__desc + .stream__desc,
+.live-view .stream__desc + .stream__desc-list,
+.live-view .stream__desc-list + .stream__desc {
+  margin-top: var(--space-3);
+}
+.live-view .stream__desc-label {
+  font-family: var(--font-ui);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-label);
+  color: var(--ink-strong);
+}
+.live-view .stream__desc-list {
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--ink-body);
+  list-style: disc;
 }
 /* "More information ↗" — the authoritative source link (CAL FIRE incident, Genasys, …). */
 .live-view .stream__more {
