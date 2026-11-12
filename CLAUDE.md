@@ -136,6 +136,8 @@ confirm nothing overflowed, misaligned, or lost contrast. The deterministic harn
 stable; it fetches the real basemap once and caches it in `.cache/basemap/` (delete it to
 pick up a new OpenFreeMap build).
 
+Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI attribution (such as a "Generated with" footer), to commit messages or pull request descriptions. `.claude/settings.json` turns off Claude Code's default commit trailer; follow the same rule with any other tool.
+
 ## What NOT to do
 
 - ❌ Add a raw hex color or a new font anywhere outside `tokens.css`.
