@@ -1,57 +1,55 @@
 # Deployment — sierragridteam.org
 
 The site is a fully static Astro build (`dist/`), deployed by GitHub Actions to
-the existing AWS S3 bucket and CloudFront distribution. Moving the source to
-`sierragridteam/sierra-website` does not move the AWS resources or change the domain.
+an AWS S3 bucket behind a CloudFront distribution in the S.I.E.R.R.A AWS
+organization.
 
 ## Infrastructure ownership
 
-Production infrastructure is managed separately from this source repository.
-The deployment requires a wildcard ACM certificate, Route 53 DNS, a dedicated
-deploy IAM user, and a KMS-encrypted, versioned S3 bucket behind CloudFront
-Origin Access Control. A CloudFront function rewrites extensionless paths to
-`index.html`. The contact form is a separate Lambda/SES integration and is not
-deployed by this site's workflow. Contact a deployment administrator for the
-current resource inventory and infrastructure change procedure.
-
-Hostinger is the registrar; the infrastructure source configures Route 53 as the
-DNS host. Confirm live nameserver delegation before making DNS changes. Older
-instructions to add individual website records at Hostinger are superseded by
-this infrastructure configuration. Do not provision replacement infrastructure
-as part of a source-repository transfer.
+Production infrastructure is managed separately from this source repository, in
+the organization's infrastructure repository (Terraform). One static-site unit
+there creates everything this site needs: a private, versioned S3 bucket behind
+CloudFront Origin Access Control, the distribution with its certificate and DNS
+records, an error-rate alarm, and the deploy role this repository assumes. A
+CloudFront function redirects `www` to the apex, strips trailing slashes and
+rewrites extensionless paths to `index.html`. The contact form is a separate
+Lambda/SES integration and is not deployed by this site's workflow. Contact a
+deployment administrator for the current resource inventory and infrastructure
+change procedure.
 
 ## GitHub configuration
 
-Preserve the `production` environment and its restrictions. Allow production
-deployments only from `main`. Repository/environment configuration is:
+There are no AWS secrets. The deploy job presents its GitHub OIDC token and
+receives short-lived credentials for a role that trusts only this repository's
+`production` environment and may only sync this site's bucket and invalidate
+its distribution.
 
-| Name                    | Kind     | Purpose                                 |
-| ----------------------- | -------- | --------------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | Secret   | Dedicated website deploy user           |
-| `AWS_SECRET_ACCESS_KEY` | Secret   | Deploy user's secret key                |
-| `AWS_REGION`            | Variable | Existing AWS region                     |
-| `AWS_ACCOUNT_ID`        | Variable | Expected account; checked before upload |
-| `S3_BUCKET_NAME`        | Variable | Existing website bucket                 |
-| `CF_DISTRO_ID`          | Variable | Existing CloudFront distribution        |
+Preserve the `production` environment and its restrictions, and allow
+production deployments only from `main`: the role trusts the environment, so
+the environment's branch rule is what keeps other branches from deploying.
+Repository configuration is four Actions variables, taken from the
+infrastructure's `github_variables` output:
 
-Use the existing infrastructure outputs for configuration; do not copy values
-from old documentation examples. GitHub cannot return the plaintext of stored
-secrets. Preserve them during transfer and recover replacements from the provider
-or approved credential store when necessary.
+| Name                                | Kind     | Purpose                          |
+| ----------------------------------- | -------- | -------------------------------- |
+| `DEPLOY_ROLE_ARN`                   | Variable | Deploy role assumed through OIDC |
+| `DEPLOY_AWS_REGION`                 | Variable | Region of the bucket             |
+| `DEPLOY_S3_BUCKET`                  | Variable | Website bucket                   |
+| `DEPLOY_CLOUDFRONT_DISTRIBUTION_ID` | Variable | CloudFront distribution          |
 
 ## Deployment and verification
 
 `.github/workflows/deploy.yml` runs after a successful CI **push** on `main` from
 this repository, or by manual dispatch on `main`. Automatic deployments check out
 the exact commit CI tested. A fork PR with a branch named `main` cannot authorize
-a production deployment. The workflow verifies the AWS account, builds, syncs
-immutable assets and revalidated HTML/manifests, then invalidates CloudFront.
+a production deployment. The workflow builds, assumes the deploy role, syncs
+immutable assets and revalidated HTML/manifests (deleting files that no longer
+exist), then invalidates CloudFront.
 
-After a transfer, verify the environment, secret names, variables, organization
-Actions policy, and a successful CI run before deploying. Test the home page,
-extensionless routes, a missing page, and the contact form. Keep the existing
-AWS account, bucket, distribution, DNS and credentials until a separately planned
-infrastructure migration.
+After a change to the infrastructure or a repository transfer, verify the
+environment, the variables, organization Actions policy, and a successful CI
+run before deploying. Test the home page, extensionless routes, a missing page,
+and the contact form.
 
 To roll back website code, revert the change through a reviewed PR and deploy the
 previous behavior. A contact-form or DNS failure may require an infrastructure
