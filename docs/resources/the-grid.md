@@ -5,8 +5,9 @@ conditions for the Ebbetts Pass Corridor (Calaveras + Tuolumne, along Hwy 4 + Hw
 
 Primary host:
 https://data.sierragridteam.org
-(Formerly info.ersn.net, which remains a supported CNAME alias through the transition;
-ersn.net is now a consuming site, "powered by S.I.E.R.R.A".)
+(Formerly info.ersn.net, which no longer resolves; ersn.net is a consuming site,
+"powered by S.I.E.R.R.A". Since 2026-11-13 the Grid is served from the Sierra Grid
+AWS account on PostgreSQL; the hostname and the API are unchanged.)
 
 Repository:
 https://github.com/sierragridteam/sierra-data

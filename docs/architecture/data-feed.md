@@ -8,7 +8,9 @@
 - Repo: https://github.com/sierragridteam/sierra-data
 - Base URL: `https://data.sierragridteam.org/api/v1`
 - **2026-07-06 migration:** the service rebranded `info.ersn.net` → The Grid and moved to
-  `data.sierragridteam.org` (info.ersn.net stays a supported CNAME alias), and its one
+  `data.sierragridteam.org` (info.ersn.net, kept as an alias for a while, no longer
+  resolves; since 2026-11-13 the Grid is hosted in the Sierra Grid AWS account, same
+  hostname and API), and its one
   coverage area was renamed `calaveras` → **`ebbetts-pass`** (breaking for hazard URLs — the
   old slug now 404s). The area slug lives in `HAZARD_AREA` (`src/lib/hazards.ts`); the base
   URL in `GRID_API_BASE` (`src/lib/grid.ts`, overridable via `PUBLIC_GRID_API_BASE`).
