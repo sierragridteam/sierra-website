@@ -8,6 +8,8 @@
  * The logo is the partner's own mark, unmodified (see src/config/partners.ts). Here it sits
  * beside the name in text, so it takes empty alt — announcing "Heltec Automation" twice
  * helps no one. (The homepage band, where the logo stands alone, uses `logoAlt`.)
+ *
+ * A partner without a logo gets no media tile: the text takes the full width of the card.
  */
 import { Image } from 'astro:assets';
 import Kicker from './Kicker.astro';
@@ -22,10 +24,18 @@ const { partner } = Astro.props;
 const host = new URL(partner.url).hostname.replace(/^www\./, '');
 ---
 
-<article class="partner-card">
-  <div class="partner-card__media">
-    <Image src={partner.logo} alt="" widths={[230, 460]} sizes="180px" class="partner-card__logo" />
-  </div>
+<article class:list={['partner-card', { 'partner-card--text': !partner.logo }]}>
+  {partner.logo && (
+    <div class="partner-card__media">
+      <Image
+        src={partner.logo}
+        alt=""
+        widths={[230, 460]}
+        sizes="180px"
+        class="partner-card__logo"
+      />
+    </div>
+  )}
   <div class="partner-card__body">
     <Kicker>{partner.category}</Kicker>
     <h2 class="partner-card__name">{partner.name}</h2>
@@ -45,6 +55,9 @@ const host = new URL(partner.url).hostname.replace(/^www\./, '');
     border: var(--border);
     border-radius: var(--radius);
     box-shadow: none;
+  }
+  .partner-card--text {
+    grid-template-columns: 1fr;
   }
 
   /* A logo tile, matching the homepage band: the lighter raised fill behind the mark,
