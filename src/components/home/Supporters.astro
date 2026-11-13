@@ -15,13 +15,18 @@
  * the page surface rather than a tinted one, and giving the band no border of its own stops
  * it competing with the service-area band immediately below.
  *
+ * Logos only, so a partner listed without one (see partners.ts) does not appear here.
+ *
  * Renders nothing when there are no supporters — an empty "Supporters" heading would be a
  * worse look than no band at all.
  */
 import { Image } from 'astro:assets';
 import Container from '../Container.astro';
-import { partners as list } from '@config/partners';
+import { partners, type Partner } from '@config/partners';
 import { supporters as copy } from '@config/content';
+
+type WithLogo = Partner & Required<Pick<Partner, 'logo' | 'logoAlt'>>;
+const list = partners.filter((p): p is WithLogo => Boolean(p.logo && p.logoAlt));
 ---
 
 {list.length > 0 && (

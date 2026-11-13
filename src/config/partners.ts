@@ -3,6 +3,7 @@
  * /partners page (each entry in full) and the homepage Supporters band (logos only).
  *
  * Edit this file to add or remove a partner; neither the page nor the band needs touching.
+ * A partner with no `logo` yet is listed on /partners as text and left out of the band.
  * Layout lives in `src/components/PartnerCard.astro` and `src/components/home/Supporters.astro`.
  *
  * ⚠️ **Only list an organization once the relationship is real and they have agreed to be
@@ -32,9 +33,14 @@ export interface Partner {
    * provide, and fix only canonical spellings (S.I.E.R.R.A, place and agency names).
    */
   description: string;
-  logo: ImageMetadata;
-  /** Alt text. The logo IS the content here, so the alt names the organization. */
-  logoAlt: string;
+  /**
+   * Optional: leave it out until the partner supplies their mark — never substitute one
+   * lifted from their site. Without it the /partners card is text only and the homepage
+   * band skips the entry.
+   */
+  logo?: ImageMetadata;
+  /** Alt text, required with `logo`. The logo IS the content, so the alt names the organization. */
+  logoAlt?: string;
   /** Their own site. Opens in a new tab, `rel="noopener external"`. */
   url: string;
 }
@@ -73,5 +79,18 @@ export const partners: readonly Partner[] = [
     logo: ersnLogo,
     logoAlt: 'Ebbetts Radio Safety Net (ERSN)',
     url: 'https://ersn.net/',
+  },
+  {
+    // The authority's full name, as uticawater.com writes it. No logo supplied yet.
+    name: 'Utica Water and Power Authority',
+    category: 'Site Partner',
+    // The first sentence is drawn from uticawater.com's own description (2026-11). The
+    // partnership is as S.I.E.R.R.A states it: access for siting repeaters, not funding —
+    // do not describe Utica as a donor or sponsor.
+    description:
+      'Utica Water and Power Authority is a nonprofit joint powers authority that supplies ' +
+      'water to Murphys and Angels Camp. Utica has opened 27 miles of its watershed area to ' +
+      'S.I.E.R.R.A for repeater placement.',
+    url: 'https://www.uticawater.com/',
   },
 ];
