@@ -51,7 +51,7 @@ export const site = {
    * contract is docs/architecture/contact-form.md). The form does a native POST
    * here and the Lambda 303-redirects back to /contact/thanks or /contact?error=1.
    */
-  contactFormEndpoint: 'https://nm2rog36hxahlwo5qmhku2lofa0bzaaq.lambda-url.us-east-1.on.aws/',
+  contactFormEndpoint: 'https://hs6tzb3avo6uepgi4wxo42jvgy0fzwli.lambda-url.us-west-2.on.aws/',
   address: {
     poBox: 'P.O. Box 2071',
     city: 'Murphys',
