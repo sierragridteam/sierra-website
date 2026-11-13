@@ -39,10 +39,12 @@ they **stay on the honest placeholder** ("—" / hidden) — never stale data, n
 or error in view. (`OperationalStatus`: Relay Nodes + Active Alerts + Fire Weather all start "—" and are filled
 live — Relay Nodes counts S.I.E.R.R.A repeaters the mesh is HEARING, not sites confirmed up;
 only Coverage is owned static config. `EmergencyBanner`: hidden until the client confirms an
-evacuation, wildfire, or PSPS Warning/shutoff — its decision is the pure `src/lib/banner.ts`.
-One deliberate exception to "stay on the placeholder": if the power layer can't be read, the
-banner keeps the last PSPS it saw rather than taking a shutoff warning down on a network
-blip; a failed read is "unknown", not an all-clear.)
+evacuation, wildfire, PSPS Warning/shutoff, or a severe weather alert in effect (NWS, ACTIVE
+and SEVERE/EXTREME; not a Watch that hasn't started, not an advisory) — its decision is the
+pure `src/lib/banner.ts`. One deliberate exception to "stay on the placeholder": if the power
+or weather_alert layer can't be read, the banner keeps the last PSPS / weather alert it saw
+rather than taking a warning down on a network blip; a failed read is "unknown", not an
+all-clear. A kept weather alert still comes down at its own `expires`.)
 
 > `/live` is the fullest version: **client-rendered live** from `src/lib/live-view.ts` (the
 > shared render functions) + `live-map.ts`; CSS is global+namespaced in `src/styles/live.css`

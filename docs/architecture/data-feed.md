@@ -184,9 +184,14 @@ feed with them; no page imports them.
      static owned config.
    - **`EmergencyBanner`** (every page): SSR-hidden; a client island polls
      `/places/{area}/summary` + the `wildfire` map layer and shows it only on an active
-     evacuation/wildfire, or a PSPS at Warning stage or under way. It fetches the `power` layer
-     only when the summary's `power` domain is MODERATE+ (a PSPS never rates lower), and keeps
-     the last PSPS it read if that fetch fails. The decision is pure, in `src/lib/banner.ts`.
+     evacuation/wildfire, a PSPS at Warning stage or under way, or (lowest priority) an NWS
+     weather alert in effect now and rated SEVERE or EXTREME: `status` ACTIVE, so a Watch or
+     Warning that hasn't started (SCHEDULED) and an advisory (MODERATE or lower) stay on /live
+     only. It fetches the `power` layer only when the summary's `power` domain is MODERATE+ (a
+     PSPS never rates lower) and the `weather_alert` layer only when the `weather` domain is
+     SEVERE+, and keeps the last PSPS / weather alert it read if that fetch fails (a kept
+     weather alert still comes down at its `expires`). The decision is pure, in
+     `src/lib/banner.ts`.
 3. **No fallback to baked data** anywhere — the honest degraded state is a placeholder /
    "unavailable", never a possibly-stale value.
 
