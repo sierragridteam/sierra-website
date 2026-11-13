@@ -4,6 +4,8 @@
  *
  * Edit this file to add or remove a partner; neither the page nor the band needs touching.
  * A partner with no `logo` yet is listed on /partners as text and left out of the band.
+ * The band is headed "Supporters" and ends on a link to /donate, so a partner that should
+ * not be read as a donor or sponsor sets `supportersBand: false` and stays on /partners only.
  * Layout lives in `src/components/PartnerCard.astro` and `src/components/home/Supporters.astro`.
  *
  * ⚠️ **Only list an organization once the relationship is real and they have agreed to be
@@ -19,6 +21,7 @@
 import type { ImageMetadata } from 'astro';
 import heltecLogo from '../assets/partners/heltec-automation.png';
 import ersnLogo from '../assets/partners/ersn.webp';
+import uticaLogo from '../assets/partners/utica-water-and-power-authority.webp';
 
 export interface Partner {
   /** Legal/product name, exactly as the organization writes it. */
@@ -41,6 +44,12 @@ export interface Partner {
   logo?: ImageMetadata;
   /** Alt text, required with `logo`. The logo IS the content, so the alt names the organization. */
   logoAlt?: string;
+  /**
+   * Set to `false` to keep a partner with a logo out of the homepage Supporters band. That
+   * band reads as "who backs us" beside a Donate link; a partner whose relationship is not
+   * of that kind belongs on /partners only. Defaults to shown.
+   */
+  supportersBand?: boolean;
   /** Their own site. Opens in a new tab, `rel="noopener external"`. */
   url: string;
 }
@@ -81,7 +90,7 @@ export const partners: readonly Partner[] = [
     url: 'https://ersn.net/',
   },
   {
-    // The authority's full name, as uticawater.com writes it. No logo supplied yet.
+    // The authority's full name, as uticawater.com writes it.
     name: 'Utica Water and Power Authority',
     category: 'Site Partner',
     // The first sentence is drawn from uticawater.com's own description (2026-11). The
@@ -91,6 +100,13 @@ export const partners: readonly Partner[] = [
       'Utica Water and Power Authority is a nonprofit joint powers authority that supplies ' +
       'water to Murphys and Angels Camp. Utica has opened 27 miles of its watershed area to ' +
       'S.I.E.R.R.A for repeater placement.',
+    // File supplied to us by S.I.E.R.R.A's board (2026-11): Utica's horizontal lockup, scaled
+    // down and with the empty transparent margin removed; the mark itself is untouched.
+    logo: uticaLogo,
+    logoAlt: 'Utica Water and Power Authority',
+    // Not a financial supporter: under "Supporters" and a Donate link the logo would say
+    // otherwise. Remove this line if that changes.
+    supportersBand: false,
     url: 'https://www.uticawater.com/',
   },
 ];

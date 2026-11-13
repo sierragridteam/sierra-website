@@ -321,7 +321,8 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   Anything about a third-party embed that "passes locally" has probably not been exercised.
 - **Partners & supporters:** `src/config/partners.ts` is one list that drives both the
   `/partners` page (category, write-up, link — `PartnerCard`) and the homepage Supporters
-  band (logos only) — add or remove an organization there, never in markup. A partner's
+  band (logos only; `supportersBand: false` keeps a partner that is not a backer out of it)
+  — add or remove an organization there, never in markup. A partner's
   write-up is agreed copy; fix only canonical spellings. `/partners` sits in the nav before
   About for now; if the nav reads as too heavy, it is the first candidate to drop to the
   footer. A partner's logo is used **unmodified** (their brand is not ours to recolor), which
