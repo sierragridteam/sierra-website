@@ -55,13 +55,13 @@ overflow, contrast, alignment, and design-system conformance (Phase 8). Optional
 4. `make build`
 5. `make test-visual` (Playwright: screenshots + axe) — uploads screenshots as artifacts.
 
-`.github/workflows/deploy.yml` (**AWS S3 + CloudFront**, DNS via Hostinger):
+`.github/workflows/deploy.yml` (**AWS S3 + CloudFront**):
 
 - On push to `main` after CI passes: `make build` → `aws s3 sync dist/ s3://$BUCKET --delete`
   → `aws cloudfront create-invalidation --paths "/*"`.
-- Credentials as repo **secrets** `AWS_ACCESS_KEY_ID` + `AWS_SECRET_ACCESS_KEY`; config as
-  **variables** `AWS_REGION`, `AWS_ACCOUNT_ID`, `S3_BUCKET_NAME`, `CF_DISTRO_ID`. Documented
-  in `docs/deployment.md`. No secrets are committed.
+- No AWS secrets: the job assumes a deploy role through GitHub OIDC. Config as
+  **variables** `DEPLOY_ROLE_ARN`, `DEPLOY_AWS_REGION`, `DEPLOY_S3_BUCKET`,
+  `DEPLOY_CLOUDFRONT_DISTRIBUTION_ID`. Documented in `docs/deployment.md`.
 
 ## Make targets (developer + CI entrypoints)
 

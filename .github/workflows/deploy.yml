@@ -1,16 +1,19 @@
 name: Deploy
 
 # Auto-deploys the static build to AWS S3 + CloudFront after CI passes on main
-# (i.e. on merge). Infra — bucket, distribution, OAC, ACM cert, DNS — is
-# provisioned separately (Terraform). No secrets are committed.
+# (i.e. on merge). Infra (bucket, distribution, DNS, the deploy role) is
+# provisioned separately (Terraform).
 #
-# Configure under Settings → Secrets and variables → Actions
-# (matches the dpup/ersn.net convention: only the keys are secret):
-#   Secrets:    AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-#   Variables:  AWS_REGION         e.g. us-west-2
-#               AWS_ACCOUNT_ID     expected account (deploy aborts if it differs)
-#               S3_BUCKET_NAME     target bucket
-#               CF_DISTRO_ID       CloudFront distribution to invalidate
+# There are no AWS secrets: the job exchanges its GitHub OIDC token for a
+# deploy role that trusts only this repository's `production` environment and
+# can only sync this site's bucket and invalidate its distribution.
+#
+# Configure under Settings → Secrets and variables → Actions → Variables
+# (the infrastructure's `github_variables` output):
+#   DEPLOY_ROLE_ARN                     role assumed through OIDC
+#   DEPLOY_AWS_REGION                   region of the bucket
+#   DEPLOY_S3_BUCKET                    target bucket
+#   DEPLOY_CLOUDFRONT_DISTRIBUTION_ID   distribution to invalidate
 
 on:
   workflow_dispatch:
@@ -21,6 +24,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # the OIDC token exchanged for the deploy role
 
 concurrency:
   group: deploy-production
@@ -54,23 +58,13 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
-
-      - name: Verify target AWS account
-        run: |
-          ACCT=$(aws sts get-caller-identity --query Account --output text)
-          if [ "$ACCT" != "${{ vars.AWS_ACCOUNT_ID }}" ]; then
-            echo "::error::Authenticated account $ACCT does not match expected ${{ vars.AWS_ACCOUNT_ID }} — aborting."
-            exit 1
-          fi
-          echo "Deploying to AWS account $ACCT"
+          role-to-assume: ${{ vars.DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.DEPLOY_AWS_REGION }}
 
       # Hashed, fingerprinted assets → cache forever (immutable).
       - name: Sync immutable assets
         run: |
-          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET_NAME }}" \
+          aws s3 sync dist/ "s3://${{ vars.DEPLOY_S3_BUCKET }}" \
             --delete \
             --exclude "*.html" \
             --exclude "*.xml" \
@@ -78,10 +72,12 @@ jobs:
             --exclude "*.json" \
             --cache-control "public, max-age=31536000, immutable"
 
-      # HTML + manifests → always revalidate.
+      # HTML + manifests → always revalidate. --delete here removes pages that
+      # no longer exist (the sync above skips these file types entirely).
       - name: Sync HTML & manifests
         run: |
-          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET_NAME }}" \
+          aws s3 sync dist/ "s3://${{ vars.DEPLOY_S3_BUCKET }}" \
+            --delete \
             --exclude "*" \
             --include "*.html" \
             --include "*.xml" \
@@ -92,5 +88,5 @@ jobs:
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id "${{ vars.CF_DISTRO_ID }}" \
+            --distribution-id "${{ vars.DEPLOY_CLOUDFRONT_DISTRIBUTION_ID }}" \
             --paths "/*"
