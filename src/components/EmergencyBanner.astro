@@ -1,14 +1,15 @@
 ---
 /**
  * EmergencyBanner — the site-wide alarm band (in BaseLayout, every page). Renders
- * nothing on calm days; when a life-safety hazard is active (an active evacuation or
- * wildfire, or a PG&E Public Safety Power Shutoff at Warning stage or under way — all
- * area-scoped) it shows a slim orange band naming the hazard, linking to the Live Feed
- * (which carries the authoritative evacuation map). Priority: evacuation, wildfire, PSPS.
- * Orange here is a sanctioned genuine-alert use. Client-only (no baked data): SSR renders
- * the band hidden + empty, and a client island checks the place summary + wildfire layer
- * (+ the power layer when the summary says a PSPS is possible) on load + every 90s. What it
- * shows, and when it rewrites the role="alert" region, is decided in `src/lib/banner.ts`.
+ * nothing on calm days; when a hazard is active (an active evacuation or wildfire, a PG&E
+ * Public Safety Power Shutoff at Warning stage or under way, or a severe NWS weather alert
+ * in effect now — all area-scoped) it shows a slim orange band naming the hazard, linking to
+ * the Live Feed (which carries the authoritative evacuation map). Priority: evacuation,
+ * wildfire, PSPS, severe weather. Orange here is a sanctioned genuine-alert use. Client-only
+ * (no baked data): SSR renders the band hidden + empty, and a client island checks the place
+ * summary + wildfire layer (+ the power and weather_alert layers when the summary says a
+ * PSPS or a severe alert is possible) on load + every 90s. What it shows, and when it
+ * rewrites the role="alert" region, is decided in `src/lib/banner.ts`.
  */
 import { HAZARD_AREA } from '@lib/hazards';
 import { GRID_API_BASE } from '@lib/grid';
@@ -41,7 +42,14 @@ import { emergencyBanner as copy } from '@config/content';
 </aside>
 
 <script>
-  import { deriveBanner, powerCheck, pspsFromLayer } from '@lib/banner';
+  import {
+    deriveBanner,
+    powerCheck,
+    pspsFromLayer,
+    weatherCheck,
+    weatherFromLayer,
+    type LayerCheck,
+  } from '@lib/banner';
   import type { HazardFeature, SummaryDomain } from '@lib/hazards';
 
   const el = document.querySelector<HTMLElement>('[data-ebanner]');
@@ -65,6 +73,9 @@ import { emergencyBanner as copy } from '@config/content';
     // Grid marks UNAVAILABLE, is "unknown" — never a reason to take a shutoff banner down
     // (the one place this island holds a prior value rather than its hidden placeholder).
     let lastPsps: HazardFeature | null = null;
+    // Likewise the last severe weather alert: an unreadable layer doesn't take it down. It
+    // can't linger past the warning itself — deriveBanner drops it once `expires` has passed.
+    let lastWeather: HazardFeature | null = null;
     const set = (sel: string, text: string) => {
       const t = el.querySelector<HTMLElement>(sel);
       if (t) t.textContent = text;
@@ -88,23 +99,35 @@ import { emergencyBanner as copy } from '@config/content';
           features?: { properties?: { headline?: string } }[];
         };
 
-        // Power is a separate signal: a failure here must not stop the evacuation and
-        // wildfire checks, so it degrades to "unknown" (keep the last PSPS) rather than throw.
-        const check = powerCheck(s.domains);
-        let psps: HazardFeature | null | undefined = check === 'none' ? null : undefined;
-        if (check === 'fetch') {
-          const res = await fetch(`${base}/places/${area}/map/power.geojson`, accept).catch(
+        // Power and weather are separate signals: a failure here must not stop the evacuation
+        // and wildfire checks, so each degrades to "unknown" (keep the last one read) rather
+        // than throw. `null` is a confirmed "none", `undefined` is "couldn't read it".
+        const read = async <T,>(
+          check: LayerCheck,
+          layer: string,
+          pick: (body: Parameters<typeof pspsFromLayer>[0]) => T | undefined
+        ): Promise<T | null | undefined> => {
+          if (check === 'none') return null;
+          if (check === 'unknown') return undefined;
+          const res = await fetch(`${base}/places/${area}/map/${layer}.geojson`, accept).catch(
             () => null
           );
-          psps = res?.ok ? pspsFromLayer(await res.json().catch(() => null)) : undefined;
-        }
+          return res?.ok ? pick(await res.json().catch(() => null)) : undefined;
+        };
+        const now = Date.now();
+        const [psps, weather] = await Promise.all([
+          read(powerCheck(s.domains), 'power', pspsFromLayer),
+          read(weatherCheck(s.domains), 'weather_alert', (body) => weatherFromLayer(body, now)),
+        ]);
         if (psps !== undefined) lastPsps = psps;
+        if (weather !== undefined) lastWeather = weather;
 
         const banner = deriveBanner({
           activeEvacuations: s.summary?.activeEvacuations,
           topEvents: s.summary?.topEvents ?? [],
           wildfire: fire.features ?? [],
           psps: lastPsps,
+          weather: lastWeather,
         });
 
         // Only touch the DOM when something actually changed — the role="alert" live

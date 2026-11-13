@@ -4,11 +4,19 @@
  * rewritten. The banner's client island does the fetching and the DOM; everything it decides
  * is here.
  *
- * Life-safety ONLY, in priority order: an evacuation, a wildfire, a PG&E Public Safety Power
- * Shutoff at Warning stage or under way (`pspsBannerEvent`). All three are read from
- * area-scoped sources; the summary's region-wide severity rollup is never trusted.
+ * In priority order: an evacuation, a wildfire, a PG&E Public Safety Power Shutoff at Warning
+ * stage or under way (`pspsBannerEvent`), then a severe weather alert in effect now
+ * (`weatherBannerEvent`: ACTIVE and SEVERE or EXTREME — never a Watch that hasn't started, never
+ * an advisory). All four are read from area-scoped sources; the summary's region-wide severity
+ * rollup is never trusted to put the band up, only to skip a fetch that can't matter.
  */
-import { SEVERITY_RANK, pspsBannerEvent, type HazardFeature, type SummaryDomain } from './hazards';
+import {
+  SEVERITY_RANK,
+  pspsBannerEvent,
+  weatherBannerEvent,
+  type HazardFeature,
+  type SummaryDomain,
+} from './hazards';
 import { formatPtDayTime } from './format';
 
 export interface BannerInput {
@@ -17,6 +25,8 @@ export interface BannerInput {
   wildfire: { properties?: { headline?: string } }[];
   /** The banner-worthy PSPS (`pspsBannerEvent`), or null when there is none. */
   psps: HazardFeature | null;
+  /** The banner-worthy weather alert (`weatherBannerEvent`), or null when there is none. */
+  weather: HazardFeature | null;
 }
 
 export interface BannerState {
@@ -26,7 +36,8 @@ export interface BannerState {
   /**
    * Changes only when the hazard does. Rewriting a `role="alert"` region re-announces it, so a
    * PSPS signs on its id, stage, status and start — never on its headline, whose customer counts
-   * PG&E revises through the day.
+   * PG&E revises through the day. A weather alert signs on what the band says (its name and
+   * end time), not its id: NWS issues every update of the same warning under a new id.
    */
   sig: string;
 }
@@ -39,11 +50,33 @@ export interface BannerState {
  *
  * `fetch` — read the layer; `none` — known no PSPS; `unknown` — The Grid can't say.
  */
-export function powerCheck(domains: SummaryDomain[] | undefined): 'fetch' | 'none' | 'unknown' {
-  const d = domains?.find((x) => x.domain === 'power');
+export function powerCheck(domains: SummaryDomain[] | undefined): LayerCheck {
+  return domainCheck(domains, 'power', 2);
+}
+
+/**
+ * Is it worth fetching the weather_alert layer? Same reasoning as `powerCheck`: the layer
+ * carries the alert polygons (~33 KB gzipped on a storm day), and the summary's `weather`
+ * domain already has the highest weather severity, so a confirmed domain below SEVERE is a
+ * known "nothing for the banner".
+ */
+export function weatherCheck(domains: SummaryDomain[] | undefined): LayerCheck {
+  return domainCheck(domains, 'weather', 3);
+}
+
+export type LayerCheck = 'fetch' | 'none' | 'unknown';
+
+function domainCheck(
+  domains: SummaryDomain[] | undefined,
+  domain: string,
+  minRank: number
+): LayerCheck {
+  const d = domains?.find((x) => x.domain === domain);
   if (!d) return 'fetch';
   if (d.status === 'UNAVAILABLE') return 'unknown';
-  return (SEVERITY_RANK[String(d.highestSeverity).toUpperCase()] ?? 0) >= 2 ? 'fetch' : 'none';
+  return (SEVERITY_RANK[String(d.highestSeverity).toUpperCase()] ?? 0) >= minRank
+    ? 'fetch'
+    : 'none';
 }
 
 /** The banner-worthy PSPS from a fetched power layer, or `undefined` when it can't be read. */
@@ -52,6 +85,28 @@ export function pspsFromLayer(
 ): HazardFeature | null | undefined {
   if (!layer || layer.metadata?.sourceStatus === 'UNAVAILABLE') return undefined;
   return pspsBannerEvent(layer.features ?? []);
+}
+
+/** The banner-worthy weather alert from a fetched layer, or `undefined` when it can't be read. */
+export function weatherFromLayer(
+  layer: { features?: HazardFeature[]; metadata?: { sourceStatus?: string } } | null,
+  now: number
+): HazardFeature | null | undefined {
+  if (!layer || layer.metadata?.sourceStatus === 'UNAVAILABLE') return undefined;
+  return weatherBannerEvent(layer.features ?? [], now);
+}
+
+/**
+ * The NWS event name and when it ends, e.g. "Winter Storm Warning in effect until Sat 10:00
+ * PT". The name is the alert's `weather.event` (its headline when that is missing), never the
+ * forecast text, which is one click away on /live. `expires` is the hazard's end as NWS
+ * issued it; without one the phrase stops at "in effect".
+ */
+function weatherHeadline(f: HazardFeature): string {
+  const p = f.properties;
+  const name = p.weather?.event || p.headline || 'Severe weather alert';
+  const until = formatPtDayTime(p.expires);
+  return until ? `${name} in effect until ${until}` : `${name} in effect`;
 }
 
 /**
@@ -67,7 +122,7 @@ function pspsHeadline(f: HazardFeature): string {
     : 'PG&E plans to shut off power in parts of the service area';
 }
 
-export function deriveBanner(input: BannerInput): BannerState {
+export function deriveBanner(input: BannerInput, now: number = Date.now()): BannerState {
   if ((input.activeEvacuations ?? 0) > 0) {
     const headline =
       input.topEvents.find((h) => h.layer === 'EVACUATION')?.headline ??
@@ -87,6 +142,13 @@ export function deriveBanner(input: BannerInput): BannerState {
       headline: pspsHeadline(input.psps),
       sig: `psps|${p.id}|${p.power?.stage ?? ''}|${p.status ?? ''}|${p.power?.deEnergizationStart ?? ''}`,
     };
+  }
+  // Re-checked against `now`, not just when the layer was read: the island keeps the last
+  // alert it saw through a failed poll, and that must not outlive the warning's own end.
+  const wx = input.weather ? weatherBannerEvent([input.weather], now) : null;
+  if (wx) {
+    const headline = weatherHeadline(wx);
+    return { active: true, label: 'Severe Weather', headline, sig: `wx|${headline}` };
   }
   return { active: false, label: '', headline: '', sig: 'none' };
 }

@@ -25,7 +25,8 @@ robots.txt, sitemap-index.xml, site.webmanifest, og images   (generated)
 "PT" suffix). The header brand is the mark alone (no wordmark); the homepage hides it (the
 hero emblem stands in). **Live Feed** is the public flagship during an emergency.
 
-When a life-safety hazard is active, a site-wide **EmergencyBanner** sits above the nav.
+When a life-safety hazard is active (an evacuation, a wildfire, a PSPS Warning or shutoff),
+or a severe weather warning is in effect, a site-wide **EmergencyBanner** sits above the nav.
 
 ## Global chrome
 

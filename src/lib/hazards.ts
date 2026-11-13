@@ -295,6 +295,42 @@ export function pspsBannerEvent(features: HazardFeature[]): HazardFeature | null
 }
 
 /**
+ * The weather alert that warrants the site-wide banner, or null: an NWS alert **in effect now**
+ * (`status` ACTIVE) rated SEVERE or EXTREME — a Winter Storm Warning under way, not the Watch
+ * issued two days ahead (SCHEDULED, see `isScheduled`) and not an advisory (MODERATE or lower).
+ * Both stay on /live. An alert whose `expires` has passed is dropped even if the feed still
+ * lists it, so a cached layer can't hold the band up after the warning ends.
+ *
+ * `status` is the authority, as in `isScheduled`; a record with no status at all falls back to
+ * its onset. Any other status (ended, cancelled) is not "in effect".
+ *
+ * Deterministic when several qualify — highest severity, then the one that ends last, then by
+ * id — so feed order can't flip which one the banner names between polls.
+ */
+export function weatherBannerEvent(features: HazardFeature[], now: number): HazardFeature | null {
+  const ends = (f: HazardFeature) => Date.parse(String(f.properties.expires ?? ''));
+  const inEffect = (f: HazardFeature) => {
+    const status = String(f.properties.status ?? '').toUpperCase();
+    if (status ? status !== 'ACTIVE' : isScheduled(f, now)) return false;
+    const end = ends(f);
+    return !(Number.isFinite(end) && end <= now);
+  };
+  const hits = features.filter(
+    (f) =>
+      String(f.properties.layer ?? '').toUpperCase() === 'WEATHER_ALERT' &&
+      rankOf(f) >= SEVERITY_RANK.SEVERE &&
+      inEffect(f)
+  );
+  hits.sort(
+    (a, b) =>
+      rankOf(b) - rankOf(a) ||
+      (ends(b) || Infinity) - (ends(a) || Infinity) ||
+      String(a.properties.id).localeCompare(String(b.properties.id))
+  );
+  return hits[0] ?? null;
+}
+
+/**
  * The prioritized alert stream: every relevant active hazard, most-urgent first.
  * Excludes road segments (that's the road-conditions table), a "normal"
  * fire-weather banner (INFO — not an alert) and INFO power outages (isNotablePower).
