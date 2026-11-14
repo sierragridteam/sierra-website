@@ -72,6 +72,30 @@ export const partners: readonly Partner[] = [
     url: 'https://heltec.org/',
   },
   {
+    // The authority's full name, as uticawater.com writes it.
+    name: 'Utica Water and Power Authority',
+    category: 'Site Partner',
+    // The first sentence is drawn from uticawater.com's own description (2026-11). The
+    // partnership is as S.I.E.R.R.A states it: access for siting repeaters, not funding —
+    // do not describe Utica as a donor or sponsor.
+    description:
+      'Utica Water and Power Authority is a nonprofit joint powers authority that supplies ' +
+      'water to Murphys and Angels Camp. Utica has opened 27 miles of its watershed area to ' +
+      'S.I.E.R.R.A for repeater placement.',
+    // Utica's shield badge only, cropped from the horizontal lockup S.I.E.R.R.A's board
+    // supplied (2026-11): the wordmark beside it is dropped because the name is set in text
+    // next to the logo, and the wide lockup left the shield too small to read. The crop is
+    // at the source's own resolution; the badge itself is not redrawn or recolored.
+    logo: uticaLogo,
+    logoAlt: 'Utica Water and Power Authority',
+    // Not a financial supporter: under "Supporters" and a Donate link the logo would say
+    // otherwise. Remove this line if that changes.
+    supportersBand: false,
+    url: 'https://www.uticawater.com/',
+  },
+  {
+    // Listed last by request (2026-11); the order here is the order on /partners and in the
+    // homepage band.
     // ERSN's site writes the name both with and without the apostrophe; its title, sidebar
     // and footer agree on none.
     name: 'Ebbetts Radio Safety Net',
@@ -88,25 +112,5 @@ export const partners: readonly Partner[] = [
     logo: ersnLogo,
     logoAlt: 'Ebbetts Radio Safety Net (ERSN)',
     url: 'https://ersn.net/',
-  },
-  {
-    // The authority's full name, as uticawater.com writes it.
-    name: 'Utica Water and Power Authority',
-    category: 'Site Partner',
-    // The first sentence is drawn from uticawater.com's own description (2026-11). The
-    // partnership is as S.I.E.R.R.A states it: access for siting repeaters, not funding —
-    // do not describe Utica as a donor or sponsor.
-    description:
-      'Utica Water and Power Authority is a nonprofit joint powers authority that supplies ' +
-      'water to Murphys and Angels Camp. Utica has opened 27 miles of its watershed area to ' +
-      'S.I.E.R.R.A for repeater placement.',
-    // File supplied to us by S.I.E.R.R.A's board (2026-11): Utica's horizontal lockup, scaled
-    // down and with the empty transparent margin removed; the mark itself is untouched.
-    logo: uticaLogo,
-    logoAlt: 'Utica Water and Power Authority',
-    // Not a financial supporter: under "Supporters" and a Donate link the logo would say
-    // otherwise. Remove this line if that changes.
-    supportersBand: false,
-    url: 'https://www.uticawater.com/',
   },
 ];
