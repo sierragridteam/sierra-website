@@ -154,6 +154,9 @@ export const supporters = {
   note:
     'Support from outside the membership is what puts a repeater on a ridge and keeps it ' +
     'there.',
+  // Every logo in the band links here — our write-up of the partnership — not to the
+  // organization's own site; the /partners card carries the link out.
+  logoHref: '/partners',
   ctaLabel: 'Support this work',
   ctaHref: '/donate',
 } as const;

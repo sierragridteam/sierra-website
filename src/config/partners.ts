@@ -50,7 +50,10 @@ export interface Partner {
    * of that kind belongs on /partners only. Defaults to shown.
    */
   supportersBand?: boolean;
-  /** Their own site. Opens in a new tab, `rel="noopener external"`. */
+  /**
+   * Their own site, linked from the /partners card (new tab, `rel="noopener external"`).
+   * The homepage band does not use it: its logos link to /partners.
+   */
   url: string;
 }
 
@@ -88,14 +91,13 @@ export const partners: readonly Partner[] = [
     // at the source's own resolution; the badge itself is not redrawn or recolored.
     logo: uticaLogo,
     logoAlt: 'Utica Water and Power Authority',
-    // Not a financial supporter: under "Supporters" and a Donate link the logo would say
-    // otherwise. Remove this line if that changes.
-    supportersBand: false,
+    // In the homepage band by org decision (2026-11) as a backer of the network through
+    // site access. Still not a financial supporter — the band's copy names no form of
+    // support, and must not start to while Utica is in it.
     url: 'https://www.uticawater.com/',
   },
   {
-    // Listed last by request (2026-11); the order here is the order on /partners and in the
-    // homepage band.
+    // Listed last by request (2026-11); the order here is the order on /partners.
     // ERSN's site writes the name both with and without the apostrophe; its title, sidebar
     // and footer agree on none.
     name: 'Ebbetts Radio Safety Net',
@@ -111,6 +113,8 @@ export const partners: readonly Partner[] = [
       'used on ersn.net.',
     logo: ersnLogo,
     logoAlt: 'Ebbetts Radio Safety Net (ERSN)',
+    // On /partners only, by org decision (2026-11).
+    supportersBand: false,
     url: 'https://ersn.net/',
   },
 ];

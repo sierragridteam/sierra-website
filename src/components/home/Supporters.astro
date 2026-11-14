@@ -19,6 +19,9 @@
  * does one marked `supportersBand: false`: under this heading and the Donate link a logo
  * reads as a backer, which not every partner is.
  *
+ * Each logo links to /partners (our write-up of the partnership), not to the organization's
+ * own site; the link out lives on the /partners card.
+ *
  * Renders nothing when there are no supporters — an empty "Supporters" heading would be a
  * worse look than no band at all.
  */
@@ -45,13 +48,7 @@ const list = partners.filter(
       <ul class="supporters__list">
         {list.map((s) => (
           <li class="supporters__item">
-            <a
-              class="supporters__link"
-              href={s.url}
-              target="_blank"
-              rel="noopener external"
-              title={s.name}
-            >
+            <a class="supporters__link" href={copy.logoHref} title={s.name}>
               <Image
                 src={s.logo}
                 alt={s.logoAlt}
