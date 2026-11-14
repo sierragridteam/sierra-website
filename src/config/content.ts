@@ -154,11 +154,11 @@ export const supporters = {
   note:
     'Support from outside the membership is what puts a repeater on a ridge and keeps it ' +
     'there.',
-  // Every logo in the band links here — our write-up of the partnership — not to the
-  // organization's own site; the /partners card carries the link out.
-  logoHref: '/partners',
-  ctaLabel: 'Support this work',
-  ctaHref: '/donate',
+  // The band leads to /partners, not straight to /donate and not out to an organization's
+  // own site: every logo and the link below them go here. The journey is homepage →
+  // partners → donate; /partners carries the links out and the link to /donate.
+  href: '/partners',
+  ctaLabel: 'Learn about the partners supporting this work',
 } as const;
 
 /** The Live Feed (situation) page — the public flagship during an emergency. */
@@ -496,6 +496,10 @@ export const partners = {
       'If you operate a tower, manage land on a ridge, serve a foothill community, or build ' +
       'the equipment a mesh runs on, we would like to hear from you.',
     label: 'Get in Touch',
+    // The second step of homepage → partners → donate. A plain secondary button: the
+    // orange Donate button is sanctioned on /about only.
+    donateNote: 'You can also support the work directly with a donation.',
+    donateLabel: 'Support This Work',
   },
 } as const;
 

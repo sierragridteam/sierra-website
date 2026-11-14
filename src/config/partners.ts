@@ -4,7 +4,7 @@
  *
  * Edit this file to add or remove a partner; neither the page nor the band needs touching.
  * A partner with no `logo` yet is listed on /partners as text and left out of the band.
- * The band is headed "Supporters" and ends on a link to /donate, so a partner that should
+ * The band is headed "Supporters" and leads on to /partners and then /donate, so a partner that should
  * not be read as a donor or sponsor sets `supportersBand: false` and stays on /partners only.
  * Layout lives in `src/components/PartnerCard.astro` and `src/components/home/Supporters.astro`.
  *
@@ -46,7 +46,7 @@ export interface Partner {
   logoAlt?: string;
   /**
    * Set to `false` to keep a partner with a logo out of the homepage Supporters band. That
-   * band reads as "who backs us" beside a Donate link; a partner whose relationship is not
+   * band reads as "who backs us"; a partner whose relationship is not
    * of that kind belongs on /partners only. Defaults to shown.
    */
   supportersBand?: boolean;

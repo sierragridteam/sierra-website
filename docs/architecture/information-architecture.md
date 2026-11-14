@@ -85,7 +85,8 @@ Order, top to bottom:
 3. **Mission statement** — Newsreader 21px, editorial gravitas. Builds + operates + trains.
 4. **Operational Doctrine** — three numbered doctrine cards: **EDUCATE / BUILD / OPERATE**.
 5. **Supporters band** — organizations backing the network (`src/config/partners.ts`),
-   as logo tiles linking to /partners, plus a green "Support this work" link to /donate. Placed here on purpose:
+   as logo tiles plus a green "Learn about the partners supporting this work" link, all
+   going to /partners (which links on to /donate). Placed here on purpose:
    after Mission and Doctrine the reader knows what we do and how, which is where social
    proof lands — and deliberately NOT in the hero, where a sponsor mark would sit beside
    "not an emergency dispatch service" and blur the one thing that page must say plainly.
