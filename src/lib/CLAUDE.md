@@ -1,8 +1,11 @@
 # src/lib — data layer & helpers
 
 `grid.ts` + `hazards.ts` are the typed data.sierragridteam.org shapes + **pure derivations**
-(`deriveStream`, `deriveSituationSummary`, `layerFeatures`, …) plus shared constants
-(`GRID_API_BASE`, `HAZARD_AREA`, `STREAM_LAYERS`).
+(`deriveStream`, `deriveDigest`, `deriveSituationSummary`, `layerFeatures`, …) plus shared
+constants (`GRID_API_BASE`, `HAZARD_AREA`, `STREAM_LAYERS`). `deriveDigest` is what /live
+lists: the stream cut to a few cards, with chain controls and outages folded and the rest
+counted. `GRID_SITE` / `gridPage` / `gridReport` (in `grid.ts`) build links to the Grid
+explorer, where the full record lives.
 `live-view.ts` turns a fetched snapshot into the `/live` view-model + region HTML;
 `live-map.ts` is the MapLibre map; `banner.ts` is the site-wide EmergencyBanner's decision
 (evacuation > wildfire > PSPS > severe weather in effect, and when it may re-announce); `units.ts` converts metric→imperial; `format.ts` is

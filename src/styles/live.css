@@ -505,6 +505,28 @@
   text-decoration: none;
 }
 
+/* What the list leaves out, with the way to it on the Grid explorer. */
+.live-view .stream__rest {
+  margin-top: var(--space-4);
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--ink-secondary);
+}
+/* A link to the Grid explorer: the same quiet text link /mesh uses beside a section head. */
+.live-view .stream__rest a,
+.report-grid-link {
+  font-family: var(--font-ui);
+  font-size: var(--fs-label-lg);
+  color: var(--brand-green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.live-view .stream__rest a:hover,
+.report-grid-link:hover {
+  color: var(--brand-green-hover);
+}
+
 /* ---- Road conditions ---- */
 .live-view .roads {
   display: grid;

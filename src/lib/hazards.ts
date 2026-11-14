@@ -353,6 +353,167 @@ export function deriveStream(snapshot: HazardsSnapshot): HazardFeature[] {
   });
 }
 
+// ---- The digest: what /live lists ----
+
+/** The most cards /live shows. Past this the page stops being a glance; the rest is on Grid. */
+export const DIGEST_MAX = 6;
+
+/**
+ * One line of the /live alert list. Either a single hazard, or several of a kind folded into
+ * one line (every chain-control checkpoint on a highway; every ordinary outage), because a
+ * resident needs "chains are required on Highway 4", not eleven checkpoints.
+ */
+export type DigestItem =
+  | { type: 'event'; feature: HazardFeature; rank: number }
+  | {
+      type: 'rollup';
+      /** Stable key for the list. */
+      id: string;
+      of: 'chain_control' | 'power';
+      rank: number;
+      severity: string;
+      title: string;
+      /** A short line under the title: the places, or the largest outage. */
+      where: string;
+      /** How many feed records this line stands for. */
+      count: number;
+      source: string;
+    };
+
+export interface StreamDigest {
+  items: DigestItem[];
+  /** Feed records behind the items shown. */
+  shown: number;
+  /** Feed records not shown here at all (planned road work, minor incidents, overflow). */
+  rest: number;
+  /** What most of the rest is, in the feed's own word for it ("Road incident"), or null. */
+  restMostly: string | null;
+}
+
+const titleCase = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/(^|[\s.-])([a-z])/g, (_, lead: string, c: string) => lead + c.toUpperCase());
+
+/**
+ * The few things worth a card, most urgent first, and a count of everything else.
+ *
+ * Shown singly: evacuations, wildfires, weather alerts, a non-normal fire-weather state,
+ * earthquakes, a PSPS, a closure point, and any road report at SEVERE or above. Folded into
+ * one line each: chain-control checkpoints per highway, and ordinary outages. Left to Grid:
+ * planned road work and minor incidents. Nothing is hidden silently: `rest` counts it and the
+ * page says so and links to it.
+ */
+export function deriveDigest(snapshot: HazardsSnapshot): StreamDigest {
+  const stream = deriveStream(snapshot);
+  const items: DigestItem[] = [];
+  const chains = new Map<string, HazardFeature[]>();
+  const outages: HazardFeature[] = [];
+  const left: HazardFeature[] = [];
+  for (const f of stream) {
+    const p = f.properties;
+    const layer = String(p.layer).toLowerCase();
+    const closed = p.category === 'closed' || String(p.status).toUpperCase() === 'CLOSED';
+    if (layer === 'chain_control' && !closed) {
+      const highway = String(
+        (p.chainControl as { highway?: string } | undefined)?.highway || 'the corridor'
+      );
+      chains.set(highway, [...(chains.get(highway) ?? []), f]);
+    } else if (layer === 'power' && p.category !== 'psps') outages.push(f);
+    else if (layer === 'road_incident' && rankOf(f) < SEVERITY_RANK.SEVERE) left.push(f);
+    else items.push({ type: 'event', feature: f, rank: rankOf(f) });
+  }
+  // One of a kind keeps its own card (and its detail: a lone outage's restoration estimate,
+  // a lone checkpoint's place); folding starts at two.
+  // Highways in number order, so the corridor's own (Highway 4) leads its neighbours.
+  const number = (highway: string) => Number(/\d+/.exec(highway)?.[0] ?? Infinity);
+  for (const [highway, group] of [...chains].sort((a, b) => number(a[0]) - number(b[0]))) {
+    if (group.length === 1) {
+      items.push({ type: 'event', feature: group[0], rank: rankOf(group[0]) });
+      continue;
+    }
+    const top = group.reduce((a, f) => (rankOf(f) > rankOf(a) ? f : a));
+    const levels = [
+      ...new Set(
+        group
+          .map((f) =>
+            String((f.properties.chainControl as { level?: string } | undefined)?.level ?? '')
+          )
+          .filter(Boolean)
+      ),
+    ].sort();
+    const places = [
+      ...new Set(group.map((f) => titleCase(String(f.properties.areaLabel ?? ''))).filter(Boolean)),
+    ];
+    items.push({
+      type: 'rollup',
+      id: `chain:${highway}`,
+      of: 'chain_control',
+      rank: rankOf(top),
+      severity: String(top.properties.severity),
+      title: `Chain control${levels.length ? ` ${levels.join(', ')}` : ''} on ${highway}`,
+      where: places.join(' · '),
+      count: group.length,
+      source: top.properties.source?.name ?? '',
+    });
+  }
+  if (outages.length === 1)
+    items.push({ type: 'event', feature: outages[0], rank: rankOf(outages[0]) });
+  else if (outages.length) {
+    const top = outages.reduce((a, f) => (rankOf(f) > rankOf(a) ? f : a));
+    const customers = outages.reduce((n, f) => n + (f.properties.power?.customersAffected ?? 0), 0);
+    const largest = outages.reduce((a, f) =>
+      (f.properties.power?.customersAffected ?? 0) > (a.properties.power?.customersAffected ?? 0)
+        ? f
+        : a
+    );
+    items.push({
+      type: 'rollup',
+      id: 'power:outages',
+      of: 'power',
+      rank: rankOf(top),
+      severity: String(top.properties.severity),
+      title: `${customers.toLocaleString('en-US')} ${customers === 1 ? 'customer' : 'customers'} without power in ${outages.length} ${outages.length === 1 ? 'outage' : 'outages'}`,
+      where: `Largest: ${largest.properties.headline}`,
+      count: outages.length,
+      source: top.properties.source?.name ?? '',
+    });
+  }
+  // Most urgent first; the stream's own order (rank, then newest) breaks ties among events.
+  const order = new Map(stream.map((f, i) => [f.properties.id, i]));
+  // Folded lines follow the events of their rank, in the order they were made (highway number, then outages).
+  const made = new Map(items.map((item, i) => [item, i]));
+  const at = (item: DigestItem) =>
+    item.type === 'event'
+      ? (order.get(item.feature.properties.id) ?? 0)
+      : stream.length + (made.get(item) ?? 0);
+  items.sort((a, b) => b.rank - a.rank || at(a) - at(b));
+  const kept = items.slice(0, DIGEST_MAX);
+  const dropped = items.slice(DIGEST_MAX);
+  const size = (item: DigestItem) => (item.type === 'event' ? 1 : item.count);
+  const shown = kept.reduce((n, item) => n + size(item), 0);
+  // What the rest mostly is: the unshown records' commonest kind, by the feed's own label.
+  const kinds = new Map<string, number>();
+  for (const f of left) kinds.set(f.properties.kind, (kinds.get(f.properties.kind) ?? 0) + 1);
+  for (const item of dropped) {
+    const kind =
+      item.type === 'event'
+        ? item.feature.properties.kind
+        : item.of === 'power'
+          ? 'Power outage'
+          : 'Chain control';
+    kinds.set(kind, (kinds.get(kind) ?? 0) + size(item));
+  }
+  const rest = stream.length - shown;
+  const mostly = [...kinds].sort((a, b) => b[1] - a[1])[0];
+  return {
+    items: kept,
+    shown,
+    rest,
+    restMostly: mostly && mostly[1] * 2 > rest ? mostly[0] : null,
+  };
+}
+
 export interface SituationSummary {
   /** Highest tone present in the locally-relevant stream. */
   highestRank: number;

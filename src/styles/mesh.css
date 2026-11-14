@@ -126,6 +126,14 @@
   color: var(--brand-green-hover);
 }
 
+/* Under the repeater table: the rest of the network is on the Grid explorer. */
+.mesh-view .mesh-grid-more {
+  margin-top: var(--space-4);
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--ink-secondary);
+}
+
 /* ---- 01 Map legend ---- */
 
 .mesh-view .mesh-legend {

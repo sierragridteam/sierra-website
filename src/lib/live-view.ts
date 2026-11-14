@@ -10,19 +10,23 @@
  * be imported server-side and bundled into the client island alike.
  */
 import {
-  deriveStream,
+  deriveDigest,
   deriveSituationSummary,
   isNotablePower,
   isScheduled,
   layerFeatures,
   STREAM_LAYERS,
   toneFor,
+  toneForRank,
   severityLabel,
   type HazardFeature,
   type HazardsSnapshot,
   type Scanner,
   type SituationSummary,
+  type DigestItem,
+  type StreamDigest,
 } from './hazards';
+import { gridPage, gridReport } from './grid';
 import {
   groupBurnStatus,
   type BurnGroup,
@@ -353,66 +357,109 @@ function streamExtra(f: HazardFeature, now: number): string | null {
   return null;
 }
 
-function renderStream(items: HazardFeature[], now: number): string {
-  if (items.length === 0) return `<p class="stream__empty">${esc(copy.streamEmpty)}</p>`;
-  const lis = items
-    .map((f) => {
-      const tone = toneFor(f);
-      const p = f.properties;
-      const ex = streamExtra(f, now);
-      // Authoritative "more info" page for THIS event (CAL FIRE incident, Genasys evac
-      // viewer, …) — from the feed's per-event provenance when present; opens the body so
-      // the link is reachable.
-      const moreUrl = p.provenance?.sourceUrl;
-      const hasBody = !!(ex || p.description || moreUrl);
-      // An issued-but-not-yet-in-force alert is marked in the kicker, where it is visible
-      // with the card collapsed. `effective` carries the hazard's onset (Grid 2026-08-11);
-      // when the product publishes none we say so plainly rather than invent a start time.
-      const when =
-        pspsWhen(f) ??
-        (isScheduled(f, now)
-          ? (() => {
-              const at = formatPtDayTime(p.effective);
-              return at ? `Begins ${at}` : 'Not yet in effect';
-            })()
-          : null);
-      const head =
-        `<span class="stream__head"><span class="stream__kicker">` +
-        `<span class="stream__sev">${esc(severityLabel(String(p.severity)))}</span>` +
-        `<span class="stream__kind">${esc(p.kind)}</span>` +
-        (when ? `<span class="stream__when">${esc(when)}</span>` : '') +
-        `</span>` +
-        `<span class="stream__title">${esc(wildfireTitle(p.headline, p.wildfire))}</span>` +
-        (p.areaLabel ? `<span class="stream__where">${esc(p.areaLabel)}</span>` : '') +
-        `</span>`;
-      const source = p.source?.name
-        ? `<span class="stream__source">${esc(p.source.name)}</span>`
-        : '';
-      // data-hazard-id links the card to its map feature — hovering/focusing it highlights
-      // the feature on the /live map (wired in the page controller). Harmless for stream
-      // items with no map geometry (weather/fire-weather banners): the highlight no-ops.
-      const hid = `data-hazard-id="${esc(p.id)}"`;
-      if (hasBody) {
-        return (
-          `<li><details class="stream__card stream__card--${tone}" ${hid}>` +
-          `<summary class="stream__summary">${head}` +
-          `<span class="stream__meta">${source}<span class="stream__chevron" aria-hidden="true"></span></span></summary>` +
-          `<div class="stream__body">` +
-          (ex ? `<p class="stream__extra">${esc(ex)}</p>` : '') +
-          formatAlertBody(p.description) +
-          (moreUrl
-            ? `<p class="stream__more"><a href="${esc(moreUrl)}" target="_blank" rel="noopener external">More information<span aria-hidden="true"> &#8599;</span></a></p>`
-            : '') +
-          `</div></details></li>`
-        );
-      }
-      return (
-        `<li><div class="stream__card stream__card--static stream__card--${tone}" ${hid}>` +
-        `<div class="stream__summary">${head}<span class="stream__meta">${source}</span></div></div></li>`
-      );
-    })
+/** The one link every card ends on: this report, or this subject, on the Grid explorer. */
+const gridLink = (href: string, label: string): string =>
+  `<p class="stream__more"><a href="${esc(href)}">${esc(label)}<span aria-hidden="true"> &rarr;</span></a></p>`;
+
+/** The Grid page that holds everything of a layer, for a card that stands for several records. */
+const gridHome = (item: Extract<DigestItem, { type: 'rollup' }>): string =>
+  gridPage(item.of === 'power' ? 'power' : 'roads');
+
+function renderEventCard(f: HazardFeature, now: number): string {
+  const tone = toneFor(f);
+  const p = f.properties;
+  const ex = streamExtra(f, now);
+  // Authoritative "more info" page for THIS event (CAL FIRE incident, Genasys evac
+  // viewer, …) — from the feed's per-event provenance when present.
+  const moreUrl = p.provenance?.sourceUrl;
+  // An issued-but-not-yet-in-force alert is marked in the kicker, where it is visible
+  // with the card collapsed. `effective` carries the hazard's onset (Grid 2026-08-11);
+  // when the product publishes none we say so plainly rather than invent a start time.
+  const when =
+    pspsWhen(f) ??
+    (isScheduled(f, now)
+      ? (() => {
+          const at = formatPtDayTime(p.effective);
+          return at ? `Begins ${at}` : 'Not yet in effect';
+        })()
+      : null);
+  const head =
+    `<span class="stream__head"><span class="stream__kicker">` +
+    `<span class="stream__sev">${esc(severityLabel(String(p.severity)))}</span>` +
+    `<span class="stream__kind">${esc(p.kind)}</span>` +
+    (when ? `<span class="stream__when">${esc(when)}</span>` : '') +
+    `</span>` +
+    `<span class="stream__title">${esc(wildfireTitle(p.headline, p.wildfire))}</span>` +
+    (p.areaLabel ? `<span class="stream__where">${esc(p.areaLabel)}</span>` : '') +
+    `</span>`;
+  const source = p.source?.name ? `<span class="stream__source">${esc(p.source.name)}</span>` : '';
+  // data-hazard-id links the card to its map feature — hovering/focusing it highlights
+  // the feature on the /live map (wired in the page controller). Harmless for stream
+  // items with no map geometry (weather/fire-weather banners): the highlight no-ops.
+  // Every card opens: at the least it holds the link to this report on Grid, where its
+  // history, map and related reports are.
+  return (
+    `<li><details class="stream__card stream__card--${tone}" data-hazard-id="${esc(p.id)}">` +
+    `<summary class="stream__summary">${head}` +
+    `<span class="stream__meta">${source}<span class="stream__chevron" aria-hidden="true"></span></span></summary>` +
+    `<div class="stream__body">` +
+    (ex ? `<p class="stream__extra">${esc(ex)}</p>` : '') +
+    formatAlertBody(p.description) +
+    (moreUrl
+      ? `<p class="stream__more"><a href="${esc(moreUrl)}" target="_blank" rel="noopener external">More information<span aria-hidden="true"> &#8599;</span></a></p>`
+      : '') +
+    gridLink(gridReport(p.id), copy.grid.report) +
+    `</div></details></li>`
+  );
+}
+
+/** Several records of one kind as a single card: chain control on a highway, the outages. */
+function renderRollupCard(item: Extract<DigestItem, { type: 'rollup' }>): string {
+  const tone = toneForRank(item.rank);
+  const kind = item.of === 'power' ? 'Power outages' : 'Chain control';
+  const head =
+    `<span class="stream__head"><span class="stream__kicker">` +
+    `<span class="stream__sev">${esc(severityLabel(item.severity))}</span>` +
+    `<span class="stream__kind">${esc(kind)}</span>` +
+    `</span>` +
+    `<span class="stream__title">${esc(item.title)}</span>` +
+    (item.where ? `<span class="stream__where">${esc(item.where)}</span>` : '') +
+    `</span>`;
+  const source = item.source ? `<span class="stream__source">${esc(item.source)}</span>` : '';
+  const note =
+    item.of === 'power'
+      ? copy.grid.outagesNote
+      : `${item.count} ${item.count === 1 ? 'checkpoint reports' : 'checkpoints report'} a chain requirement. ${copy.grid.chainsNote}`;
+  return (
+    `<li><details class="stream__card stream__card--${tone}">` +
+    `<summary class="stream__summary">${head}` +
+    `<span class="stream__meta">${source}<span class="stream__chevron" aria-hidden="true"></span></span></summary>` +
+    `<div class="stream__body"><p class="stream__extra">${esc(note)}</p>` +
+    gridLink(gridHome(item), item.of === 'power' ? copy.grid.power : copy.grid.roads) +
+    `</div></details></li>`
+  );
+}
+
+/**
+ * What the list leaves out, said plainly, with the way to it. A count, never "and more":
+ * the reader should know how much they are not seeing (content-style-guide §10).
+ */
+function renderRest(digest: StreamDigest): string {
+  if (digest.rest <= 0) return '';
+  const what = digest.restMostly ? `, mostly ${digest.restMostly.toLowerCase()}s` : '';
+  const line = `${digest.rest} more ${digest.rest === 1 ? 'report' : 'reports'}${what}.`;
+  return `<p class="stream__rest">${esc(line)} <a href="${esc(gridPage('events'))}">${esc(copy.grid.all)}<span aria-hidden="true"> &rarr;</span></a></p>`;
+}
+
+function renderStream(digest: StreamDigest, now: number): string {
+  if (digest.items.length === 0)
+    return `<p class="stream__empty">${esc(copy.streamEmpty)}</p>${renderRest(digest)}`;
+  const lis = digest.items
+    .map((item) =>
+      item.type === 'event' ? renderEventCard(item.feature, now) : renderRollupCard(item)
+    )
     .join('');
-  return `<ul class="stream">${lis}</ul>`;
+  return `<ul class="stream">${lis}</ul>${renderRest(digest)}`;
 }
 
 // ---- road conditions (was RoadConditions) ----
@@ -586,7 +633,7 @@ function weatherAlertTile(s: SituationSummary): LiveView['tiles']['weatherAlerts
  */
 export function renderHeadline(
   haz: HazardsSnapshot,
-  stream: HazardFeature[],
+  digest: StreamDigest,
   tone: StatusTone
 ): string {
   const lead = (t: string) =>
@@ -595,7 +642,9 @@ export function renderHeadline(
   const unreadable = STREAM_LAYERS.some(
     (l) => (haz.layers?.[l]?.metadata?.sourceStatus ?? 'UNAVAILABLE') === 'UNAVAILABLE'
   );
-  const n = stream.length;
+  // The count is of the alerts listed, not of every feed record: eleven chain-control
+  // checkpoints are one alert to a reader, and planned road work is not an alert at all.
+  const n = digest.items.length;
   const alerts = `${n} ${n === 1 ? 'alert' : 'alerts'}`;
   if (unreadable) {
     return n
@@ -648,7 +697,7 @@ export function buildView(
   now: number = Date.now()
 ): LiveView {
   const summary = deriveSituationSummary(haz, now);
-  const stream = deriveStream(haz);
+  const digest = deriveDigest(haz);
   const fire = FIRE[summary.fireWeather] ?? FIRE.UNKNOWN;
 
   const status: LiveView['status'] =
@@ -690,7 +739,7 @@ export function buildView(
 
   return {
     status,
-    headline: renderHeadline(haz, stream, status.tone),
+    headline: renderHeadline(haz, digest, status.tone),
     syncedLabel: `Synced ${formatPtTime(summary.syncedAt)}`,
     tiles,
     mapData: buildMapData(haz),
@@ -698,7 +747,7 @@ export function buildView(
       figures: renderFigures(tiles),
       weather: renderWeather(grid.conditions),
       burn: renderBurn(grid.burn),
-      stream: renderStream(stream, now),
+      stream: renderStream(digest, now),
       roads: renderRoads(layerFeatures(haz, 'road_segment'), layerFeatures(haz, 'chain_control')),
       scanners: renderScanners(haz.scanners ?? []),
     },
