@@ -1,7 +1,10 @@
 # Contact-form backend — spec & handoff
 
-**Status: live.** The AWS side is provisioned separately in us-east-1 and the form posts to its Function URL (`site.contactFormEndpoint` in
-`src/config/site.ts`). This document remains the contract both sides implement.
+**Status: live.** The AWS side is provisioned separately, in the organization's
+infrastructure repository (us-west-2, with a DKIM-signed domain identity rather than
+the single-address identity sketched below), and the form posts to its Function URL
+(`site.contactFormEndpoint` in `src/config/site.ts`). This document remains the
+contract both sides implement.
 
 ## Goal
 
