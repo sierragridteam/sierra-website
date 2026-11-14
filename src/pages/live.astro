@@ -7,6 +7,7 @@ import ReportSectionHead from '@components/ReportSectionHead.astro';
 import { live as copy } from '@config/content';
 import { externalLinks, site } from '@config/site';
 import { BASEMAP_ATTRIBUTION } from '@lib/basemap';
+import { gridPage } from '@lib/grid';
 import '../styles/map.css';
 import '../styles/live.css';
 
@@ -194,7 +195,12 @@ const schema = {
         id="roads-title"
         title={copy.roadsHeading}
         intro={copy.roadsIntro}
-      />
+      >
+        <a slot="controls" class="report-grid-link" href={gridPage('roads')}>
+          {copy.grid.roads}
+          <span aria-hidden="true"> &rarr;</span>
+        </a>
+      </ReportSectionHead>
       <div class="live-sec-body" data-live-roads></div>
     </Section>
 

@@ -94,6 +94,10 @@ export const mesh = {
     'more recently.',
   rosterHeading: 'Repeaters',
   rosterIntro: 'Every repeater on the corridor, with its last check-in and battery.',
+  /** Under the table: where the rest is. Names the destination (the Grid explorer). */
+  gridNote:
+    'Each repeater’s readings over time, the links between them and the relay’s gateways are on Grid.',
+  gridLink: 'The mesh on Grid',
   historyHeading: 'Battery charge',
   /** Completed in mesh-history.ts with the count of repeaters that report telemetry. */
   historyIntroPrefix: 'Last 24 hours, for the',
@@ -180,8 +184,21 @@ export const live = {
   autoRefresh: 'Auto-refreshes every 90 seconds',
   mapHeading: 'Live hazard map',
   mapIntro: 'Hazards the official feeds have mapped. Select one for its detail.',
+  /**
+   * Links to the Grid explorer (grid.sierragridteam.org). This page lists the few alerts a
+   * resident needs now; every card and section ends on one of these for the rest. Name the
+   * destination, never "click here".
+   */
+  grid: {
+    report: 'Full report on Grid',
+    roads: 'Road conditions on Grid',
+    power: 'Outages on Grid',
+    all: 'See every report on Grid',
+    chainsNote: 'Where it starts and how far it runs is on the roads page.',
+    outagesNote: 'Each outage, its area and PG&E’s restoration estimate are on the power page.',
+  },
   streamHeading: 'Active alerts',
-  streamIntro: 'Most urgent first, from the feeds we watch.',
+  streamIntro: 'Most urgent first, from the feeds we watch. The full record is on Grid.',
   streamEmpty: 'No active hazards in the service area right now. The map and feeds below are live.',
   conditionsHeading: 'Current conditions',
   /**

@@ -6,7 +6,9 @@
  */
 import { test, expect } from 'bun:test';
 import {
+  deriveDigest,
   deriveStream,
+  DIGEST_MAX,
   deriveSituationSummary,
   deriveActiveAlertsTile,
   pspsBannerEvent,
@@ -302,4 +304,136 @@ test('the homepage tile never reads "None" under a PSPS banner, and unknown powe
   expect(deriveActiveAlertsTile(deriveSituationSummary(watch)).value).toBe('None');
   const down = snap({ ...quiet, power: fc([], 'UNAVAILABLE') });
   expect(deriveActiveAlertsTile(deriveSituationSummary(down)).value).toBe('Unknown');
+});
+
+// ---- the /live digest ----
+
+const chain = (id: string, place: string, highway = 'Highway 4', level = 'R2', extra = {}) =>
+  point('chain_control', 2, -120, 38.4, {
+    id: `cc:${id}`,
+    kind: 'Chain control',
+    category: level.toLowerCase(),
+    headline: `${highway} chain control ${level}`,
+    areaLabel: place,
+    chainControl: { level, highway, direction: 'Eastbound' },
+    ...extra,
+  });
+const outageOf = (id: string, customers: number, rank = 2) =>
+  point('power', rank, -120, 38.2, {
+    id: `pge:${id}`,
+    kind: 'Power outage',
+    category: 'unplanned',
+    headline: `Power outage — ${customers} customers`,
+    power: { customersAffected: customers },
+  });
+const work = (id: string) =>
+  point('road_incident', 2, -120, 38.1, {
+    id: `caltrans:${id}`,
+    kind: 'Road incident',
+    headline: 'Lane closure',
+  });
+
+test('the digest folds chain-control checkpoints per highway and ordinary outages into one line each', () => {
+  const d = deriveDigest(
+    snap({
+      weather_alert: fc([
+        point('weather_alert', 3, -120, 38, {
+          id: 'wx:1',
+          kind: 'Weather alert',
+          headline: 'Winter Storm Warning',
+        }),
+      ]),
+      chain_control: fc([
+        chain('a', 'POISON SPRINGS'),
+        chain('b', 'TAMARACK'),
+        chain('c', 'TAMARACK'),
+        chain('d', 'PEDDLER VISTA', 'Highway 88'),
+      ]),
+      power: fc([outageOf('1', 449), outageOf('2', 3), outageOf('3', 1, 0)]),
+      road_incident: fc([work('1'), work('2'), work('3')]),
+    })
+  );
+  const titles = d.items.map((i) => (i.type === 'event' ? i.feature.properties.headline : i.title));
+  expect(titles).toEqual([
+    'Winter Storm Warning',
+    // A lone checkpoint on its highway keeps its own card.
+    'Highway 88 chain control R2',
+    'Chain control R2 on Highway 4',
+    '452 customers without power in 2 outages',
+  ]);
+  const hwy4 = d.items.find((i) => i.type === 'rollup' && i.of === 'chain_control');
+  expect(hwy4).toMatchObject({ count: 3, where: 'Poison Springs · Tamarack' });
+  // Planned road work is not listed; it is counted, and named as what the rest mostly is.
+  expect(d.shown).toBe(1 + 1 + 3 + 2);
+  expect(d.rest).toBe(3);
+  expect(d.restMostly).toBe('Road incident');
+});
+
+test('a closure point, a PSPS and a severe road report are never folded or left out', () => {
+  const d = deriveDigest(
+    snap({
+      chain_control: fc([
+        chain('gate', 'EBBETTS PASS', 'Highway 4', '', {
+          category: 'closed',
+          headline: 'Highway 4 road closed',
+        }),
+        chain('a', 'TAMARACK'),
+        chain('b', 'BEAR VALLEY'),
+      ]),
+      power: fc([
+        outageOf('1', 5),
+        outageOf('2', 9),
+        point('power', 3, -120, 38, {
+          id: 'psps:1',
+          kind: 'Public Safety Power Shutoff',
+          category: 'psps',
+          headline: 'PSPS Warning',
+        }),
+      ]),
+      road_incident: fc([
+        point('road_incident', 3, -120, 38, {
+          id: 'chp:1',
+          kind: 'Road incident',
+          headline: 'Highway 4 closed by a crash',
+        }),
+        work('1'),
+      ]),
+    })
+  );
+  const events = d.items
+    .filter((i) => i.type === 'event')
+    .map((i) => (i.type === 'event' ? i.feature.properties.headline : ''));
+  expect(events).toEqual(
+    expect.arrayContaining(['Highway 4 road closed', 'PSPS Warning', 'Highway 4 closed by a crash'])
+  );
+  expect(d.items.filter((i) => i.type === 'rollup')).toHaveLength(2);
+  expect(d.rest).toBe(1);
+});
+
+test('the digest stops at its ceiling, most urgent first, and counts what it dropped', () => {
+  const zones = Array.from({ length: 9 }, (_, i) =>
+    point('evacuation', i < 2 ? 4 : 3, -120, 38 + i / 100, {
+      id: `evac:${i}`,
+      kind: 'Evacuation',
+      headline: `Zone ${i}`,
+    })
+  );
+  const d = deriveDigest(snap({ evacuation: fc(zones), road_incident: fc([work('1')]) }));
+  expect(d.items).toHaveLength(DIGEST_MAX);
+  expect(d.items.slice(0, 2).every((i) => i.rank === 4)).toBe(true);
+  expect(d.rest).toBe(9 - DIGEST_MAX + 1);
+  // The overflow is mostly evacuations, and the line must say so rather than "road incidents".
+  expect(d.restMostly).toBe('Evacuation');
+});
+
+test('a quiet feed is an empty digest, and one with only road work says how much it left out', () => {
+  expect(deriveDigest(snap({ wildfire: fc([]) }))).toEqual({
+    items: [],
+    shown: 0,
+    rest: 0,
+    restMostly: null,
+  });
+  const d = deriveDigest(snap({ road_incident: fc([work('1'), work('2')]) }));
+  expect(d.items).toEqual([]);
+  expect(d.rest).toBe(2);
 });

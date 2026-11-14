@@ -146,9 +146,19 @@ watch.`; an unreadable feed says so instead of counting), the lede, the status p
   a click opens the shared "blended label" card (`map-card.ts`); SSR fallback.
 - **02 Active alerts** beside it, then **03 Road conditions**, **04 Dispatch audio**, **05
   Official sources** — numbered section heads (`ReportSectionHead`).
-- **The alert stream** (`renderStream` in `src/lib/live-view.ts`) — every relevant hazard,
-  most-urgent first (`deriveStream` in `src/lib/hazards.ts`). The region-wide `road_incident`
-  layer is filtered to the service area (`isInServiceArea`), so out-of-area incidents never show.
+- **The alert list** (`renderStream` in `src/lib/live-view.ts`) is a **digest**, not the whole
+  feed (`deriveDigest` in `src/lib/hazards.ts`): at most six cards, most urgent first.
+  Evacuations, wildfires, weather alerts, a PSPS, a closure point and any SEVERE road report
+  each keep a card. Chain-control checkpoints fold into one line per highway and ordinary
+  outages into one line (from two up; a lone one keeps its card). Planned road work and minor
+  incidents are left to Grid. Nothing is dropped silently: a line under the list counts the
+  rest ("21 more reports, mostly road incidents") and links to it. The h1 counts the cards.
+- **Grid is the full record.** /live and /mesh summarize; the explorer at
+  grid.sierragridteam.org holds every report, its history and the per-repeater detail. Each
+  alert card ends on "Full report on Grid" (that report by id, `gridReport`), a folded card
+  and the Road conditions head link to the matching Grid page (`gridPage`), and /mesh has one
+  link under the repeater table. One quiet text link per place; new detail goes to Grid, not
+  onto these pages.
 
 > `/live` is **client-rendered live**: the browser re-fetches the feeds and re-renders these
 > regions from the shared `src/lib/live-view.ts` functions (same code as the SSR fallback),

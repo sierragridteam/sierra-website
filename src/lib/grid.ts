@@ -28,6 +28,19 @@ export const GRID_API_BASE =
   import.meta.env?.PUBLIC_GRID_API_BASE ??
   (import.meta.env?.DEV ? '/grid-api' : 'https://data.sierragridteam.org/api/v1');
 
+/**
+ * The Grid explorer (grid.sierragridteam.org): the full record behind what this site
+ * summarizes. /live and /mesh show the few things a resident needs now and link there for
+ * the rest; they never try to hold it all. `PUBLIC_GRID_SITE` overrides it for a preview.
+ */
+export const GRID_SITE = import.meta.env?.PUBLIC_GRID_SITE ?? 'https://grid.sierragridteam.org';
+export type GridPage = '' | 'events' | 'roads' | 'power' | 'weather' | 'wildfires' | 'mesh';
+/** A page on the explorer. */
+export const gridPage = (page: GridPage): string => `${GRID_SITE}/${page ? `${page}/` : ''}`;
+/** One report on the explorer, by its event id (the id every hazard feature carries). */
+export const gridReport = (id: string): string =>
+  `${GRID_SITE}/events/?record=${encodeURIComponent(id)}`;
+
 // ---- Types (mirror the real API responses captured 2026-07-09) ----
 
 /** One monitored town in the `/conditions` band. */

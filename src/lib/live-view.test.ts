@@ -419,3 +419,77 @@ test('an expanded alert card unwraps NWS description; the collapsed summary is u
   expect(html).not.toContain('\n');
   expect(html).toContain('<span class="stream__title">Winter Storm Watch</span>');
 });
+
+// ---- the Grid explorer links ----
+
+test('every card ends on its report on Grid, a folded card on its Grid page, and the rest is counted and linked', () => {
+  const feature = (layer: string, id: string, rank: number, extra = {}) =>
+    ({
+      type: 'Feature',
+      geometry: null,
+      properties: {
+        id,
+        layer,
+        kind: layer,
+        severity: 'MODERATE',
+        severityRank: rank,
+        headline: `h ${id}`,
+        source: { id: 'x', name: 'X' },
+        ...extra,
+      },
+    }) as HazardFeature;
+  const view = buildView(
+    snap({
+      weather_alert: fc([feature('weather_alert', 'wx:urn:oid:1.2', 3)]),
+      chain_control: fc([
+        feature('chain_control', 'cc:a', 2, {
+          areaLabel: 'TAMARACK',
+          chainControl: { level: 'R2', highway: 'Highway 4' },
+        }),
+        feature('chain_control', 'cc:b', 2, {
+          areaLabel: 'BEAR VALLEY',
+          chainControl: { level: 'R2', highway: 'Highway 4' },
+        }),
+      ]),
+      road_incident: fc([
+        feature('road_incident', 'caltrans:1', 2, { kind: 'Road incident' }),
+        feature('road_incident', 'caltrans:2', 2, { kind: 'Road incident' }),
+      ]),
+    }),
+    emptyGrid,
+    NOON_WED
+  );
+  const html = view.html.stream;
+  expect(html).toContain(
+    'href="https://grid.sierragridteam.org/events/?record=wx%3Aurn%3Aoid%3A1.2"'
+  );
+  expect(html).toContain('Full report on Grid');
+  expect(html).toContain('Chain control R2 on Highway 4');
+  expect(html).toContain('href="https://grid.sierragridteam.org/roads/"');
+  expect(html).toContain('2 more reports, mostly road incidents.');
+  expect(html).toContain('href="https://grid.sierragridteam.org/events/"');
+  // The headline counts what is listed (the warning and the chain line), not every record.
+  expect(view.headline).toContain('2 alerts');
+  // Road work alone is not an alert, but it is not hidden either.
+  const readable = Object.fromEntries(
+    [
+      'evacuation',
+      'wildfire',
+      'weather_alert',
+      'fire_weather',
+      'chain_control',
+      'earthquake',
+      'power',
+    ].map((l) => [l, fc([])])
+  );
+  const quiet = buildView(
+    snap({
+      ...readable,
+      road_incident: fc([feature('road_incident', 'caltrans:1', 2, { kind: 'Road incident' })]),
+    }),
+    emptyGrid,
+    NOON_WED
+  );
+  expect(quiet.headline).toContain('No active alerts');
+  expect(quiet.html.stream).toContain('1 more report, mostly road incidents.');
+});

@@ -12,6 +12,7 @@ import Section from '@components/Section.astro';
 import PageHead from '@components/PageHead.astro';
 import MeshMap from './MeshMap.astro';
 import ReportSectionHead from '@components/ReportSectionHead.astro';
+import { gridPage } from '@lib/grid';
 import { mesh } from '@config/content';
 ---
 
@@ -54,6 +55,13 @@ import { mesh } from '@config/content';
       <div slot="controls" data-mesh-sort></div>
     </ReportSectionHead>
     <div class="mesh-roster" data-mesh-roster></div>
+    <p class="mesh-grid-more">
+      {mesh.gridNote}{' '}
+      <a class="mesh-about-link" href={gridPage('mesh')}>
+        {mesh.gridLink}
+        <span aria-hidden="true"> &rarr;</span>
+      </a>
+    </p>
   </section>
 
   <section class="mesh-sec" aria-labelledby="mesh-history-title">
