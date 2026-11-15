@@ -86,7 +86,10 @@ jobs:
         if: steps.pr.outputs.skip == 'false'
         run: |
           pnpm install --frozen-lockfile
-          pnpm add --global @anthropic-ai/claude-code@2.1.319
+          # pnpm skips a package's install script unless it is allowed, and the CLI's
+          # script is what fetches its native binary — without the flag `claude` exits
+          # with "native binary not installed".
+          pnpm add --global --allow-build=@anthropic-ai/claude-code @anthropic-ai/claude-code@2.1.319
           mkdir -p /tmp/desk-editor /tmp/news-desk /tmp/fire-desk
 
       # Written unconditionally (cheap); only the fire editor/critic actually load it.
