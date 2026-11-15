@@ -10,6 +10,10 @@ import { site, nav, footerNav, externalLinks, donate } from '@config/site';
 
 const year = site.foundingYear;
 const reg = site.registration;
+// The "Site" list: primary nav, the footer-only pages, then Donate. On wide screens it
+// runs in two columns, read down then across, so the rows per column come from its length.
+const siteLinks = [...nav, ...footerNav, donate];
+const siteRows = Math.ceil(siteLinks.length / 2);
 const registrationLine = `Registered ${reg.jurisdiction} ${reg.type} · Entity No. ${reg.entityNumber}`;
 ---
 
@@ -27,15 +31,12 @@ const registrationLine = `Registered ${reg.jurisdiction} ${reg.type} · Entity N
 
       <nav class="footer__nav" aria-label="Footer">
         <p class="footer__navhead">Site</p>
-        <ul>
-          {[...nav, ...footerNav].map((item) => (
+        <ul class="footer__sitelist" style={`--site-rows: ${siteRows}`}>
+          {siteLinks.map((item) => (
             <li>
               <a href={item.href}>{item.label}</a>
             </li>
           ))}
-          <li>
-            <a href={donate.href}>{donate.label}</a>
-          </li>
         </ul>
       </nav>
 
@@ -84,7 +85,7 @@ const registrationLine = `Registered ${reg.jurisdiction} ${reg.type} · Entity N
 
   .footer__top {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr;
+    grid-template-columns: 1.4fr 1.2fr 1fr;
     gap: var(--space-8);
   }
 
@@ -133,6 +134,17 @@ const registrationLine = `Registered ${reg.jurisdiction} ${reg.type} · Entity N
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
+  }
+
+  /* Wide screens: the Site list in two columns, filled down then across. */
+  @media (min-width: 901px) {
+    .footer__nav .footer__sitelist {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(var(--site-rows), auto);
+      column-gap: var(--space-7);
+      justify-content: start;
+    }
   }
 
   .footer__nav a {
