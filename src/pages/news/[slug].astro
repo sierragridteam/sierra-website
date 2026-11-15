@@ -27,7 +27,7 @@ const path = `/news/${post.id}`;
 const postSchema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
-  headline: post.data.title,
+  headline: post.data.headline ?? post.data.title,
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString().slice(0, 10),
   ...(post.data.updatedDate
@@ -66,7 +66,7 @@ const postSchema = {
         "Read the full situation →"). Harmless on normal posts. */}
       <article class="post" id="timeline">
         <h1 id="post-title" class="post__title">
-          {post.data.title}
+          {post.data.headline ?? post.data.title}
         </h1>
         <Prose class="post__body">
           <Content />

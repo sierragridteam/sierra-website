@@ -33,6 +33,7 @@ const facts = [
     label: labels.status,
     value: `Registered ${reg.jurisdiction} ${reg.type} · Entity No. ${reg.entityNumber}`,
   },
+  { label: labels.taxStatus, value: `${site.taxStatus} tax-exempt nonprofit` },
   { label: labels.founded, value: String(site.foundingYear) },
   { label: labels.mail, value: site.address.line },
   { label: labels.serviceArea, value: press.facts.serviceArea },
@@ -60,6 +61,9 @@ const pageSchema = {
     <div class="press-grid">
       <div class="press-aside">
         <PressBlock heading={press.contact.heading}>
+          <p>
+            {press.contact.name}, {press.contact.title}
+          </p>
           <p>
             {press.contact.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
           </p>

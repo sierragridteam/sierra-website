@@ -95,10 +95,24 @@ test('/press lists organizational releases and announcements', async ({ page }) 
   await page.goto('/press', { waitUntil: 'domcontentloaded' });
   const releases = page.locator('section[aria-labelledby="releases-title"]');
   // Organizational news is listed; an ordinary desk post is not.
-  await expect(releases).toContainText('S.I.E.R.R.A awarded Calaveras foundation grant');
+  await expect(releases).toContainText('S.I.E.R.R.A and Utica partner in Murphys');
+  await expect(releases).toContainText('S.I.E.R.R.A receives critical Calaveras grant');
   await expect(releases).toContainText('S.I.E.R.R.A Applies for Calaveras Grant');
+  // The desk's write-up of the grant opts out (press: false): the release itself is listed.
+  await expect(releases).not.toContainText('S.I.E.R.R.A awarded Calaveras foundation grant');
   await expect(releases).not.toContainText('How to read a Red Flag Warning');
   await expect(page.locator('footer a[href="/press"]')).toHaveCount(1);
+});
+
+test('a press release shows its full headline and the standing close', async ({ page }) => {
+  await page.goto('/news/2026-11-15-utica-repeater-partnership', { waitUntil: 'domcontentloaded' });
+  // The h1 is the headline as issued; the short `title` carries the page title.
+  await expect(page.locator('h1')).toContainText(/Utica Water and Power Authority Partner/);
+  expect((await page.title()).length).toBeLessThanOrEqual(60);
+  const foot = page.locator('.press-foot');
+  await expect(foot).toContainText('About S.I.E.R.R.A');
+  await expect(foot).toContainText('Media Contact');
+  await expect(foot.locator('a[href="/press"]')).toHaveCount(1);
 });
 
 test('404 page returns on-brand not-found content', async ({ page }) => {

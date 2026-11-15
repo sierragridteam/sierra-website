@@ -130,9 +130,14 @@ published as issued: a member adds it as an ordinary PR — one file in `src/con
 tagged `Press Release`, no `author:` — and the post page appends the standing About and
 media-contact block itself (`PressFoot`; copy in `content.ts` `press`), so neither belongs
 in the body. It is listed on `/press` with the `Announcement` posts (`src/lib/press.ts`).
-The honesty rules still bind it — above all §10.4, no claim about what the network covers
-or how it performs — and the reviewer is the check. A human-added release does count toward
-the News Desk's 3-day cadence guard, like any non-fire post.
+The brief does not govern it: a release is the author's signed writing, so the voice rules
+and §10 (including §10.4, claims about coverage or performance) are not applied and no
+material edit is made — only the mechanical fixes listed under "Press" in `CLAUDE.md`
+(canonical spellings and typos, a short `title:` beside the full `headline:`, the header and
+the release's own About paragraph removed). When a release covers news the desk already
+wrote up, set `press: false` on the desk post so `/press` lists the release itself. A
+human-added release does count toward the News Desk's 3-day cadence guard, like any
+non-fire post.
 
 **Reopening a declined subject** takes an issue, too. The desk won't return to a subject a
 member declined in the last year on its own; a `desk:topic` or `desk:news` issue about it is

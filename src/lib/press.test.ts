@@ -21,4 +21,9 @@ describe('press', () => {
     expect(isPressItem({ tag: 'Explainer', press: false })).toBe(false);
     expect(isPressItem({})).toBe(false);
   });
+
+  test('press: false takes a press-tagged post off /press', () => {
+    expect(isPressItem({ tag: 'Announcement', press: false })).toBe(false);
+    expect(isPressItem({ tag: 'Press Release', press: false })).toBe(false);
+  });
 });

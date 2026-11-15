@@ -38,8 +38,8 @@ const orgSchema = {
   logo: new URL('/brand/sierra-logo-full.png', site.url).href,
   ...(site.emailIsPlaceholder ? {} : { email: site.email }),
   foundingDate: String(site.foundingYear),
-  // Public CA Secretary of State registration (state entity, NOT a 501(c)(3) — see the
-  // note on site.registration). A structured, verifiable identifier, not a tax claim.
+  // Public CA Secretary of State registration (the state entity — see the note on
+  // site.registration). A structured, verifiable identifier, not a tax claim.
   identifier: {
     '@type': 'PropertyValue',
     name: `${site.registration.jurisdiction} Secretary of State entity number`,

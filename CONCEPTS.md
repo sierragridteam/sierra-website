@@ -94,8 +94,10 @@ commissioned post; a finished signed piece makes a submission.
 
 The organization's own release, published as issued: a post tagged `Press Release`, added
 by a member in an ordinary pull request and never drafted, rewritten, or retagged by a
-desk. Its page closes with the standing About and media-contact block, and it is listed on
-the press page.
+desk. It is the author's writing: no material edit is made and neither the Brief nor the
+site's copy rules are applied to it — only mechanical fixes (canonical spellings, typos, a
+short title beside the full headline). Its page closes with the standing About and
+media-contact block, and it is listed on the press page.
 
 _Distinguished from:_ a Commissioned post, which is the desk's write-up of organizational
 news in the desk's voice. Both are listed on the press page; only the release is the

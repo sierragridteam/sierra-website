@@ -480,8 +480,9 @@ export const about = {
  * /press — the press page: what the alliance has announced, the wording to describe it,
  * the plain facts, logos, and a contact. `about` and `contact` here also close every post
  * tagged `Press Release` (PressFoot), so the standing wording lives in one place and never
- * drifts between releases. Nothing here may claim what the network covers or how it
- * performs (style guide §3) — a reporter will quote it.
+ * drifts between releases. This standing wording is the SITE's copy, so it follows the
+ * style guide (no claim about what the network covers or how it performs). A release's
+ * own body is different: it is the author's, published as issued — see CLAUDE.md "Press".
  */
 export const press = {
   kicker: 'Press & Media',
@@ -501,7 +502,8 @@ export const press = {
     boilerplate: [
       about.intro,
       'The alliance was established in 2026 and is based in Murphys, California. It is a ' +
-        'registered California nonprofit public benefit corporation, run entirely by volunteers.',
+        '501(c)(3) nonprofit, registered in California as a nonprofit public benefit ' +
+        'corporation, and run entirely by volunteers.',
     ],
     nameNote:
       'Write the name with periods — S.I.E.R.R.A — and give the full name on first reference.',
@@ -512,6 +514,7 @@ export const press = {
       name: 'Name',
       legalName: 'Full Name',
       status: 'Status',
+      taxStatus: 'Tax Status',
       founded: 'Established',
       mail: 'Mail',
       serviceArea: 'Service Area',
@@ -521,6 +524,9 @@ export const press = {
   },
   contact: {
     heading: 'Media Contact',
+    /** The contact the releases themselves name. */
+    name: 'Jay Goldberg',
+    title: 'President and CEO',
     body: 'Send press questions and interview requests to',
     note:
       'A volunteer reads every message. S.I.E.R.R.A has no staffed press office, so allow ' +
@@ -605,9 +611,8 @@ export const donate = {
       desc: 'Radios, solar gear, antennas, and ridge-top tower space help as much as cash. Reach out via the contact page.',
     },
   ],
-  // TODO(pre-launch): once 501(c)(3) status is confirmed, replace with the official
-  // language + EIN. Until then this stays honest: no deductibility is claimed.
-  taxNote:
-    'S.I.E.R.R.A’s tax-exempt status and the deductibility of gifts are being finalized. ' +
-    'Official confirmation and receipt details will be posted here once complete.',
+  // States the status only (site.taxStatus). It makes no promise about the deductibility of
+  // a particular gift or about receipts, and gives no EIN — add those when the board
+  // supplies the wording; do not write them from general knowledge.
+  taxNote: 'S.I.E.R.R.A is a 501(c)(3) tax-exempt nonprofit organization.',
 } as const;

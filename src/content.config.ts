@@ -33,10 +33,14 @@ const blog = defineCollection({
      *  published as issued and added by a member, never drafted by a desk — its page closes
      *  with the standing About + media-contact block, and it is listed on /press). */
     tag: z.string().optional(),
-    /** List this post on /press even though its tag is not a press tag — for organizational
-     *  news filed another way (a founder's signed submission). `Press Release` and
-     *  `Announcement` posts are listed without it. See src/lib/press.ts. */
+    /** Overrides whether the post is listed on /press. `Press Release` and `Announcement`
+     *  posts are listed by default; `true` adds organizational news filed another way (a
+     *  founder's signed submission), `false` removes a desk write-up that the release itself
+     *  now covers. See src/lib/press.ts. */
     press: z.boolean().optional(),
+    /** A press release's full headline, exactly as issued — shown as the h1 on its own page.
+     *  `title` stays the short form (≤ ~46 chars) used for the page title, lists and RSS. */
+    headline: z.string().optional(),
     /** Byline. Omit for organizational posts; the automated desk sets its own. Also gates
      *  the standing colophon footnote (shown once per page for automated-desk posts). */
     author: z.string().optional(),

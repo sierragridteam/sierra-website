@@ -70,6 +70,10 @@ they cover.
    code). The full legal name must appear at least once per page (the footer does
    this automatically).
 
+**One standing exception to the copy rules:** a signed **press release** is the author's
+writing and is published as issued — see "Press" under Project facts. Rules 1–6 (design,
+accessibility) and the live-data half of rule 7 still apply to the page around it.
+
 ## How to build pages
 
 Pages (`src/pages/*.astro`) are **assembled from existing components only**. Don't
@@ -305,14 +309,32 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   author's copy, but canonical spellings, typos, hard specs, and the §10 honesty rules are
   always fixed. See the runbook's "Proposing topics".
 - **Press** (`/press`) is footer-linked, not in the header nav (`footerNav` in `site.ts`; also
-  pointed to from `/news`, `/about` and `/contact`). It lists the organization's news — posts
-  tagged `Press Release` or `Announcement`, plus any post with `press: true` in its
-  frontmatter (`src/lib/press.ts`) — beside the media contact, facts and logos. A **press
-  release** is an ordinary post tagged `Press Release`, added by a member's PR and published
-  as issued; the desks never draft one. Its page closes with the standing About + media
-  contact (`PressFoot`), so never write a boilerplate or contact block into a release body.
-  That wording lives once in `content.ts` (`press`) and may not claim what the network
-  covers or how it performs. Release headlines follow the same ~46-character limit.
+  pointed to from `/news`, `/about` and `/contact`). It lists the organization's news beside
+  the media contact, facts and logos: posts tagged `Press Release` or `Announcement` by
+  default, with a post's own `press: true | false` overriding either way (`src/lib/press.ts`)
+  — `true` for organizational news filed under another tag, `false` for a desk write-up the
+  release itself now covers.
+- **A press release is the author's writing, published as issued.** It is an ordinary post
+  tagged `Press Release`, added by a member's PR; the desks never draft, rewrite or retag
+  one. **Make no material edits**, and do not hold it to the site's copy rules: the style
+  guide's voice, the news brief, and the ban on claims about what the network covers or how
+  it performs govern copy the _site_ writes, not a signed release. That includes a release
+  that disagrees with another page (a title, a description of an event) — leave both as they
+  are and tell the member, don't reconcile them. Only these **mechanical** fixes are made,
+  without asking:
+  - canonical spellings — `S.I.E.R.R.A` (no trailing period), the full legal name with its
+    `&`, `501(c)(3)`, agency and place names — and plain typos (a misspelt word, a doubled
+    space, an obviously wrong year in the dateline);
+  - the release's full headline goes in `headline:` (shown as the page's h1, as issued) and a
+    short form of it in `title:` (≤ ~46 chars, for the page title, lists and RSS);
+  - the "FOR IMMEDIATE RELEASE" line, the media-contact header and the release's own "About
+    S.I.E.R.R.A" paragraph come out, because the page appends the standing versions
+    (`PressFoot`; wording in `content.ts` `press`). A partner's "About" paragraph stays.
+
+  List every fix for the member in the PR. `description:` is ours to write: one plain
+  sentence of what the release announces, with no claim of its own. The standing About and
+  contact wording is site copy and does follow the style guide.
+
 - **Fire bulletins** are the one sanctioned live-incident post. Conventions: exactly
   **one open bulletin** at a time, tagged `Fire Update` (retagged `Retrospective` on
   close); it has a `summary` (the feed shows only that current-status head + a "Read the

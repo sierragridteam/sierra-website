@@ -19,6 +19,9 @@ import { site } from '@config/site';
   </PressBlock>
   <PressBlock heading={press.contact.heading}>
     <p>
+      {press.contact.name}, {press.contact.title}
+    </p>
+    <p>
       {press.contact.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
     </p>
   </PressBlock>

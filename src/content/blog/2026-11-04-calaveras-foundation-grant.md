@@ -3,6 +3,7 @@ title: S.I.E.R.R.A awarded Calaveras foundation grant
 description: The Calaveras Community Foundation has awarded S.I.E.R.R.A a grant toward running and expanding its solar-powered MeshCore repeaters along the Highway 4 corridor and teaching residents to use them.
 pubDate: 2026-11-04
 tag: Announcement
+press: false
 author: Signal Desk
 ---
 

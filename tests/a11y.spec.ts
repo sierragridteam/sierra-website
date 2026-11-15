@@ -11,6 +11,7 @@ const pages = [
   { name: 'news', path: '/news' },
   { name: 'news-archive', path: '/news/archive' },
   { name: 'news-post', path: '/news/2026-07-03-what-this-blog-is-for' },
+  { name: 'news-release', path: '/news/2026-11-15-utica-repeater-partnership' },
   { name: 'live', path: '/live' },
   { name: 'contact', path: '/contact' },
   { name: 'contact-thanks', path: '/contact/thanks' },
