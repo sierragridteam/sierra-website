@@ -83,7 +83,7 @@ const postSchema = {
         {isPressRelease(post.data) && <PressFoot />}
         <PostNotes desk={post.data.author === colophon.deskName} />
         <div class="post__foot">
-          <Button variant="secondary" href="/news" arrow>
+          <Button variant="secondary" href="/news/archive" arrow>
             {news.archiveLink}
           </Button>
         </div>
