@@ -16,11 +16,12 @@
  * it competing with the service-area band immediately below.
  *
  * Logos only, so a partner listed without one (see partners.ts) does not appear here. Nor
- * does one marked `supportersBand: false`: under this heading and the Donate link a logo
- * reads as a backer, which not every partner is.
+ * does one marked `supportersBand: false`: under this heading a logo reads as a backer,
+ * which not every partner is.
  *
- * Each logo links to /partners (our write-up of the partnership), not to the organization's
- * own site; the link out lives on the /partners card.
+ * Each logo, and the link under them, goes to /partners (our write-up of the partnership),
+ * not to the organization's own site and not straight to /donate: /partners carries both
+ * the links out and the link to /donate.
  *
  * Renders nothing when there are no supporters — an empty "Supporters" heading would be a
  * worse look than no band at all.
@@ -48,7 +49,7 @@ const list = partners.filter(
       <ul class="supporters__list">
         {list.map((s) => (
           <li class="supporters__item">
-            <a class="supporters__link" href={copy.logoHref} title={s.name}>
+            <a class="supporters__link" href={copy.href} title={s.name}>
               <Image
                 src={s.logo}
                 alt={s.logoAlt}
@@ -63,7 +64,7 @@ const list = partners.filter(
       </ul>
 
       <p class="supporters__cta">
-        <a class="supporters__cta-link" href={copy.ctaHref}>
+        <a class="supporters__cta-link" href={copy.href}>
           {copy.ctaLabel}
         </a>
       </p>
