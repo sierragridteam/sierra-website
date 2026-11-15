@@ -6,6 +6,7 @@ import PageHead from '@components/PageHead.astro';
 import SectionHeader from '@components/SectionHeader.astro';
 import Button from '@components/Button.astro';
 import PersonCard from '@components/PersonCard.astro';
+import PressPointer from '@components/press/PressPointer.astro';
 import { about } from '@config/content';
 import { board, advisors } from '@config/people';
 import { site, donate, externalLinks } from '@config/site';
@@ -30,7 +31,13 @@ const aboutSchema = {
       lead={about.headline.lead}
       rest={about.headline.rest}
       lede={about.intro}
-    />
+    >
+      <div class="about-contact">
+        <Button variant="secondary" href="/contact" arrow>
+          {about.contactLink}
+        </Button>
+      </div>
+    </PageHead>
   </Section>
 
   <Section surface="page" labelledby="story-title">
@@ -98,6 +105,9 @@ const aboutSchema = {
       {advisors.map((person) => (
         <PersonCard person={person} />
       ))}
+    </div>
+    <div class="about-press">
+      <PressPointer />
     </div>
   </Section>
 
@@ -188,6 +198,16 @@ const aboutSchema = {
     line-height: 1.55;
     color: var(--ink-body);
     max-width: 60ch;
+  }
+
+  .about-contact {
+    margin-top: var(--space-6);
+  }
+
+  .about-press {
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: var(--border-soft);
   }
 
   .about-team__note {

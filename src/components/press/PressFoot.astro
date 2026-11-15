@@ -1,0 +1,58 @@
+---
+/**
+ * PressFoot — the standing close of a press release: the About paragraphs and the media
+ * contact, then a link back to the list on /press. Rendered as page chrome on the page of
+ * any post tagged `Press Release` (src/lib/press.ts), NOT authored into the release body, so
+ * every release ends on the same wording. Copy lives in src/config/content.ts (`press`).
+ */
+import PressBlock from './PressBlock.astro';
+import { press } from '@config/content';
+import { site } from '@config/site';
+---
+
+{/* A <div>, not <footer>: the page's single <footer> landmark is SiteFooter. */}
+<div class="press-foot">
+  <PressBlock heading={press.about.heading}>
+    {press.about.boilerplate.map((para) => (
+      <p>{para}</p>
+    ))}
+  </PressBlock>
+  <PressBlock heading={press.contact.heading}>
+    <p>
+      {press.contact.name}, {press.contact.title}
+    </p>
+    <p>
+      {press.contact.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
+    </p>
+  </PressBlock>
+  <p class="press-foot__more">
+    <a href="/press">
+      {press.allReleasesLink}
+      <span aria-hidden="true"> &rarr;</span>
+    </a>
+  </p>
+</div>
+
+<style>
+  .press-foot {
+    margin-top: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .press-foot__more {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label-lg);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .press-foot__more a {
+    color: var(--brand-green);
+    text-decoration: none;
+  }
+  .press-foot__more a:hover {
+    color: var(--brand-green-hover);
+    text-decoration: underline;
+  }
+</style>

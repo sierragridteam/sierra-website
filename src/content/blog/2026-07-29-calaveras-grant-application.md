@@ -3,6 +3,7 @@ title: S.I.E.R.R.A Applies for Calaveras Grant
 description: The alliance has applied to the Calaveras Community Foundation for funding to add solar-powered mesh repeaters along the Highway 4 corridor and run free public workshops on off-grid communication.
 pubDate: 2026-07-29
 tag: Member Submission
+press: true
 author: Jay Goldberg, founder
 ---
 

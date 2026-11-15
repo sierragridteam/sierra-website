@@ -302,18 +302,20 @@ export const contact = {
   },
 } as const;
 
-export const blog = {
+export const news = {
   kicker: 'News & Notes',
   title: 'Notes from the foothills.',
   intro:
     'Technology, preparedness, and lessons in emergency communications — written slowly, ' +
     'when there is something worth saying. For anything happening right now, the Live Feed ' +
     'is the place.',
-  /** How many full posts the main /blog page shows before pointing at the archive. */
+  /** How many full posts the main /news page shows before pointing at the archive. */
   recentCount: 5,
   archiveLink: 'Browse the Archive',
-  /** Label for the RSS feed link in the /blog header (feed lives at /rss.xml). */
+  /** Label for the RSS feed link in the /news header (feed lives at /rss.xml). */
   feedLink: 'Subscribe via RSS',
+  /** Label for the quiet link from the /news header to the /press page. */
+  pressLink: 'Press & Media',
   emptyNote: 'No posts yet — the first ones are on their way.',
   archive: {
     kicker: 'News & Notes',
@@ -343,7 +345,7 @@ export const colophon = {
     {
       heading: 'What it is',
       body:
-        'Posts on the blog bylined "Signal Desk" are drafted by an automated editorial ' +
+        'News posts bylined "Signal Desk" are drafted by an automated editorial ' +
         'system — an AI model with web-search access, operating under a published editorial ' +
         'brief that sets its scope, sourcing standards, and hard rules. It runs on a ' +
         'schedule, and most runs publish nothing: silence is the intended output unless ' +
@@ -381,6 +383,8 @@ export const colophon = {
 export const about = {
   kicker: 'About the Alliance',
   headline: { lead: 'Resilient communications,', rest: 'built by neighbors.' },
+  /** Button under the lede — /contact is not in the header nav, so About carries it. */
+  contactLink: 'Contact Us',
   intro:
     'S.I.E.R.R.A — the Signal Integrity & Emergency Radio Response Alliance — is an ' +
     'all-volunteer non-profit that builds, operates, and trains the people behind an off-grid ' +
@@ -475,6 +479,83 @@ export const about = {
 } as const;
 
 /**
+ * /press — the press page: what the alliance has announced, the wording to describe it,
+ * the plain facts, logos, and a contact. `about` and `contact` here also close every post
+ * tagged `Press Release` (PressFoot), so the standing wording lives in one place and never
+ * drifts between releases. This standing wording is the SITE's copy, so it follows the
+ * style guide (no claim about what the network covers or how it performs). A release's
+ * own body is different: it is the author's, published as issued — see CLAUDE.md "Press".
+ */
+export const press = {
+  kicker: 'Press & Media',
+  /** The h1, two lines on the hero's pattern (PageHead): muted, then near-black. */
+  headline: { lead: 'For the press —', rest: 'releases, facts, and a contact.' },
+  intro:
+    'What S.I.E.R.R.A has announced, how to describe the alliance accurately, and who to ' +
+    'write to with a question.',
+  releases: {
+    heading: 'Releases & Announcements',
+    emptyNote: 'No releases yet.',
+    newsLink: 'All News',
+  },
+  about: {
+    heading: 'About S.I.E.R.R.A',
+    /** The quotable description. Paragraph one is the About-page intro, verbatim. */
+    boilerplate: [
+      about.intro,
+      'The alliance was established in 2026 and is based in Murphys, California. It is a ' +
+        '501(c)(3) nonprofit, registered in California as a nonprofit public benefit ' +
+        'corporation, and run entirely by volunteers.',
+    ],
+    nameNote:
+      'Write the name with periods — S.I.E.R.R.A — and give the full name on first reference.',
+  },
+  facts: {
+    heading: 'Facts',
+    labels: {
+      name: 'Name',
+      legalName: 'Full Name',
+      status: 'Status',
+      taxStatus: 'Tax Status',
+      founded: 'Established',
+      mail: 'Mail',
+      serviceArea: 'Service Area',
+      web: 'Website',
+    },
+    serviceArea: 'The Calaveras & Tuolumne foothills',
+  },
+  contact: {
+    heading: 'Media Contact',
+    /** The contact the releases themselves name. */
+    name: 'Jay Goldberg',
+    title: 'President and CEO',
+    body: 'Send press questions and interview requests to',
+    note:
+      'A volunteer reads every message. S.I.E.R.R.A has no staffed press office, so allow ' +
+      'time for a reply.',
+    /** Pointer to /contact for everything that is not a press question. */
+    general: 'For general questions, volunteering, or mail, use the',
+    generalLinkLabel: 'contact page',
+  },
+  logos: {
+    heading: 'Logos',
+    note: 'Use the logo unmodified. Write to the media contact for another size or format.',
+    files: [
+      { label: 'Full logo (PNG)', href: '/brand/sierra-logo-full.png' },
+      { label: 'Mark only (PNG)', href: '/brand/sierra-mark.png' },
+    ],
+  },
+  /** Link at the foot of a release's own page, back to the list on /press. */
+  allReleasesLink: 'All Releases',
+  /** One-line pointers to /press from /about and /contact. */
+  pointer: {
+    heading: 'Press & media',
+    body: 'Writing about S.I.E.R.R.A? Releases, facts, and a media contact are on the',
+    linkLabel: 'Press page',
+  },
+} as const;
+
+/**
  * The Partners page (/partners). Only the page's frame lives here — the partners themselves
  * (name, category, write-up, logo) are in src/config/partners.ts. Spare, like the homepage
  * Supporters band: who we work with is a fact about how the network is built, not a boast,
@@ -535,9 +616,8 @@ export const donate = {
       desc: 'Radios, solar gear, antennas, and ridge-top tower space help as much as cash. Reach out via the contact page.',
     },
   ],
-  // TODO(pre-launch): once 501(c)(3) status is confirmed, replace with the official
-  // language + EIN. Until then this stays honest: no deductibility is claimed.
-  taxNote:
-    'S.I.E.R.R.A’s tax-exempt status and the deductibility of gifts are being finalized. ' +
-    'Official confirmation and receipt details will be posted here once complete.',
+  // States the status only (site.taxStatus). It makes no promise about the deductibility of
+  // a particular gift or about receipts, and gives no EIN — add those when the board
+  // supplies the wording; do not write them from general knowledge.
+  taxNote: 'S.I.E.R.R.A is a 501(c)(3) tax-exempt nonprofit organization.',
 } as const;

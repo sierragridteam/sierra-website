@@ -1,0 +1,28 @@
+---
+/**
+ * PressPointer — the one-line pointer to /press shown on /about and /contact, the two
+ * places a reporter looks before the footer. Copy lives in content.ts (`press.pointer`).
+ */
+import { press } from '@config/content';
+---
+
+<p class="press-pointer">
+  {press.pointer.body} <a href="/press">{press.pointer.linkLabel}</a>.
+</p>
+
+<style>
+  .press-pointer {
+    max-width: 70ch;
+    font-size: var(--fs-small);
+    line-height: var(--lh-body);
+    color: var(--ink-secondary);
+  }
+  .press-pointer a {
+    color: var(--brand-green);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .press-pointer a:hover {
+    color: var(--brand-green-hover);
+  }
+</style>

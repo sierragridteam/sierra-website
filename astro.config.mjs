@@ -33,8 +33,13 @@ export default defineConfig({
   trailingSlash: 'never',
   // /alerts was folded into the flagship /live situation page. Astro emits a static
   // redirect (meta-refresh + canonical); a true 301 can also be set at CloudFront.
+  // /blog was renamed /news (2026-11): the section, its archive and every post moved, and
+  // the old addresses redirect the same way. The posts still live in src/content/blog/.
   redirects: {
     '/alerts': '/live',
+    '/blog': '/news',
+    '/blog/archive': '/news/archive',
+    '/blog/[slug]': '/news/[slug]',
   },
   build: {
     // Directory output: /mesh -> mesh/index.html (Astro's default, matches the other

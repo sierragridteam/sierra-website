@@ -1,0 +1,169 @@
+---
+/**
+ * /news/archive — every post, titles only, grouped by year then month.
+ * Two columns on wide screens (CSS multi-column; month groups don't break).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/Section.astro';
+import PageHead from '@components/PageHead.astro';
+import { news } from '@config/content';
+import { site } from '@config/site';
+
+const description =
+  'The S.I.E.R.R.A news archive — every post on emergency communications, technology, and ' +
+  'preparedness for the foothills, by year and month.';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Group newest-first into years, then months (calendar dates — group in UTC).
+interface MonthGroup {
+  label: string;
+  posts: typeof posts;
+}
+const years = new Map<number, Map<number, MonthGroup>>();
+for (const post of posts) {
+  const d = post.data.pubDate;
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth();
+  if (!years.has(y)) years.set(y, new Map());
+  const months = years.get(y)!;
+  if (!months.has(m)) {
+    months.set(m, {
+      label: d.toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' }),
+      posts: [],
+    });
+  }
+  months.get(m)!.posts.push(post);
+}
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `News Archive — ${site.name}`,
+  url: `${site.url}/news/archive`,
+};
+---
+
+<BaseLayout title="News Archive" description={description} path="/news/archive" schema={pageSchema}>
+  <Section surface="page" labelledby="archive-title">
+    <PageHead
+      kicker={news.archive.kicker}
+      id="archive-title"
+      lead={news.archive.headline.lead}
+      rest={news.archive.headline.rest}
+    >
+      <p class="archive-back">
+        <a href="/news">
+          <span aria-hidden="true">&larr;</span> {news.archive.backLink}
+        </a>
+      </p>
+    </PageHead>
+
+    {posts.length === 0 && <p class="archive-empty">{news.emptyNote}</p>}
+
+    <div class="archive">
+      {[...years.entries()].map(([year, months]) => (
+        <section class="archive-year" aria-labelledby={`year-${year}`}>
+          <h2 id={`year-${year}`} class="archive-year__label">
+            {year}
+          </h2>
+          {[...months.entries()].map(([m, group]) => (
+            <div class="archive-month">
+              <h3 class="archive-month__label">{group.label}</h3>
+              <ul class="archive-month__list">
+                {group.posts.map((post) => (
+                  <li>
+                    <a href={`/news/${post.id}`}>{post.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      ))}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .archive-back {
+    margin-top: var(--space-5);
+  }
+  .archive-back a {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label-lg);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--brand-green);
+  }
+  .archive-back a:hover {
+    color: var(--brand-green-hover);
+    text-decoration: underline;
+  }
+
+  .archive-empty {
+    margin-top: var(--space-7);
+    font-size: var(--fs-lead);
+    color: var(--ink-secondary);
+  }
+
+  /* Two columns on big screens; each month block stays intact. */
+  .archive {
+    margin-top: var(--space-7);
+    columns: 2;
+    column-gap: var(--space-9);
+    max-width: 900px;
+  }
+  .archive-year {
+    break-inside: avoid;
+  }
+  .archive-year__label {
+    font-size: var(--fs-h3);
+    padding-bottom: var(--space-3);
+    border-bottom: var(--border);
+  }
+  .archive-year + .archive-year {
+    margin-top: var(--space-7);
+  }
+  .archive-month {
+    break-inside: avoid;
+    margin-top: var(--space-5);
+  }
+  .archive-month__label {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--brand-brass-text);
+  }
+  .archive-month__list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-3);
+  }
+  .archive-month__list li {
+    margin-block: var(--space-2);
+    line-height: var(--lh-body);
+  }
+  .archive-month__list a {
+    color: var(--ink-body);
+    text-decoration: none;
+  }
+  .archive-month__list a:hover {
+    color: var(--brand-green);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 760px) {
+    .archive {
+      columns: 1;
+    }
+  }
+</style>

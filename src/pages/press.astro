@@ -1,0 +1,239 @@
+---
+/**
+ * /press — for reporters: the releases and announcements (news posts picked out by
+ * src/lib/press.ts), the quotable description, the plain facts, logos, and a contact.
+ * Footer-linked, not in the header nav. A release is an ordinary post in
+ * src/content/blog/ tagged `Press Release`; this page only lists them.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/Section.astro';
+import PageHead from '@components/PageHead.astro';
+import Button from '@components/Button.astro';
+import PostMeta from '@components/blog/PostMeta.astro';
+import PressBlock from '@components/press/PressBlock.astro';
+import { press } from '@config/content';
+import { site } from '@config/site';
+import { isPressItem } from '@lib/press';
+
+const description =
+  'Press releases and announcements from S.I.E.R.R.A, with the facts, logos, and media ' +
+  'contact for reporters covering the Calaveras & Tuolumne foothills.';
+
+const items = (await getCollection('blog'))
+  .filter((post) => isPressItem(post.data))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const reg = site.registration;
+const labels = press.facts.labels;
+const facts = [
+  { label: labels.name, value: site.name },
+  { label: labels.legalName, value: site.legalName },
+  {
+    label: labels.status,
+    value: `Registered ${reg.jurisdiction} ${reg.type} · Entity No. ${reg.entityNumber}`,
+  },
+  { label: labels.taxStatus, value: `${site.taxStatus} tax-exempt nonprofit` },
+  { label: labels.founded, value: String(site.foundingYear) },
+  { label: labels.mail, value: site.address.line },
+  { label: labels.serviceArea, value: press.facts.serviceArea },
+  { label: labels.web, value: site.domain },
+];
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `Press — ${site.name}`,
+  url: `${site.url}/press`,
+};
+---
+
+<BaseLayout title="Press" description={description} path="/press" schema={pageSchema}>
+  <Section surface="page" labelledby="press-title">
+    <PageHead
+      kicker={press.kicker}
+      id="press-title"
+      lead={press.headline.lead}
+      rest={press.headline.rest}
+      lede={press.intro}
+    />
+
+    <div class="press-grid">
+      <div class="press-aside">
+        <PressBlock heading={press.contact.heading}>
+          <p>
+            {press.contact.name}, {press.contact.title}
+          </p>
+          <p>
+            {press.contact.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
+          </p>
+          <p class="press-note">{press.contact.note}</p>
+          <p class="press-note">
+            {press.contact.general} <a href="/contact">{press.contact.generalLinkLabel}</a>.
+          </p>
+        </PressBlock>
+
+        <PressBlock heading={press.facts.heading}>
+          <dl class="press-facts">
+            {facts.map((fact) => (
+              <div class="press-facts__row">
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </PressBlock>
+
+        <PressBlock heading={press.logos.heading}>
+          <ul class="press-logos">
+            {press.logos.files.map((file) => (
+              <li>
+                <a href={file.href} download>
+                  {file.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="press-note">{press.logos.note}</p>
+        </PressBlock>
+      </div>
+
+      <div class="press-main">
+        <section aria-labelledby="releases-title">
+          <PressBlock heading={press.releases.heading} headingId="releases-title">
+            {items.length === 0 && <p class="press-note">{press.releases.emptyNote}</p>}
+            {items.length > 0 && (
+              <ul class="press-list">
+                {items.map((post) => (
+                  <li class="press-item">
+                    <PostMeta date={post.data.pubDate} tag={post.data.tag} />
+                    <h3 class="press-item__title">
+                      <a href={`/news/${post.id}`}>{post.data.title}</a>
+                    </h3>
+                    <p class="press-item__desc">{post.data.description}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </PressBlock>
+          <div class="press-main__more">
+            <Button variant="secondary" href="/news" arrow>
+              {press.releases.newsLink}
+            </Button>
+          </div>
+        </section>
+
+        <section aria-labelledby="press-about-title">
+          <PressBlock heading={press.about.heading} headingId="press-about-title">
+            {press.about.boilerplate.map((para) => (
+              <p>{para}</p>
+            ))}
+            <p class="press-note">{press.about.nameNote}</p>
+          </PressBlock>
+        </section>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  /* Contact, facts and logos in a narrower left column; the releases and the quotable
+     description on the right — the /contact split. Stacks below 860px, contact first. */
+  .press-grid {
+    margin-top: var(--space-8);
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .press-aside,
+  .press-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+    min-width: 0;
+  }
+
+  .press-note {
+    font-size: var(--fs-small);
+    color: var(--ink-secondary);
+  }
+
+  .press-facts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .press-facts__row {
+    padding-block: var(--space-3);
+    border-bottom: var(--border-soft);
+  }
+  .press-facts__row:first-child {
+    padding-top: 0;
+  }
+  .press-facts__row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .press-facts dt {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--brand-brass-text);
+  }
+  .press-facts dd {
+    margin: var(--space-1) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--ink-strong);
+    overflow-wrap: anywhere;
+  }
+
+  .press-logos,
+  .press-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .press-logos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .press-item + .press-item {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: var(--border-soft);
+  }
+  .press-item__title {
+    margin-top: var(--space-2);
+    font-size: var(--fs-mission);
+    line-height: var(--lh-heading);
+  }
+  /* Beats PressBlock's body-link rule: a title is not an inline link. */
+  .press-main .press-item__title a {
+    color: var(--ink-strong);
+    text-decoration: none;
+  }
+  .press-main .press-item__title a:hover {
+    color: var(--brand-green);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .press-item__desc {
+    margin-top: var(--space-2);
+    max-width: 66ch;
+  }
+  .press-main__more {
+    margin-top: var(--space-6);
+  }
+
+  @media (max-width: 860px) {
+    .press-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -9,11 +9,11 @@ const pages = [
   // The h1 is generated from the feed ("9 of 11 repeaters / heard in the last 12 hours."),
   // or states the failure honestly when the feed can't be reached — as in this suite.
   { name: 'mesh', path: '/mesh', h1: /repeaters|mesh/i },
-  { name: 'blog', path: '/blog', h1: /notes from the foothills/i },
-  { name: 'blog-archive', path: '/blog/archive', h1: /archive/i },
+  { name: 'news', path: '/news', h1: /notes from the foothills/i },
+  { name: 'news-archive', path: '/news/archive', h1: /archive/i },
   {
-    name: 'blog-post',
-    path: '/blog/2026-07-03-what-this-blog-is-for',
+    name: 'news-post',
+    path: '/news/2026-07-03-what-this-blog-is-for',
     h1: /what this blog is for/i,
   },
   // Generated from the alert stream once the feed lands ("3 alerts / for the foothills right
@@ -23,6 +23,7 @@ const pages = [
   { name: 'contact-thanks', path: '/contact/thanks', h1: /your message is on its way/i },
   { name: 'about', path: '/about', h1: /resilient communications/i },
   { name: 'partners', path: '/partners', h1: /organizations we build with/i },
+  { name: 'press', path: '/press', h1: /releases, facts, and a contact/i },
   { name: 'about-jay', path: '/about/jay', h1: /jay l\. goldberg/i },
   { name: 'about-corrinne', path: '/about/corrinne', h1: /corrinne goldberg/i },
   { name: 'about-allan', path: '/about/allan', h1: /allan claghorn/i },
@@ -74,7 +75,44 @@ test('rss feed is valid and lists posts', async ({ request }) => {
   expect(body).toContain('<channel>');
   // A known post surfaces with an absolute permalink (item links are absolutized).
   expect(body).toContain('<title>What this blog is for</title>');
-  expect(body).toContain('https://sierragridteam.org/blog/2026-07-03-what-this-blog-is-for');
+  expect(body).toContain('https://sierragridteam.org/news/2026-07-03-what-this-blog-is-for');
+});
+
+// /blog became /news; the old addresses (section, archive, every post) still land.
+for (const [from, to] of [
+  ['/blog', '/news'],
+  ['/blog/archive', '/news/archive'],
+  ['/blog/2026-07-03-what-this-blog-is-for', '/news/2026-07-03-what-this-blog-is-for'],
+]) {
+  test(`${from} redirects to ${to}`, async ({ page }) => {
+    await page.goto(from, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(`**${to}`);
+    await expect(page.locator('h1')).toHaveCount(1);
+  });
+}
+
+test('/press lists organizational releases and announcements', async ({ page }) => {
+  await page.goto('/press', { waitUntil: 'domcontentloaded' });
+  const releases = page.locator('section[aria-labelledby="releases-title"]');
+  // Organizational news is listed; an ordinary desk post is not.
+  await expect(releases).toContainText('S.I.E.R.R.A and Utica partner in Murphys');
+  await expect(releases).toContainText('S.I.E.R.R.A receives critical Calaveras grant');
+  await expect(releases).toContainText('S.I.E.R.R.A Applies for Calaveras Grant');
+  // The desk's write-up of the grant opts out (press: false): the release itself is listed.
+  await expect(releases).not.toContainText('S.I.E.R.R.A awarded Calaveras foundation grant');
+  await expect(releases).not.toContainText('How to read a Red Flag Warning');
+  await expect(page.locator('footer a[href="/press"]')).toHaveCount(1);
+});
+
+test('a press release shows its full headline and the standing close', async ({ page }) => {
+  await page.goto('/news/2026-11-15-utica-repeater-partnership', { waitUntil: 'domcontentloaded' });
+  // The h1 is the headline as issued; the short `title` carries the page title.
+  await expect(page.locator('h1')).toContainText(/Utica Water and Power Authority Partner/);
+  expect((await page.title()).length).toBeLessThanOrEqual(60);
+  const foot = page.locator('.press-foot');
+  await expect(foot).toContainText('About S.I.E.R.R.A');
+  await expect(foot).toContainText('Media Contact');
+  await expect(foot.locator('a[href="/press"]')).toHaveCount(1);
 });
 
 test('404 page returns on-brand not-found content', async ({ page }) => {

@@ -25,16 +25,20 @@ export const site = {
    * Official California Secretary of State registration — a public trust signal shown in
    * the footer (the entity number is searchable on the CA SoS business registry).
    *
-   * IMPORTANT: this is STATE registration, NOT federal 501(c)(3) tax-exempt status. Do not
-   * imply that gifts are tax-deductible from this — deductibility needs an IRS determination
-   * + EIN, which the Donate `taxNote` (src/config/content.ts) still marks as being finalized.
-   * The filing's certificate number is an internal record and is intentionally not published.
+   * This is the STATE registration. The federal tax-exempt status is `taxStatus` below —
+   * a separate fact; neither implies the other. The filing's certificate number is an internal record and is intentionally not published.
    */
   registration: {
     jurisdiction: 'California',
     type: 'nonprofit public benefit corporation',
     entityNumber: 'B2026028525',
   },
+  /**
+   * Federal tax-exempt status, as the organization states it in its own releases (confirmed
+   * 2026-11). The EIN is not published here yet — add it beside this when the board supplies
+   * it, and never invent one.
+   */
+  taxStatus: '501(c)(3)',
 
   /**
    * Contact email — the single source of truth. Override at deploy time with the
@@ -70,16 +74,26 @@ export const site = {
 /**
  * Primary navigation. Order is intentional — Home first, then Mesh (the flagship
  * capability) ahead of the rest. This list drives both the header nav and the
- * footer "Site" list, so adding an entry here surfaces it in both places.
+ * footer "Site" list, so adding an entry here surfaces it in both places. A page that
+ * belongs in the footer only goes in `footerNav` below.
  */
 export const nav: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Home', href: '/' },
   { label: 'Live Feed', href: '/live' },
   { label: 'Mesh', href: '/mesh' },
-  { label: 'Blog', href: '/blog' },
+  { label: 'News', href: '/news' },
   { label: 'Partners', href: '/partners' },
   { label: 'About', href: '/about' },
+];
+
+/**
+ * Footer-only links, listed in the footer "Site" column after the primary nav. For pages
+ * a reader goes looking for that don't earn a header slot: /contact (also reached from the
+ * top of /about, the media contact on /press, and the Volunteer buttons) and /press.
+ */
+export const footerNav: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Contact', href: '/contact' },
+  { label: 'Press', href: '/press' },
 ];
 
 /**

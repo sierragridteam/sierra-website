@@ -1,4 +1,4 @@
-# Fire Desk — the automated, member-reviewed live wildfire bulletin for /blog.
+# Fire Desk — the automated, member-reviewed live wildfire bulletin for /news.
 # Each morning: if a fire is active (or a bulletin is open), a writer agent reads The Grid
 # and creates/updates/closes the one "current wildfire situation" post per
 # docs/fire-desk-content-brief.md; a critic agent verifies every figure against the official
@@ -100,7 +100,10 @@ jobs:
         if: steps.guard.outputs.skip == 'false'
         run: |
           pnpm install --frozen-lockfile
-          pnpm add --global @anthropic-ai/claude-code@2.1.319
+          # pnpm skips a package's install script unless it is allowed, and the CLI's
+          # script is what fetches its native binary — without the flag `claude` exits
+          # with "native binary not installed".
+          pnpm add --global --allow-build=@anthropic-ai/claude-code @anthropic-ai/claude-code@2.1.319
 
       - name: Writer — read the Grid and create/update/close (or decline)
         if: steps.guard.outputs.skip == 'false'
