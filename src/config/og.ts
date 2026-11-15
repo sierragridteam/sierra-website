@@ -4,7 +4,7 @@
  * Keep titles short — they render at 64px on the card.
  */
 import type { OgCard } from '@lib/og';
-import { home, mesh, live, contact, about, partners, donate, blog } from './content';
+import { home, mesh, live, contact, about, partners, donate, news, press } from './content';
 import { people } from './people';
 import { site } from './site';
 
@@ -49,15 +49,20 @@ export const ogCards: Record<string, OgCard> = {
     title: `${donate.headline.lead} ${donate.headline.rest}`,
     subtitle: 'Fund the relays, radios, and training that keep the foothills connected.',
   },
-  blog: {
-    kicker: blog.kicker,
-    title: blog.title,
+  news: {
+    kicker: news.kicker,
+    title: news.title,
     subtitle: 'Technology, preparedness, and lessons in emergency communications.',
   },
-  'blog-archive': {
-    kicker: blog.archive.kicker,
-    title: `${blog.archive.headline.lead} ${blog.archive.headline.rest}`,
+  'news-archive': {
+    kicker: news.archive.kicker,
+    title: `${news.archive.headline.lead} ${news.archive.headline.rest}`,
     subtitle: 'Technology, preparedness, and lessons in emergency communications.',
+  },
+  press: {
+    kicker: press.kicker,
+    title: `${press.headline.lead} ${press.headline.rest}`,
+    subtitle: 'Releases, facts, logos, and a media contact for reporters.',
   },
   default: {
     kicker: site.name,

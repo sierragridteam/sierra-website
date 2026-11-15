@@ -75,11 +75,11 @@ const schemas = [orgSchema, ...(Array.isArray(schema) ? schema : schema ? [schem
 <link rel="canonical" href={canonical} />
 <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow'} />
 
-{/* Blog feed autodiscovery (the site's one RSS feed) */}
+{/* News feed autodiscovery (the site's one RSS feed) */}
 <link
   rel="alternate"
   type="application/rss+xml"
-  title={`${site.name} — Blog`}
+  title={`${site.name} — News`}
   href={new URL('/rss.xml', site.url).href}
 />
 

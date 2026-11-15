@@ -9,7 +9,7 @@ only, not a spec or catch-all.
 
 ### Desk
 
-An autonomous editorial agent that drafts posts for the public blog and opens them as pull
+An autonomous editorial agent that drafts posts for the public news feed and opens them as pull
 requests. A desk never publishes: a human merging the pull request is what publishes, and
 every desk's public disclosure promises that review.
 
@@ -89,6 +89,17 @@ the honesty rules in full.
 _Distinguished from:_ a Commissioned post, where the member supplies the topic and facts
 and the desk supplies the writing. The test is what arrived: notes and an angle make a
 commissioned post; a finished signed piece makes a submission.
+
+### Press release
+
+The organization's own release, published as issued: a post tagged `Press Release`, added
+by a member in an ordinary pull request and never drafted, rewritten, or retagged by a
+desk. Its page closes with the standing About and media-contact block, and it is listed on
+the press page.
+
+_Distinguished from:_ a Commissioned post, which is the desk's write-up of organizational
+news in the desk's voice. Both are listed on the press page; only the release is the
+organization's own wording.
 
 ### Fire Bulletin
 

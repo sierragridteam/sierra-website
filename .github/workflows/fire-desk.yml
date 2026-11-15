@@ -1,4 +1,4 @@
-# Fire Desk — the automated, member-reviewed live wildfire bulletin for /blog.
+# Fire Desk — the automated, member-reviewed live wildfire bulletin for /news.
 # Each morning: if a fire is active (or a bulletin is open), a writer agent reads The Grid
 # and creates/updates/closes the one "current wildfire situation" post per
 # docs/fire-desk-content-brief.md; a critic agent verifies every figure against the official

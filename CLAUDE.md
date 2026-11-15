@@ -109,7 +109,7 @@ Page rules:
 - **Open a single-column page with `PageHead`** (kicker, the hero's two-line h1, lede) as the
   first thing in its first `Section` — the same head /live and /mesh use. Its copy is a
   `headline: { lead, rest }` in `content.ts`: line one muted, line two the claim. Only the
-  homepage hero, the two-column /blog, posts, profiles and the 404 open differently.
+  homepage hero, the two-column /news, posts, profiles and the 404 open differently.
 - The homepage sets `hideBrandInNav`; other pages show the compact brand automatically.
 - ⚠️ **Do not put a `CLAUDE.md` (or any `.md`) in `src/pages/`** — Astro would route it
   as a public page. Page guidance lives here in the root CLAUDE.md.
@@ -266,22 +266,24 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   only — a cold night in the enclosure is weather). Emphasis is a class toggle on the paths,
   never a re-render, or it fights the mouse. Axis labels and the note are HTML over a
   stretched SVG (`vector-effect: non-scaling-stroke`), so type never stretches.
-- **The blog** (`/blog`) is an Astro content collection: markdown posts in
-  `src/content/blog/`, one file per post named `yyyy-mm-dd-topic.md` (the filename is
-  the URL slug; `pubDate` must match the date prefix). Frontmatter: `title`,
+- **News** (`/news`, called the blog until 2026-11) is an Astro content collection: markdown
+  posts in `src/content/blog/`, one file per post named `yyyy-mm-dd-topic.md` (the filename
+  is the URL slug; `pubDate` must match the date prefix). The folder and the collection keep
+  the name `blog` because the desks write there; only the public addresses moved, and
+  `/blog`, `/blog/archive` and every `/blog/<slug>` redirect (`astro.config.mjs`). Frontmatter: `title`,
   `description` (one sentence), `pubDate`, optional `updatedDate` + `summary`
   (live bulletins only — see below), `tag` (one pillar), optional `author`.
-  `/blog` shows recent posts in full, `/blog/archive` lists titles by year/month.
-  The blog also has an RSS feed at **`/rss.xml`** (`src/pages/rss.xml.ts`, `@astrojs/rss`
-  — a prerendered static endpoint, not baked live data). It mirrors the `/blog` ordering
+  `/news` shows recent posts in full, `/news/archive` lists titles by year/month.
+  It also has an RSS feed at **`/rss.xml`** (`src/pages/rss.xml.ts`, `@astrojs/rss`
+  — a prerendered static endpoint, not baked live data). It mirrors the `/news` ordering
   (`updatedDate ?? pubDate`) and honesty model: a live bulletin uses its `summary` fold
   head with a stable permalink `guid`, so an update re-surfaces the same entry in readers
   rather than duplicating it. `<link rel="alternate">` autodiscovery is in `Seo.astro`
-  (every page); the visible "Subscribe via RSS" link is on `/blog`.
+  (every page); the visible "Subscribe via RSS" link is on `/news`.
   Post copy follows `docs/content-style-guide.md` AND `docs/news-feed-content-brief.md`
   (scope, sourcing, and hard rules for what may be published). Keep post headlines
   under ~46 chars so the page title stays ≤60 with the site suffix.
-- **Two automated desks** publish to `/blog` via member-reviewed PRs (never direct):
+- **Two automated desks** publish to `/news` via member-reviewed PRs (never direct):
   the **News Desk** (slow channel; `docs/news-feed-content-brief.md`) and the **Fire
   Desk** (live wildfire bulletins; `docs/fire-desk-content-brief.md`). Runbook:
   `docs/architecture/news-desk.md`. Merge auto-deploys, so `main` must stay
@@ -302,6 +304,15 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   brief §4.7): the desk **copy-edits it, never rewrites it** — voice rules don't bind the
   author's copy, but canonical spellings, typos, hard specs, and the §10 honesty rules are
   always fixed. See the runbook's "Proposing topics".
+- **Press** (`/press`) is footer-linked, not in the header nav (`footerNav` in `site.ts`; also
+  pointed to from `/news`, `/about` and `/contact`). It lists the organization's news — posts
+  tagged `Press Release` or `Announcement`, plus any post with `press: true` in its
+  frontmatter (`src/lib/press.ts`) — beside the media contact, facts and logos. A **press
+  release** is an ordinary post tagged `Press Release`, added by a member's PR and published
+  as issued; the desks never draft one. Its page closes with the standing About + media
+  contact (`PressFoot`), so never write a boilerplate or contact block into a release body.
+  That wording lives once in `content.ts` (`press`) and may not claim what the network
+  covers or how it performs. Release headlines follow the same ~46-character limit.
 - **Fire bulletins** are the one sanctioned live-incident post. Conventions: exactly
   **one open bulletin** at a time, tagged `Fire Update` (retagged `Retrospective` on
   close); it has a `summary` (the feed shows only that current-status head + a "Read the

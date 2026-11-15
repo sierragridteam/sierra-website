@@ -11,16 +11,19 @@
 /                 Home        — hero coverage map → operational status → mission → doctrine → service banner
 /live             Live Feed   — situation map (MapLibre) + prioritized hazard stream + conditions/roads/scanners
 /mesh             Mesh / LoRa — live report: headline + figures, map, repeater table, battery chart
+/news             News        — recent posts in full beside the head; /news/archive lists every title; /news/<slug> is a post
+/press            Press       — releases & announcements, media contact, facts, logos (footer-linked, not in the header nav)
 /partners         Partners    — partner organizations (src/config/partners.ts), partner-with-us CTA
 /about            About       — story, doctrine, by-the-numbers, leadership, get-involved CTA
 /contact          Contact     — P.O. Box, volunteer roles, mailto form, 911 disclaimer
 /donate           Donate      — ways to give (placeholder until a provider is wired)
 /alerts → /live   redirect    — the old alerts page folded into the Live Feed
+/blog/* → /news/* redirect    — the section was renamed News (2026-11); the section, archive and every post redirect
 /404              Not found   — on-brand fallback
 robots.txt, sitemap-index.xml, site.webmanifest, og images   (generated)
 ```
 
-**Primary nav order (left→right):** Home · Live Feed · Mesh · Blog · Partners · About · Contact, plus a
+**Primary nav order (left→right):** Home · Live Feed · Mesh · News · Partners · About · Contact, plus a
 **Donate** CTA (orange-accent text) and a **live local clock** (America/Los_Angeles, 24h,
 "PT" suffix). The header brand is the mark alone (no wordmark); the homepage hides it (the
 hero emblem stands in). **Live Feed** is the public flagship during an emergency.
@@ -36,9 +39,9 @@ or a severe weather warning is in effect, a site-wide **EmergencyBanner** sits a
 - **Page head** (`<PageHead>`) — every single-column page opens the same way: a kicker, an h1
   on the hero's two-line pattern (line one in muted ink, line two in near-black), then a lede.
   /live and /mesh generate their two lines from the feed; About, Partners, Contact, Donate,
-  the colophon, the blog archive and the contact confirmation take theirs from
+  the colophon, the news archive, /press and the contact confirmation take theirs from
   `src/config/content.ts` (`headline: { lead, rest }`). The exceptions are deliberate: the
-  homepage hero, /blog (two columns: the head beside the latest posts), a post and a profile
+  homepage hero, /news (two columns: the head beside the latest posts), a post and a profile
   page (each a two-column article), and the centred 404.
 
 ## Page-by-page

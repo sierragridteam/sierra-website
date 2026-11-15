@@ -1,4 +1,4 @@
-# Signal Desk — the automated, member-reviewed news desk for /blog.
+# Signal Desk — the automated, member-reviewed news desk for /news.
 # Daily: a writer agent researches and (rarely) drafts a post per
 # docs/news-feed-content-brief.md; a critic agent adversarially reviews and edits
 # or vetoes it; anything that survives is opened as a PULL REQUEST for member

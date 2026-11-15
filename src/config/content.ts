@@ -302,18 +302,20 @@ export const contact = {
   },
 } as const;
 
-export const blog = {
+export const news = {
   kicker: 'News & Notes',
   title: 'Notes from the foothills.',
   intro:
     'Technology, preparedness, and lessons in emergency communications — written slowly, ' +
     'when there is something worth saying. For anything happening right now, the Live Feed ' +
     'is the place.',
-  /** How many full posts the main /blog page shows before pointing at the archive. */
+  /** How many full posts the main /news page shows before pointing at the archive. */
   recentCount: 5,
   archiveLink: 'Browse the Archive',
-  /** Label for the RSS feed link in the /blog header (feed lives at /rss.xml). */
+  /** Label for the RSS feed link in the /news header (feed lives at /rss.xml). */
   feedLink: 'Subscribe via RSS',
+  /** Label for the quiet link from the /news header to the /press page. */
+  pressLink: 'Press & Media',
   emptyNote: 'No posts yet — the first ones are on their way.',
   archive: {
     kicker: 'News & Notes',
@@ -343,7 +345,7 @@ export const colophon = {
     {
       heading: 'What it is',
       body:
-        'Posts on the blog bylined "Signal Desk" are drafted by an automated editorial ' +
+        'News posts bylined "Signal Desk" are drafted by an automated editorial ' +
         'system — an AI model with web-search access, operating under a published editorial ' +
         'brief that sets its scope, sourcing standards, and hard rules. It runs on a ' +
         'schedule, and most runs publish nothing: silence is the intended output unless ' +
@@ -471,6 +473,74 @@ export const about = {
     ],
     mapLink: { label: 'Open the mesh status board', href: '/mesh' },
     meshcoreLabel: 'MeshCore community map',
+  },
+} as const;
+
+/**
+ * /press — the press page: what the alliance has announced, the wording to describe it,
+ * the plain facts, logos, and a contact. `about` and `contact` here also close every post
+ * tagged `Press Release` (PressFoot), so the standing wording lives in one place and never
+ * drifts between releases. Nothing here may claim what the network covers or how it
+ * performs (style guide §3) — a reporter will quote it.
+ */
+export const press = {
+  kicker: 'Press & Media',
+  /** The h1, two lines on the hero's pattern (PageHead): muted, then near-black. */
+  headline: { lead: 'For the press —', rest: 'releases, facts, and a contact.' },
+  intro:
+    'What S.I.E.R.R.A has announced, how to describe the alliance accurately, and who to ' +
+    'write to with a question.',
+  releases: {
+    heading: 'Releases & Announcements',
+    emptyNote: 'No releases yet.',
+    newsLink: 'All News',
+  },
+  about: {
+    heading: 'About S.I.E.R.R.A',
+    /** The quotable description. Paragraph one is the About-page intro, verbatim. */
+    boilerplate: [
+      about.intro,
+      'The alliance was established in 2026 and is based in Murphys, California. It is a ' +
+        'registered California nonprofit public benefit corporation, run entirely by volunteers.',
+    ],
+    nameNote:
+      'Write the name with periods — S.I.E.R.R.A — and give the full name on first reference.',
+  },
+  facts: {
+    heading: 'Facts',
+    labels: {
+      name: 'Name',
+      legalName: 'Full Name',
+      status: 'Status',
+      founded: 'Established',
+      mail: 'Mail',
+      serviceArea: 'Service Area',
+      web: 'Website',
+    },
+    serviceArea: 'The Calaveras & Tuolumne foothills',
+  },
+  contact: {
+    heading: 'Media Contact',
+    body: 'Send press questions and interview requests to',
+    note:
+      'A volunteer reads every message. S.I.E.R.R.A has no staffed press office, so allow ' +
+      'time for a reply.',
+  },
+  logos: {
+    heading: 'Logos',
+    note: 'Use the logo unmodified. Write to the media contact for another size or format.',
+    files: [
+      { label: 'Full logo (PNG)', href: '/brand/sierra-logo-full.png' },
+      { label: 'Mark only (PNG)', href: '/brand/sierra-mark.png' },
+    ],
+  },
+  /** Link at the foot of a release's own page, back to the list on /press. */
+  allReleasesLink: 'All Releases',
+  /** One-line pointers to /press from /about and /contact. */
+  pointer: {
+    heading: 'Press & media',
+    body: 'Writing about S.I.E.R.R.A? Releases, facts, and a media contact are on the',
+    linkLabel: 'Press page',
   },
 } as const;
 

@@ -70,16 +70,25 @@ export const site = {
 /**
  * Primary navigation. Order is intentional — Home first, then Mesh (the flagship
  * capability) ahead of the rest. This list drives both the header nav and the
- * footer "Site" list, so adding an entry here surfaces it in both places.
+ * footer "Site" list, so adding an entry here surfaces it in both places. A page that
+ * belongs in the footer only goes in `footerNav` below.
  */
 export const nav: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Home', href: '/' },
   { label: 'Live Feed', href: '/live' },
   { label: 'Mesh', href: '/mesh' },
-  { label: 'Blog', href: '/blog' },
+  { label: 'News', href: '/news' },
   { label: 'Partners', href: '/partners' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
+];
+
+/**
+ * Footer-only links, listed in the footer "Site" column after the primary nav. For pages
+ * a specific reader goes looking for (a reporter, for /press) that don't earn a header slot.
+ */
+export const footerNav: ReadonlyArray<{ label: string; href: string }> = [
+  { label: 'Press', href: '/press' },
 ];
 
 /**

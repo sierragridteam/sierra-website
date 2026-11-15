@@ -6,7 +6,7 @@
  */
 import Logo from './Logo.astro';
 import Container from './Container.astro';
-import { site, nav, externalLinks, donate } from '@config/site';
+import { site, nav, footerNav, externalLinks, donate } from '@config/site';
 
 const year = site.foundingYear;
 const reg = site.registration;
@@ -28,7 +28,7 @@ const registrationLine = `Registered ${reg.jurisdiction} ${reg.type} · Entity N
       <nav class="footer__nav" aria-label="Footer">
         <p class="footer__navhead">Site</p>
         <ul>
-          {nav.map((item) => (
+          {[...nav, ...footerNav].map((item) => (
             <li>
               <a href={item.href}>{item.label}</a>
             </li>

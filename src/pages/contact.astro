@@ -4,8 +4,9 @@ import Section from '@components/Section.astro';
 import PageHead from '@components/PageHead.astro';
 import Callout from '@components/Callout.astro';
 import ContactForm from '@components/contact/ContactForm.astro';
+import PressPointer from '@components/press/PressPointer.astro';
 import { site } from '@config/site';
-import { contact } from '@config/content';
+import { contact, press } from '@config/content';
 
 const description =
   'Volunteer with S.I.E.R.R.A — ham operators, LoRa techs, and emergency-management roles. ' +
@@ -73,6 +74,13 @@ const contactSchema = {
             We are an all-volunteer organization with no public office — mail reaches us at the P.O.
             Box above.
           </p>
+        </section>
+
+        <section aria-labelledby="press-pointer-title">
+          <h2 id="press-pointer-title" class="contact-h2">
+            {press.pointer.heading}
+          </h2>
+          <PressPointer />
         </section>
       </div>
 

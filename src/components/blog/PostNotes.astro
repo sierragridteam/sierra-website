@@ -1,12 +1,12 @@
 ---
 /**
  * PostNotes — the automated-desk disclosure (colophon) footnote, rendered as page chrome
- * once per page: at the /blog feed footer and once on each post page, NOT authored into post
+ * once per page: at the /news feed footer and once on each post page, NOT authored into post
  * bodies. Gated by `desk` (the byline is the automated desk). The emergency caveat is NOT
  * here — it is global site chrome in SiteFooter (already once per page). Copy lives in
- * src/config/content.ts (blog.notes); the desk name in colophon.deskName.
+ * src/config/content.ts (news.notes); the desk name in colophon.deskName.
  */
-import { blog, colophon } from '@config/content';
+import { news, colophon } from '@config/content';
 
 interface Props {
   desk?: boolean;
@@ -20,7 +20,7 @@ const { desk, class: className } = Astro.props;
 {desk && (
   <div class:list={['post-notes', className]}>
     <p class="post-notes__line">
-      {colophon.deskName} {blog.notes.deskDisclosure} <a href="/colophon">/colophon</a>.
+      {colophon.deskName} {news.notes.deskDisclosure} <a href="/colophon">/colophon</a>.
     </p>
   </div>
 )}

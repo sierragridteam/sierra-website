@@ -1,0 +1,154 @@
+---
+/**
+ * /news/<yyyy-mm-dd-topic> — a single post. The slug is the markdown filename
+ * in src/content/blog/ (date prefix included, so URLs sort naturally).
+ */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/Section.astro';
+import Button from '@components/Button.astro';
+import PostMeta from '@components/blog/PostMeta.astro';
+import Prose from '@components/blog/Prose.astro';
+import PostNotes from '@components/blog/PostNotes.astro';
+import PressFoot from '@components/press/PressFoot.astro';
+import { news, colophon } from '@config/content';
+import { site } from '@config/site';
+import { isPressRelease } from '@lib/press';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const path = `/news/${post.id}`;
+
+const postSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString().slice(0, 10),
+  ...(post.data.updatedDate
+    ? { dateModified: post.data.updatedDate.toISOString().slice(0, 10) }
+    : {}),
+  url: `${site.url}${path}`,
+  ...(post.data.author ? { author: { '@type': 'Organization', name: post.data.author } } : {}),
+  publisher: { '@type': 'NGO', name: site.legalName },
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  path={path}
+  schema={postSchema}
+>
+  <Section surface="page" labelledby="post-title">
+    <div class="post-layout">
+      <aside class="post-rail">
+        <nav class="post-back" aria-label="Breadcrumb">
+          <a href="/news">
+            <span aria-hidden="true">&larr;</span> {news.post.backLink}
+          </a>
+        </nav>
+        <PostMeta
+          date={post.data.pubDate}
+          updatedDate={post.data.updatedDate}
+          tag={post.data.tag}
+          class="post-rail__meta"
+        />
+        {post.data.author && <p class="post-rail__byline">By {post.data.author}</p>}
+      </aside>
+
+      {/* #timeline is the fold link's landing target from the feed (a live bulletin's
+        "Read the full situation →"). Harmless on normal posts. */}
+      <article class="post" id="timeline">
+        <h1 id="post-title" class="post__title">
+          {post.data.title}
+        </h1>
+        <Prose class="post__body">
+          <Content />
+        </Prose>
+        {/* A release closes on the standing About + media-contact block. */}
+        {isPressRelease(post.data) && <PressFoot />}
+        <PostNotes desk={post.data.author === colophon.deskName} />
+        <div class="post__foot">
+          <Button variant="secondary" href="/news" arrow>
+            {news.archiveLink}
+          </Button>
+        </div>
+      </article>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  /* Meta in a sticky left rail, the post on the right (stacks below 860px). */
+  .post-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 340px) 1fr;
+    gap: var(--space-9);
+    align-items: start;
+  }
+
+  .post-rail {
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--space-5));
+  }
+  .post-back a {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label-lg);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--brand-green);
+  }
+  .post-back a:hover {
+    color: var(--brand-green-hover);
+    text-decoration: underline;
+  }
+  .post-rail :global(.post-rail__meta) {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: var(--border);
+  }
+  .post-rail__byline {
+    margin-top: var(--space-2);
+    font-size: var(--fs-small);
+    color: var(--ink-secondary);
+  }
+
+  .post {
+    max-width: 66ch;
+    min-width: 0;
+    /* Land clear of the sticky topbar when arrived at via #timeline. */
+    scroll-margin-top: calc(var(--topbar-h) + var(--space-5));
+  }
+  .post__title {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+  }
+  .post__foot {
+    margin-top: var(--space-7);
+    padding-top: var(--space-6);
+    border-top: var(--border);
+  }
+
+  @media (max-width: 860px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    .post-rail {
+      position: static;
+    }
+    .post-rail :global(.post-rail__meta) {
+      margin-top: var(--space-5);
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+</style>

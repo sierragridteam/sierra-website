@@ -125,6 +125,15 @@ is anything simply _wrong_ — canonical spellings, typos, hard specs like the h
 limit — plus the honesty rules (§10) in full, with every change to their words disclosed.
 The desk's public notes are written to the author, who is reading them.
 
+**A press release does not go through a desk.** A release is the organization's own text,
+published as issued: a member adds it as an ordinary PR — one file in `src/content/blog/`
+tagged `Press Release`, no `author:` — and the post page appends the standing About and
+media-contact block itself (`PressFoot`; copy in `content.ts` `press`), so neither belongs
+in the body. It is listed on `/press` with the `Announcement` posts (`src/lib/press.ts`).
+The honesty rules still bind it — above all §10.4, no claim about what the network covers
+or how it performs — and the reviewer is the check. A human-added release does count toward
+the News Desk's 3-day cadence guard, like any non-fire post.
+
 **Reopening a declined subject** takes an issue, too. The desk won't return to a subject a
 member declined in the last year on its own; a `desk:topic` or `desk:news` issue about it is
 the member saying it's wanted after all.
