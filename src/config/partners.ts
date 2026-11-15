@@ -22,6 +22,7 @@ import type { ImageMetadata } from 'astro';
 import heltecLogo from '../assets/partners/heltec-automation.png';
 import ersnLogo from '../assets/partners/ersn.webp';
 import uticaLogo from '../assets/partners/utica-water-and-power-authority.webp';
+import awsLogo from '../assets/partners/amazon-web-services.png';
 
 export interface Partner {
   /** Legal/product name, exactly as the organization writes it. */
@@ -97,7 +98,8 @@ export const partners: readonly Partner[] = [
     url: 'https://www.uticawater.com/',
   },
   {
-    // Listed last by request (2026-11); the order here is the order on /partners.
+    // Listed after the hardware and site partners by request (2026-11); the order here is the
+    // order on /partners.
     // ERSN's site writes the name both with and without the apostrophe; its title, sidebar
     // and footer agree on none.
     name: 'Ebbetts Radio Safety Net',
@@ -116,5 +118,21 @@ export const partners: readonly Partner[] = [
     // On /partners only, by org decision (2026-11).
     supportersBand: false,
     url: 'https://ersn.net/',
+  },
+  {
+    // At the bottom of /partners by request (2026-11).
+    name: 'Amazon Web Services',
+    category: 'Infrastructure Partner',
+    // "Is moving", not "runs on": the migration is under way. Update the tense when it is
+    // done, and do not say what form AWS's support takes.
+    description:
+      'Amazon Web Services (AWS) is a cloud computing platform. With support from AWS, ' +
+      'S.I.E.R.R.A is moving the computing behind its monitoring and data services to AWS, ' +
+      'including the feeds that keep the live situation page current.',
+    // The standard AWS logo (dark wordmark, orange smile), rasterized from the vector at
+    // its own proportions with a transparent ground; not redrawn or recolored.
+    logo: awsLogo,
+    logoAlt: 'Amazon Web Services (AWS)',
+    url: 'https://aws.amazon.com/',
   },
 ];
