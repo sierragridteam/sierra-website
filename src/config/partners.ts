@@ -123,16 +123,17 @@ export const partners: readonly Partner[] = [
     // At the bottom of /partners by request (2026-11).
     name: 'Amazon Web Services',
     category: 'Infrastructure Partner',
-    // "Is moving", not "runs on": the migration is under way. Update the tense when it is
-    // done, and do not say what form AWS's support takes.
+    // Present tense by org decision (2026-11). Do not say what form AWS's support takes.
     description:
-      'Amazon Web Services (AWS) is a cloud computing platform. With support from AWS, ' +
-      'S.I.E.R.R.A is moving the computing behind its monitoring and data services to AWS, ' +
-      'including the feeds that keep the live situation page current.',
+      'Amazon Web Services (AWS) is a cloud computing platform. AWS powers ' +
+      "S.I.E.R.R.A's monitoring and data services, including the feeds that keep the live " +
+      'situation page current.',
     // The standard AWS logo (dark wordmark, orange smile), rasterized from the vector at
     // its own proportions with a transparent ground; not redrawn or recolored.
     logo: awsLogo,
     logoAlt: 'Amazon Web Services (AWS)',
+    // On /partners only, by org decision (2026-11).
+    supportersBand: false,
     url: 'https://aws.amazon.com/',
   },
 ];
