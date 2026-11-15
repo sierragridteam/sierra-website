@@ -308,6 +308,10 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   brief §4.7): the desk **copy-edits it, never rewrites it** — voice rules don't bind the
   author's copy, but canonical spellings, typos, hard specs, and the §10 honesty rules are
   always fixed. See the runbook's "Proposing topics".
+- **Contact** (`/contact`) is not in the header nav either (2026-11): it is in the footer
+  (`footerNav`), a "Contact Us" button under the About page's lede, a line in the media
+  contact on `/press`, and the Volunteer buttons. If a new page needs a way to reach us, link
+  `/contact` in its own content.
 - **Press** (`/press`) is footer-linked, not in the header nav (`footerNav` in `site.ts`; also
   pointed to from `/news`, `/about` and `/contact`). It lists the organization's news beside
   the media contact, facts and logos: posts tagged `Press Release` or `Announcement` by
@@ -330,6 +334,11 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   - the "FOR IMMEDIATE RELEASE" line, the media-contact header and the release's own "About
     S.I.E.R.R.A" paragraph come out, because the page appends the standing versions
     (`PressFoot`; wording in `content.ts` `press`). A partner's "About" paragraph stays.
+
+  **Attribute it to its author:** `author:` is the person who issued the release, named and
+  titled as the release's own contact line gives them (`Jay Goldberg, President and CEO`),
+  even where another page titles them differently. A release never carries the desk byline
+  and is never left unsigned.
 
   List every fix for the member in the PR. `description:` is ours to write: one plain
   sentence of what the release announces, with no claim of its own. The standing About and

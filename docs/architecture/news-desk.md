@@ -127,7 +127,8 @@ The desk's public notes are written to the author, who is reading them.
 
 **A press release does not go through a desk.** A release is the organization's own text,
 published as issued: a member adds it as an ordinary PR — one file in `src/content/blog/`
-tagged `Press Release`, no `author:` — and the post page appends the standing About and
+tagged `Press Release`, with `author:` set to the person who issued it, named as the
+release names them — and the post page appends the standing About and
 media-contact block itself (`PressFoot`; copy in `content.ts` `press`), so neither belongs
 in the body. It is listed on `/press` with the `Announcement` posts (`src/lib/press.ts`).
 The brief does not govern it: a release is the author's signed writing, so the voice rules

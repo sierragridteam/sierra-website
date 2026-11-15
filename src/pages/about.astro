@@ -31,7 +31,13 @@ const aboutSchema = {
       lead={about.headline.lead}
       rest={about.headline.rest}
       lede={about.intro}
-    />
+    >
+      <div class="about-contact">
+        <Button variant="secondary" href="/contact" arrow>
+          {about.contactLink}
+        </Button>
+      </div>
+    </PageHead>
   </Section>
 
   <Section surface="page" labelledby="story-title">
@@ -192,6 +198,10 @@ const aboutSchema = {
     line-height: 1.55;
     color: var(--ink-body);
     max-width: 60ch;
+  }
+
+  .about-contact {
+    margin-top: var(--space-6);
   }
 
   .about-press {

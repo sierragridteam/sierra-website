@@ -23,7 +23,7 @@
 robots.txt, sitemap-index.xml, site.webmanifest, og images   (generated)
 ```
 
-**Primary nav order (left→right):** Home · Live Feed · Mesh · News · Partners · About · Contact, plus a
+**Primary nav order (left→right):** Home · Live Feed · Mesh · News · Partners · About, plus a
 **Donate** CTA (orange-accent text) and a **live local clock** (America/Los_Angeles, 24h,
 "PT" suffix). The header brand is the mark alone (no wordmark); the homepage hides it (the
 hero emblem stands in). **Live Feed** is the public flagship during an emergency.

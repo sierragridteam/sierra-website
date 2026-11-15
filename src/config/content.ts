@@ -383,6 +383,8 @@ export const colophon = {
 export const about = {
   kicker: 'About the Alliance',
   headline: { lead: 'Resilient communications,', rest: 'built by neighbors.' },
+  /** Button under the lede — /contact is not in the header nav, so About carries it. */
+  contactLink: 'Contact Us',
   intro:
     'S.I.E.R.R.A — the Signal Integrity & Emergency Radio Response Alliance — is an ' +
     'all-volunteer non-profit that builds, operates, and trains the people behind an off-grid ' +
@@ -531,6 +533,9 @@ export const press = {
     note:
       'A volunteer reads every message. S.I.E.R.R.A has no staffed press office, so allow ' +
       'time for a reply.',
+    /** Pointer to /contact for everything that is not a press question. */
+    general: 'For general questions, volunteering, or mail, use the',
+    generalLinkLabel: 'contact page',
   },
   logos: {
     heading: 'Logos',

@@ -68,6 +68,9 @@ const pageSchema = {
             {press.contact.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
           </p>
           <p class="press-note">{press.contact.note}</p>
+          <p class="press-note">
+            {press.contact.general} <a href="/contact">{press.contact.generalLinkLabel}</a>.
+          </p>
         </PressBlock>
 
         <PressBlock heading={press.facts.heading}>

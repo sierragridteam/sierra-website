@@ -4,6 +4,7 @@ headline: S.I.E.R.R.A, Utica Water and Power Authority Partner to Expand Off-Gri
 description: The Utica Water and Power Authority board has voted to partner with S.I.E.R.R.A to host solar-powered MeshCore repeaters on Utica property in Murphys.
 pubDate: 2026-11-15
 tag: Press Release
+author: Jay Goldberg, President and CEO
 ---
 
 MURPHYS, Calif. (Nov. 15, 2026) — Signal Integrity & Emergency Radio Response Alliance (S.I.E.R.R.A) 501(c)(3) announced today that the Utica Water and Power Authority (UWPA) Board of Directors voted to partner with the nonprofit to host solar-powered, off-grid emergency communications repeaters on Utica property.

@@ -84,14 +84,15 @@ export const nav: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'News', href: '/news' },
   { label: 'Partners', href: '/partners' },
   { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
 ];
 
 /**
  * Footer-only links, listed in the footer "Site" column after the primary nav. For pages
- * a specific reader goes looking for (a reporter, for /press) that don't earn a header slot.
+ * a reader goes looking for that don't earn a header slot: /contact (also reached from the
+ * top of /about, the media contact on /press, and the Volunteer buttons) and /press.
  */
 export const footerNav: ReadonlyArray<{ label: string; href: string }> = [
+  { label: 'Contact', href: '/contact' },
   { label: 'Press', href: '/press' },
 ];
 

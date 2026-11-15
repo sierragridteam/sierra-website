@@ -34,7 +34,15 @@ const postSchema = {
     ? { dateModified: post.data.updatedDate.toISOString().slice(0, 10) }
     : {}),
   url: `${site.url}${path}`,
-  ...(post.data.author ? { author: { '@type': 'Organization', name: post.data.author } } : {}),
+  // The desk is an organizational byline; any other byline is a person.
+  ...(post.data.author
+    ? {
+        author: {
+          '@type': post.data.author === colophon.deskName ? 'Organization' : 'Person',
+          name: post.data.author,
+        },
+      }
+    : {}),
   publisher: { '@type': 'NGO', name: site.legalName },
 };
 ---

@@ -11,7 +11,7 @@
 | ------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `BaseLayout` | `layouts/BaseLayout.astro`    | HTML shell: `<head>` via `<Seo>`, skip-link, `<TopBar>`, `<slot/>`, `<SiteFooter>`. Props: `title`, `description`, `path`, `ogImage?`, `hideBrandInNav?`, `wide?`. |
 | `Seo`        | `components/Seo.astro`        | All `<head>` meta: title, description, canonical, OG, Twitter, JSON-LD, favicons, theme-color. Props from page frontmatter.                                        |
-| `TopBar`     | `components/TopBar.astro`     | Brand mark (hidden when `hideBrand`), nav (Home·Live Feed·Mesh·News·Partners·About·Contact), Donate link, `<LocalClock>`.                                          |
+| `TopBar`     | `components/TopBar.astro`     | Brand mark (hidden when `hideBrand`), nav (Home·Live Feed·Mesh·News·Partners·About), Donate link, `<LocalClock>`.                                                  |
 | `SiteFooter` | `components/SiteFooter.astro` | Mark + full legal name + P.O. Box + established 2026 + quick links + 911 disclaimer line.                                                                          |
 | `Container`  | `components/Container.astro`  | Centered max-width wrapper (`--container-max`) + gutters.                                                                                                          |
 | `Section`    | `components/Section.astro`    | Vertical-rhythm section wrapper (`--space-8`/`--space-9` padding), optional `surface` prop.                                                                        |
