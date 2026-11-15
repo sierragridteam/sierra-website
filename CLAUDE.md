@@ -283,7 +283,7 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
   (`updatedDate ?? pubDate`) and honesty model: a live bulletin uses its `summary` fold
   head with a stable permalink `guid`, so an update re-surfaces the same entry in readers
   rather than duplicating it. `<link rel="alternate">` autodiscovery is in `Seo.astro`
-  (every page); the visible "Subscribe via RSS" link is on `/news`.
+  (every page); the visible "RSS Feed" link is on `/news`.
   Post copy follows `docs/content-style-guide.md` AND `docs/news-feed-content-brief.md`
   (scope, sourcing, and hard rules for what may be published). Keep post headlines
   under ~46 chars so the page title stays ≤60 with the site suffix.

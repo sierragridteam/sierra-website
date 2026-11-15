@@ -303,22 +303,22 @@ export const contact = {
 } as const;
 
 export const news = {
-  kicker: 'News & Notes',
-  title: 'Notes from the foothills.',
+  kicker: 'News',
+  title: 'News from the foothills.',
   intro:
-    'Technology, preparedness, and lessons in emergency communications — written slowly, ' +
-    'when there is something worth saying. For anything happening right now, the Live Feed ' +
-    'is the place.',
+    'Announcements from the alliance, and writing on technology and preparedness — ' +
+    'published when there is something worth saying.',
+  /** Where to go for a current incident: text, then the linked label (to /live). */
+  liveNote: { text: 'For anything happening right now, open the', linkLabel: 'Live Feed' },
   /** How many full posts the main /news page shows before pointing at the archive. */
   recentCount: 5,
   archiveLink: 'Browse the Archive',
-  /** Label for the RSS feed link in the /news header (feed lives at /rss.xml). */
-  feedLink: 'Subscribe via RSS',
-  /** Label for the quiet link from the /news header to the /press page. */
-  pressLink: 'Press & Media',
+  /** The three ways further into the section, listed under the intro at equal weight:
+   *  /news/archive, /press, and the feed at /rss.xml. */
+  links: { archive: 'Archive', press: 'Press', feed: 'RSS Feed' },
   emptyNote: 'No posts yet — the first ones are on their way.',
   archive: {
-    kicker: 'News & Notes',
+    kicker: 'News',
     headline: { lead: 'The archive —', rest: 'every post, by year and month.' },
     backLink: 'Latest Posts',
   },

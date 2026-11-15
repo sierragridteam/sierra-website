@@ -9,7 +9,7 @@ const pages = [
   // The h1 is generated from the feed ("9 of 11 repeaters / heard in the last 12 hours."),
   // or states the failure honestly when the feed can't be reached — as in this suite.
   { name: 'mesh', path: '/mesh', h1: /repeaters|mesh/i },
-  { name: 'news', path: '/news', h1: /notes from the foothills/i },
+  { name: 'news', path: '/news', h1: /news from the foothills/i },
   { name: 'news-archive', path: '/news/archive', h1: /archive/i },
   {
     name: 'news-post',
