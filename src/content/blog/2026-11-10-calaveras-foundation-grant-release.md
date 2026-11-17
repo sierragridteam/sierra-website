@@ -4,7 +4,7 @@ headline: S.I.E.R.R.A Receives Critical Grant from The Calaveras Community Found
 description: The Calaveras Community Foundation has awarded S.I.E.R.R.A a grant to expand its MeshCore network along the Highway 4 corridor from Vallecito to Bear Valley.
 pubDate: 2026-11-10
 tag: Press Release
-author: Jay Goldberg, President and CEO
+author: Jay Goldberg, President and Founder
 ---
 
 [CALAVERAS COUNTY, CA] – NOV 10, 2026 — The Signal Integrity & Emergency Radio Response Alliance (S.I.E.R.R.A) 501(c)(3) announced today that it has been awarded a grant from the Calaveras Community Foundation to expand its MeshCore off-grid emergency SMS communications network along the Hwy 4 corridor from Vallecito to Bear Valley, CA.

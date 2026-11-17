@@ -528,7 +528,7 @@ export const press = {
     heading: 'Media Contact',
     /** The contact the releases themselves name. */
     name: 'Jay Goldberg',
-    title: 'President and CEO',
+    title: 'President and Founder',
     body: 'Send press questions and interview requests to',
     note:
       'A volunteer reads every message. S.I.E.R.R.A has no staffed press office, so allow ' +
