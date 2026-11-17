@@ -336,7 +336,7 @@ Don't add `Co-Authored-By:` trailers naming an agent or model, or any other AI a
     (`PressFoot`; wording in `content.ts` `press`). A partner's "About" paragraph stays.
 
   **Attribute it to its author:** `author:` is the person who issued the release, named and
-  titled as the release's own contact line gives them (`Jay Goldberg, President and CEO`),
+  titled as the release's own contact line gives them (`Jay Goldberg, Founder and President`),
   even where another page titles them differently. A release never carries the desk byline
   and is never left unsigned.
 
