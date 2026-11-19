@@ -6,6 +6,7 @@
  */
 import { test, expect } from 'bun:test';
 import {
+  beyondLines,
   deriveDigest,
   deriveStream,
   DIGEST_MAX,
@@ -436,4 +437,106 @@ test('a quiet feed is an empty digest, and one with only road work says how much
   const d = deriveDigest(snap({ road_incident: fc([work('1'), work('2')]) }));
   expect(d.items).toEqual([]);
   expect(d.rest).toBe(2);
+});
+
+// ---- Past a road's end: the feed says what it is, the site only reads it ----
+
+// The road_segment feature as The Grid served it on 2026-11-19, `beyond` given per test.
+function road(beyond: unknown): HazardFeature {
+  return {
+    type: 'Feature',
+    geometry: null,
+    properties: {
+      id: 'road:r1',
+      layer: 'ROAD_SEGMENT',
+      kind: 'Road segment',
+      severity: 'INFO',
+      severityRank: 0,
+      headline: 'Hwy 1 — A to B',
+      status: 'OPEN',
+      source: { id: 'google', name: 'Google Routes + Caltrans' },
+      road: { roadId: 'r1', beyond } as HazardFeature['properties']['road'],
+    },
+  };
+}
+
+test('a seasonal closure past a road is the feed`s flag, rating and words', () => {
+  const [line, ...more] = beyondLines(
+    road([
+      {
+        name: 'Somewhere seasonal closure',
+        status: 'CLOSED',
+        seasonal: true,
+        severity: 'INFO',
+        severityRank: 0,
+        headline: 'Hwy 1: Somewhere seasonal closure (past B)',
+      },
+    ])
+  );
+  expect(more).toEqual([]);
+  expect(line).toEqual({
+    text: 'Hwy 1: Somewhere seasonal closure (past B)',
+    seasonal: true,
+    rank: 0,
+    severity: 'INFO',
+  });
+});
+
+test('a closure that only sounds seasonal is not: no flag, no special case', () => {
+  // The wording that the old feed used, at the rating it used, without `seasonal`.
+  const old = {
+    name: 'Ebbetts Pass winter closure',
+    status: 'CLOSED',
+    severity: 'SEVERE',
+    severityRank: 3,
+    headline: 'Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow',
+    reason: 'snow',
+  };
+  expect(beyondLines(road([old]))).toEqual([
+    { text: old.headline, seasonal: false, rank: 3, severity: 'SEVERE' },
+  ]);
+  // `seasonal: false`, or anything that is not the boolean, is the same.
+  for (const seasonal of [false, 'true', 1, null])
+    expect(beyondLines(road([{ ...old, seasonal }]))[0].seasonal).toBe(false);
+});
+
+test('conditions past a road rank by their own severity; a rank may come from the name', () => {
+  const lines = beyondLines(
+    road([
+      { headline: 'standing', seasonal: true, severity: 'INFO', severityRank: 0 },
+      { headline: 'slide', severity: 'SEVERE' }, // no severityRank: read from `severity`
+      { name: 'works', severity: 'MODERATE', severityRank: 2 }, // no headline: its `name`
+      { severity: 'EXTREME', severityRank: 4 }, // no words: nothing truthful to print
+      { headline: 'unrated' }, // no rating: INFO
+    ])
+  );
+  expect(lines.map((l) => [l.text, l.rank, l.severity, l.seasonal])).toEqual([
+    ['slide', 3, 'SEVERE', false],
+    ['works', 2, 'MODERATE', false],
+    ['standing', 0, 'INFO', true],
+    ['unrated', 0, 'INFO', false],
+  ]);
+});
+
+test('a road with nothing past its end has no lines', () => {
+  expect(beyondLines(road(undefined))).toEqual([]);
+  expect(beyondLines(road([]))).toEqual([]);
+  expect(beyondLines(road('closed'))).toEqual([]);
+  expect(beyondLines(point('road_segment', 0, 0, 0))).toEqual([]);
+});
+
+test('what lies past a road never enters the alert list or its counts', () => {
+  // The place summary stopped listing a seasonal closure on 2026-11-19; the list and the tiles
+  // never read the summary's headlines or the road table, so they are the same with or
+  // without it, at any rating.
+  const seg = (beyond: unknown) => snap({ road_segment: fc([road(beyond)]) });
+  for (const s of [
+    seg(undefined),
+    seg([{ headline: 'standing', seasonal: true, severity: 'INFO', severityRank: 0 }]),
+    seg([{ headline: 'slide', severity: 'SEVERE', severityRank: 3 }]),
+  ]) {
+    expect(deriveStream(s)).toEqual([]);
+    expect(deriveDigest(s)).toEqual({ items: [], shown: 0, rest: 0, restMostly: null });
+    expect(deriveSituationSummary(s, 0).highestRank).toBe(0);
+  }
 });

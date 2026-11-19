@@ -10,6 +10,7 @@
  * be imported server-side and bundled into the client island alike.
  */
 import {
+  beyondLines,
   deriveDigest,
   deriveSituationSummary,
   isNotablePower,
@@ -498,6 +499,22 @@ function renderRoads(segments: HazardFeature[], chains: HazardFeature[]): string
       const chain = chainFor(road.roadId, chains);
       const t = roadTone(status, chain === 'None' ? '' : chain);
       const delay = road.delayMinutes ?? 0;
+      const notes =
+        (p.description ? `<li class="road__incident">${esc(p.description)}</li>` : '') +
+        beyondLines(f)
+          .map((b) => {
+            const label = b.seasonal
+              ? copy.roadsSeasonal
+              : b.rank > 0
+                ? severityLabel(b.severity)
+                : '';
+            return (
+              `<li class="road__incident road__incident--${toneForRank(b.rank)}">` +
+              (label ? `<span class="road__incident-label">${esc(label)}</span> ` : '') +
+              `${esc(b.text)}</li>`
+            );
+          })
+          .join('');
       return (
         // data-hazard-id links the card to its map corridor — hovering it highlights the
         // road_segment line on the /live map (wired in the page controller), mirroring the
@@ -518,9 +535,10 @@ function renderRoads(segments: HazardFeature[], chains: HazardFeature[]): string
         // The reason a segment is restricted/closed lives in its `description` (the new
         // road_segment layer carries it here — the old /roads bundled it as per-road
         // `alerts`). Open segments have none. Reuses the incident styling.
-        (p.description
-          ? `<ul class="road__incidents"><li class="road__incident">${esc(p.description)}</li></ul>`
-          : '') +
+        // Below it, anything past the road's end (`road.beyond[]`): the stretch above keeps its
+        // own status. The wording, the rating and whether it is a seasonal closure are all the
+        // feed's (`beyondLines`); this only prints them, each line toned by its own severity.
+        (notes ? `<ul class="road__incidents">${notes}</ul>` : '') +
         `</article>`
       );
     })

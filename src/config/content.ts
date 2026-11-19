@@ -222,6 +222,8 @@ export const live = {
   },
   roadsHeading: 'Road conditions',
   roadsIntro: 'Travel times and chain controls on the corridor’s highways.',
+  /** Label for a line the feed marks `seasonal` past a road's end. The line's words are the feed's. */
+  roadsSeasonal: 'Seasonal closure',
   evacHeading: 'Evacuation zones & orders',
   evacNote:
     'Evacuation zones for Calaveras & Tuolumne are published by Cal OES. During an active ' +

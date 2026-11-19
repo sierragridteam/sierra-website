@@ -219,6 +219,101 @@ test('a restricted road segment shows its reason; an open one adds no incident l
   expect(segs.find((f) => f.properties.status === 'open')?.properties.tone).toBe('ok');
 });
 
+// The Arnold to Bear Valley feature as The Grid served it on 2026-11-19, `beyond` per test.
+function roadWith(beyond: unknown, extra: Record<string, unknown> = {}): HazardFeature {
+  return {
+    type: 'Feature',
+    geometry: null,
+    properties: {
+      id: 'road:hwy4-arnold-bearvalley',
+      layer: 'ROAD_SEGMENT',
+      kind: 'Road segment',
+      severity: 'INFO',
+      severityRank: 0,
+      headline: 'Hwy 4 — Arnold to Bear Valley',
+      status: 'OPEN',
+      areaLabel: 'Arnold to Bear Valley',
+      source: { id: 'google', name: 'Google Routes + Caltrans' },
+      road: { roadId: 'hwy4-arnold-bearvalley', durationMinutes: 29, distanceKm: 38, beyond },
+      ...extra,
+    } as HazardFeature['properties'],
+  };
+}
+const roadsOf = (f: HazardFeature) => buildView(snap({ road_segment: fc([f]) }), emptyGrid);
+const LIVE_BEYOND = {
+  name: 'Ebbetts Pass winter closure',
+  status: 'CLOSED',
+  side: 'END',
+  seasonal: true,
+  severity: 'INFO',
+  severityRank: 0,
+  headline: 'Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow',
+  reason: 'snow',
+};
+
+test('a seasonal closure past a road is one calm line in the feed`s words; the road stays open', () => {
+  const view = roadsOf(roadWith([LIVE_BEYOND]));
+  expect(view.html.roads).toContain(
+    '<ul class="road__incidents"><li class="road__incident road__incident--ok">' +
+      '<span class="road__incident-label">Seasonal closure</span> ' +
+      'Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow</li></ul>'
+  );
+  // The stretch itself keeps its own status and tone, on the table and on the map.
+  expect(view.html.roads).toContain('class="road road--ok"');
+  expect(view.html.roads).toContain('road__status--ok');
+  expect(view.mapData.layers.road_segment.features[0].properties.tone).toBe('ok');
+  // And it is not an alert: nothing in the list, the tiles or the headline.
+  expect(view.html.stream).not.toContain('Ebbetts');
+  expect(view.status.tone).toBe('ok');
+});
+
+test('the same closure without the flag is read at its own severity, with no seasonal label', () => {
+  // A response from before 2026-11-19: SEVERE, and no `seasonal`.
+  const { seasonal: _flag, ...unflagged } = LIVE_BEYOND;
+  const old = roadsOf(roadWith([{ ...unflagged, severity: 'SEVERE', severityRank: 3 }]));
+  expect(old.html.roads).toContain(
+    '<li class="road__incident road__incident--alarm">' +
+      '<span class="road__incident-label">Severe</span> ' +
+      'Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow</li>'
+  );
+  expect(old.html.roads).not.toContain('Seasonal closure');
+  // Unflagged at INFO: the feed's words and nothing added.
+  const info = roadsOf(roadWith([unflagged]));
+  expect(info.html.roads).toContain(
+    '<li class="road__incident road__incident--ok">Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow</li>'
+  );
+  expect(info.html.roads).not.toContain('road__incident-label');
+});
+
+test('a closure past a road that is not seasonal is toned by its severity, whatever it is called', () => {
+  const view = roadsOf(
+    roadWith(
+      [
+        {
+          headline: 'Hwy 4: closed past Bear Valley — rock slide',
+          seasonal: false,
+          severity: 'MODERATE',
+          severityRank: 2,
+        },
+        LIVE_BEYOND,
+      ],
+      { description: 'Chains required' }
+    )
+  );
+  const lines = view.html.roads.match(/<li class="road__incident[^>]*>.*?<\/li>/g) ?? [];
+  expect(lines).toEqual([
+    // The road's own reason first, then what lies past it, most severe first.
+    '<li class="road__incident">Chains required</li>',
+    '<li class="road__incident road__incident--elevated"><span class="road__incident-label">Moderate</span> Hwy 4: closed past Bear Valley — rock slide</li>',
+    '<li class="road__incident road__incident--ok"><span class="road__incident-label">Seasonal closure</span> Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow</li>',
+  ]);
+});
+
+test('a road with nothing past its end renders as before', () => {
+  expect(roadsOf(roadWith(undefined)).html.roads).not.toContain('road__incidents');
+  expect(roadsOf(roadWith([])).html.roads).not.toContain('road__incidents');
+});
+
 const NOON_WED = Date.parse('2026-10-14T19:00:00Z'); // Wed 12:00 PT
 
 function power(category: string, extra: Record<string, unknown>, pw: Record<string, unknown>) {

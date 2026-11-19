@@ -86,6 +86,13 @@ test as `/places:resolve`), so the client no longer re-filters. Layer slugs (URL
   (`roadId`, `congestion`, `delayMinutes`, `durationMinutes`, `distanceKm`) plus
   `status`/`headline`/`areaLabel` on the envelope. Chain controls are the separate
   `chain_control` layer; road incidents the `road_incident` layer.
+  `road.beyond[]` lists conditions past the road's end (the stretch keeps its own status).
+  Since 2026-11-19 The Grid states what each one is: `seasonal: true` for a yearly standing
+  closure (rated INFO, and left out of the place summary), and `severity`/`severityRank` for
+  how much it matters. `/live` prints each as a line under its road (`beyondLines`) in the
+  feed's own `headline`, toned by the feed's severity, with the generic "Seasonal closure"
+  label when the flag is set. **The site never decides that a particular event is a standing
+  condition, rewords it or ranks it down** — no rule may key on an event's name, id or reason.
 - **`weather_alert`: issued ≠ in force — read `status`.** Since 2026-08-11 `effective`/
   `expires` carry CAP's `onset`/`ends` (the _hazard's_ window) rather than the product's
   issuance time and re-issue deadline, and **`status` is `SCHEDULED` until onset**. A warning

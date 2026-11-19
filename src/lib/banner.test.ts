@@ -214,3 +214,24 @@ test('an unreadable weather layer is unknown, never "no alert"', () => {
   ).toBeUndefined();
   expect(weatherFromLayer(layer(), NOW)).toBeNull();
 });
+
+test('the roads domain never decides the banner, with or without a closure past a road', () => {
+  // Until 2026-11-19 the place summary listed the seasonal closure past Bear Valley as a SEVERE
+  // roads headline (`road:{segment}:beyond-{index}`); it no longer does. The banner reads only
+  // the power and weather domains, so both shapes give the same answer.
+  const roads = (highestSeverity: string, headlines: SummaryDomain['headlines']) =>
+    [
+      { domain: 'roads', status: 'OK', highestSeverity, activeCount: headlines.length, headlines },
+      { domain: 'power', status: 'OK', highestSeverity: 'INFO', activeCount: 0, headlines: [] },
+      { domain: 'weather', status: 'OK', highestSeverity: 'INFO', activeCount: 0, headlines: [] },
+    ] as SummaryDomain[];
+  const before = roads('SEVERE', [
+    { id: 'road:r1:beyond-0', severity: 'SEVERE', headline: 'A closure past the road' },
+  ]);
+  const after = roads('INFO', []);
+  for (const domains of [before, after]) {
+    expect(powerCheck(domains)).toBe('none');
+    expect(weatherCheck(domains)).toBe('none');
+  }
+  expect(deriveBanner(calm, NOW).active).toBe(false);
+});
