@@ -41,6 +41,21 @@ export interface HazardProvenance {
   sourceUrl?: string;
 }
 
+/**
+ * A condition past a monitored road's end, on `road.beyond[]` of a `road_segment` feature: the
+ * stretch itself keeps its own status. The Grid says what it is (2026-11-19): `seasonal` marks
+ * a yearly standing closure, and `severity`/`severityRank` say how much it matters. A response
+ * from before that date has neither `seasonal` nor, necessarily, the same rating.
+ */
+export interface RoadBeyond {
+  name?: string;
+  status?: string;
+  seasonal?: boolean;
+  severity?: Severity | string;
+  severityRank?: number;
+  headline?: string;
+}
+
 /** Common envelope on every hazard feature + the typed per-kind blocks. */
 export interface HazardProps {
   id: string;
@@ -67,6 +82,8 @@ export interface HazardProps {
     delayMinutes?: number;
     durationMinutes?: number;
     distanceKm?: number;
+    /** Conditions past the monitored road's end (see `beyondLines`). */
+    beyond?: RoadBeyond[];
   };
   earthquake?: { magnitude?: number; depthKm?: number; felt?: number | null };
   wildfire?: { acres?: number; containment?: number; county?: string; hasPerimeter?: boolean };
@@ -351,6 +368,44 @@ export function deriveStream(snapshot: HazardsSnapshot): HazardFeature[] {
       String(a.properties.updatedAt ?? a.properties.effective ?? '')
     );
   });
+}
+
+// ---- Past a road's end ----
+
+/** One line under a road: a condition past the end of the stretch the road card describes. */
+export interface BeyondLine {
+  /** The Grid's own wording: the entry's `headline`, or its `name`. */
+  text: string;
+  /** The Grid's `seasonal` flag and nothing else: a yearly standing closure. */
+  seasonal: boolean;
+  rank: number;
+  severity: string;
+}
+
+/**
+ * The conditions past a road's end, most severe first, as The Grid describes them.
+ *
+ * Nothing here is decided by this site. Whether an entry is a standing seasonal closure is the
+ * feed's `seasonal: true` (never its name, its reason or the month); how much it matters is the
+ * feed's `severityRank` (or `severity`); the words are the feed's `headline` or `name`. An entry
+ * without the flag, or flagged false, is an ordinary condition at whatever severity it carries.
+ * An entry with no words at all is left out: there is nothing truthful to print.
+ */
+export function beyondLines(f: HazardFeature): BeyondLine[] {
+  const entries = f.properties.road?.beyond;
+  if (!Array.isArray(entries)) return [];
+  return entries
+    .flatMap((b): BeyondLine[] => {
+      const text = String(b?.headline || b?.name || '').trim();
+      if (!text) return [];
+      const rank =
+        typeof b.severityRank === 'number'
+          ? b.severityRank
+          : (SEVERITY_RANK[String(b.severity ?? '').toUpperCase()] ?? 0);
+      const severity = Object.keys(SEVERITY_RANK).find((k) => SEVERITY_RANK[k] === rank) ?? 'INFO';
+      return [{ text, seasonal: b.seasonal === true, rank, severity }];
+    })
+    .sort((a, b) => b.rank - a.rank);
 }
 
 // ---- The digest: what /live lists ----
