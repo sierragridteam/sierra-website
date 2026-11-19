@@ -56,6 +56,19 @@ export interface RoadBeyond {
   headline?: string;
 }
 
+/**
+ * A chain requirement on a monitored road, on `road.chains[]` of a `road_segment` feature
+ * (The Grid, 2026-11-19). The road keeps its own status: chains do not close it. The entry is
+ * the chain-control stretch as the feed describes it; `from`/`to` are the whole stretch's ends.
+ */
+export interface RoadChain {
+  level?: string;
+  eventId?: string;
+  headline?: string;
+  from?: string;
+  to?: string;
+}
+
 /** Common envelope on every hazard feature + the typed per-kind blocks. */
 export interface HazardProps {
   id: string;
@@ -84,6 +97,8 @@ export interface HazardProps {
     distanceKm?: number;
     /** Conditions past the monitored road's end (see `beyondLines`). */
     beyond?: RoadBeyond[];
+    /** Chain requirements on the road (see `roadChains`). Absent: not known. */
+    chains?: RoadChain[];
   };
   earthquake?: { magnitude?: number; depthKm?: number; felt?: number | null };
   wildfire?: { acres?: number; containment?: number; county?: string; hasPerimeter?: boolean };
@@ -406,6 +421,41 @@ export function beyondLines(f: HazardFeature): BeyondLine[] {
       return [{ text, seasonal: b.seasonal === true, rank, severity }];
     })
     .sort((a, b) => b.rank - a.rank);
+}
+
+/** What The Grid says about chains on one monitored road. */
+export interface RoadChains {
+  /** False when the feed does not say (no `road.chains`): print "unknown", never "none". */
+  known: boolean;
+  /** The levels in force on the road, as the feed orders them (highest first), no repeats. */
+  levels: string[];
+  /** The feed's own line for each requirement ("Hwy 4 chains required, A to B (R2)"). */
+  lines: string[];
+}
+
+/**
+ * The chain requirements on a road, as The Grid states them on the road itself.
+ *
+ * Nothing here is decided by this site: which chain-control stretch lies on which road is the
+ * feed's `road.chains` (this site once matched the two layers itself, on an id the stretches
+ * never carried, and printed "None" through an R2 storm). An empty list is the feed saying
+ * there is no requirement on the road. No list at all is the feed not knowing (its chain-control
+ * read failed, or an older Grid), and that is `known: false`, which must not be shown as none.
+ */
+export function roadChains(f: HazardFeature): RoadChains {
+  const entries = f.properties.road?.chains;
+  if (!Array.isArray(entries)) return { known: false, levels: [], lines: [] };
+  const levels: string[] = [];
+  const lines: string[] = [];
+  for (const c of entries) {
+    const level = String(c?.level ?? '').trim();
+    if (level && !levels.includes(level)) levels.push(level);
+    const line = String(c?.headline ?? '').trim();
+    if (line && !lines.includes(line)) lines.push(line);
+  }
+  // An entry with no level we can print is still a requirement.
+  if (entries.length > 0 && levels.length === 0) levels.push('Required');
+  return { known: true, levels, lines };
 }
 
 // ---- The digest: what /live lists ----

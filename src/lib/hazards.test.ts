@@ -7,6 +7,7 @@
 import { test, expect } from 'bun:test';
 import {
   beyondLines,
+  roadChains,
   deriveDigest,
   deriveStream,
   DIGEST_MAX,
@@ -539,4 +540,50 @@ test('what lies past a road never enters the alert list or its counts', () => {
     expect(deriveDigest(s)).toEqual({ items: [], shown: 0, rest: 0, restMostly: null });
     expect(deriveSituationSummary(s, 0).highestRank).toBe(0);
   }
+});
+
+test('roadChains: the feed`s list, an empty list, and no list are three different answers', () => {
+  const road = (chains: unknown): HazardFeature =>
+    ({
+      type: 'Feature',
+      geometry: null,
+      properties: {
+        id: 'road:hwy4-arnold-bearvalley',
+        layer: 'ROAD_SEGMENT',
+        kind: 'Road segment',
+        severity: 'INFO',
+        severityRank: 0,
+        headline: 'Hwy 4 — Arnold to Bear Valley',
+        status: 'OPEN',
+        source: { id: 'google', name: 'Google Routes + Caltrans' },
+        road: { roadId: 'hwy4-arnold-bearvalley', chains },
+      },
+    }) as HazardFeature;
+  const r2 = { level: 'R2', eventId: 'cc:hwy4:r2', headline: 'Hwy 4 chains required, A to B (R2)' };
+  const r1 = {
+    level: 'R1',
+    eventId: 'cc:hwy4:r1',
+    headline: 'Hwy 4 chains or snow tires required, B to C (R1)',
+  };
+  expect(roadChains(road([r2, r1]))).toEqual({
+    known: true,
+    levels: ['R2', 'R1'],
+    lines: [r2.headline, r1.headline],
+  });
+  // Two stretches of one level: the level once, both lines.
+  expect(
+    roadChains(
+      road([r2, { ...r2, eventId: 'cc:hwy4:r2:2', headline: 'Hwy 4 chains required, D to E (R2)' }])
+    ).levels
+  ).toEqual(['R2']);
+  expect(roadChains(road([]))).toEqual({ known: true, levels: [], lines: [] });
+  for (const absent of [undefined, null, 'R2', {}]) {
+    expect(roadChains(road(absent))).toEqual({ known: false, levels: [], lines: [] });
+  }
+  // A requirement with no level we can print is still a requirement.
+  expect(roadChains(road([{ eventId: 'cc:hwy4:r2' }]))).toEqual({
+    known: true,
+    levels: ['Required'],
+    lines: [],
+  });
 });
