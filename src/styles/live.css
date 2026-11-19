@@ -633,6 +633,30 @@
   background: var(--brand-brass);
 }
 
+/* A condition past the road's end, toned by the feed's own severity: calm at INFO/MINOR (a
+   seasonal closure is INFO), brass at MODERATE, the alert orange only at SEVERE and above. */
+.live-view .road__incident--ok::before {
+  background: var(--ink-muted);
+}
+.live-view .road__incident--alarm::before {
+  background: var(--signal-orange);
+}
+.live-view .road__incident-label {
+  margin-right: var(--space-1);
+  font-family: var(--font-ui);
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.live-view .road__incident--elevated .road__incident-label {
+  color: var(--brand-brass-text);
+}
+.live-view .road__incident--alarm .road__incident-label {
+  color: var(--signal-orange-text);
+}
+
 /* ---- Scanner links ---- */
 .live-view .scanners {
   list-style: none;
