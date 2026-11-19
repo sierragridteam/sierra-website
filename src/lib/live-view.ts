@@ -11,6 +11,7 @@
  */
 import {
   beyondLines,
+  roadChains,
   deriveDigest,
   deriveSituationSummary,
   isNotablePower,
@@ -473,15 +474,18 @@ function roadTone(status: string, chain: string): 'ok' | 'alarm' | 'elevated' {
 }
 
 /**
- * Chain-control status for a segment. The Grid splits chain controls into their own
- * `chain_control` layer; we match one to a road by `road.roadId` and show its severity, or
- * "None" when nothing references the road (honest — no active chain control). Best-effort:
- * if chain_control features don't carry `roadId`, this degrades to "None" until verified.
+ * The "Chains" figure on a road card: the levels The Grid lists on the road (`road.chains`),
+ * "None" when it lists none, and a dash when it does not say. See `roadChains`.
  */
-function chainFor(roadId: string | undefined, chains: HazardFeature[]): string {
-  if (!roadId) return 'None';
-  const m = chains.find((c) => c.properties.road?.roadId === roadId);
-  return m ? severityLabel(String(m.properties.severity)) : 'None';
+function chainLabel(f: HazardFeature): string {
+  const c = roadChains(f);
+  if (!c.known) return '—';
+  return c.levels.length ? c.levels.join(', ') : 'None';
+}
+
+/** The road's display tone: its status, raised to brass while chains are required on it. */
+function roadToneOf(f: HazardFeature): 'ok' | 'alarm' | 'elevated' {
+  return roadTone(f.properties.status ?? 'open', roadChains(f).levels.join(', '));
 }
 
 /**
@@ -489,18 +493,22 @@ function chainFor(roadId: string | undefined, chains: HazardFeature[]): string {
  * LineString feature; travel/congestion/delay live in `properties.road`). Road *incidents*
  * are a separate layer surfaced in the alert stream, so the table no longer repeats them.
  */
-function renderRoads(segments: HazardFeature[], chains: HazardFeature[]): string {
+function renderRoads(segments: HazardFeature[]): string {
   if (segments.length === 0) return '';
   const cards = segments
     .map((f) => {
       const p = f.properties;
       const road = p.road ?? {};
       const status = p.status ?? 'open';
-      const chain = chainFor(road.roadId, chains);
-      const t = roadTone(status, chain === 'None' ? '' : chain);
+      const chain = chainLabel(f);
+      const t = roadToneOf(f);
       const delay = road.delayMinutes ?? 0;
       const notes =
         (p.description ? `<li class="road__incident">${esc(p.description)}</li>` : '') +
+        // Where the chain requirement runs, in the feed's words. The road is still open.
+        roadChains(f)
+          .lines.map((line) => `<li class="road__incident">${esc(line)}</li>`)
+          .join('') +
         beyondLines(f)
           .map((b) => {
             const label = b.seasonal
@@ -573,7 +581,6 @@ function buildMapData(haz: HazardsSnapshot): LiveMapData {
       properties: { name: s.name },
     })),
   };
-  const chains = layerFeatures(haz, 'chain_control');
   const layers: Record<string, { type: 'FeatureCollection'; features: HazardFeature[] }> = {};
   for (const l of [
     'road_segment',
@@ -598,9 +605,7 @@ function buildMapData(haz: HazardsSnapshot): LiveMapData {
     // escalates to brass. Orange is never used for a road (life-safety only).
     if (l === 'road_segment') {
       feats = feats.map((f) => {
-        const chain = chainFor(f.properties.road?.roadId, chains);
-        const tone = roadTone(f.properties.status ?? 'open', chain === 'None' ? '' : chain);
-        return { ...f, properties: { ...f.properties, tone } };
+        return { ...f, properties: { ...f.properties, tone: roadToneOf(f) } };
       });
     }
     layers[l] = { type: 'FeatureCollection', features: feats };
@@ -766,7 +771,7 @@ export function buildView(
       weather: renderWeather(grid.conditions),
       burn: renderBurn(grid.burn),
       stream: renderStream(digest, now),
-      roads: renderRoads(layerFeatures(haz, 'road_segment'), layerFeatures(haz, 'chain_control')),
+      roads: renderRoads(layerFeatures(haz, 'road_segment')),
       scanners: renderScanners(haz.scanners ?? []),
     },
   };

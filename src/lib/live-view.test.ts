@@ -314,6 +314,99 @@ test('a road with nothing past its end renders as before', () => {
   expect(roadsOf(roadWith([])).html.roads).not.toContain('road__incidents');
 });
 
+// The storm of 2026-11-18/19: Hwy 4 Arnold to Bear Valley open, chains R2 on most of it, and
+// every road card read "Chains None" because this site matched the two layers itself.
+const LIVE_CHAIN = {
+  level: 'R2',
+  eventId: 'cc:hwy4:r2',
+  headline: 'Hwy 4 chains required, Big Trees Park to Mount Reba Road (R2)',
+  from: 'Big Trees Park',
+  to: 'Mount Reba Road',
+  since: '2026-11-18T08:53:41-08:00',
+  inferred: false,
+};
+const chained = (chains: unknown, extra: Record<string, unknown> = {}) => {
+  const f = roadWith([LIVE_BEYOND], extra);
+  (f.properties.road as Record<string, unknown>).chains = chains;
+  return roadsOf(f);
+};
+const chainsCell = (html: string) => html.match(/<dt>Chains<\/dt><dd>(.*?)<\/dd>/)?.[1];
+
+test('a road under a chain requirement stays open and says the level and where', () => {
+  const view = chained([LIVE_CHAIN]);
+  expect(chainsCell(view.html.roads)).toBe('R2');
+  // Open, in the feed's word, and raised to brass on the card and the map. Never the alarm tone.
+  expect(view.html.roads).toContain(
+    '<span class="road__dot" aria-hidden="true"></span>Open</span>'
+  );
+  expect(view.html.roads).toContain('class="road road--elevated"');
+  expect(view.mapData.layers.road_segment.features[0].properties.tone).toBe('elevated');
+  const lines = view.html.roads.match(/<li class="road__incident[^>]*>.*?<\/li>/g) ?? [];
+  expect(lines).toEqual([
+    '<li class="road__incident">Hwy 4 chains required, Big Trees Park to Mount Reba Road (R2)</li>',
+    '<li class="road__incident road__incident--ok"><span class="road__incident-label">Seasonal closure</span> Hwy 4: Ebbetts Pass winter closure (past Bear Valley) — snow</li>',
+  ]);
+});
+
+test('two requirements on one road list both levels, highest first as the feed has them', () => {
+  const view = chained([
+    {
+      ...LIVE_CHAIN,
+      level: 'R3',
+      eventId: 'cc:hwy4:r3',
+      headline: 'Hwy 4 chains required on all vehicles, Bear Valley to Mount Reba Road (R3)',
+    },
+    LIVE_CHAIN,
+  ]);
+  expect(chainsCell(view.html.roads)).toBe('R3, R2');
+});
+
+test('an empty list is the feed saying none; no list at all is not known and never reads as none', () => {
+  const none = chained([]);
+  expect(chainsCell(none.html.roads)).toBe('None');
+  expect(none.html.roads).toContain('class="road road--ok"');
+  // An older Grid, or one whose chain-control read failed.
+  const unknown = chained(undefined);
+  expect(chainsCell(unknown.html.roads)).toBe('—');
+  expect(unknown.html.roads).toContain('class="road road--ok"');
+  expect(unknown.mapData.layers.road_segment.features[0].properties.tone).toBe('ok');
+});
+
+test('chain-control features do not decide a road card: only the road`s own list does', () => {
+  const road = roadWith(undefined);
+  (road.properties.road as Record<string, unknown>).chains = [];
+  const view = buildView(
+    snap({
+      road_segment: fc([road]),
+      chain_control: fc([
+        {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [-120.48, 38.51] },
+          properties: {
+            id: 'cc:hwy88:r2',
+            layer: 'CHAIN_CONTROL',
+            kind: 'Chain control',
+            severity: 'MODERATE',
+            severityRank: 2,
+            headline: 'Hwy 88 chains required, Dew Drop to Paynesville (R2)',
+            source: { id: 'caltrans', name: 'Caltrans' },
+            // The old matcher looked for this id on a chain feature. It decides nothing now.
+            road: { roadId: 'hwy4-arnold-bearvalley' },
+            chainControl: { level: 'R2', highway: 'Highway 88' },
+          },
+        },
+      ]),
+    }),
+    emptyGrid
+  );
+  expect(chainsCell(view.html.roads)).toBe('None');
+});
+
+test('a closed road with chains listed keeps the alarm tone', () => {
+  const view = chained([LIVE_CHAIN], { status: 'CLOSED' });
+  expect(view.html.roads).toContain('class="road road--alarm"');
+});
+
 const NOON_WED = Date.parse('2026-10-14T19:00:00Z'); // Wed 12:00 PT
 
 function power(category: string, extra: Record<string, unknown>, pw: Record<string, unknown>) {
