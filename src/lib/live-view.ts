@@ -494,7 +494,9 @@ function roadToneOf(f: HazardFeature): 'ok' | 'alarm' | 'elevated' {
  * are a separate layer surfaced in the alert stream, so the table no longer repeats them.
  */
 function renderRoads(segments: HazardFeature[]): string {
-  if (segments.length === 0) return '';
+  // No road at all means the layer did not answer (the corridor's roads are a fixed list, so
+  // there is always one to show when it does). Say so: a bare heading reads as nothing to report.
+  if (segments.length === 0) return `<p class="stream__empty">${esc(copy.roadsUnavailable)}</p>`;
   const cards = segments
     .map((f) => {
       const p = f.properties;

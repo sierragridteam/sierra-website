@@ -222,6 +222,9 @@ export const live = {
   },
   roadsHeading: 'Road conditions',
   roadsIntro: 'Travel times and chain controls on the corridor’s highways.',
+  /** Shown in place of the road cards when the road layer returns none: unknown, not clear. */
+  roadsUnavailable:
+    'Road status can’t be reached right now. That is not an all-clear: check Caltrans before you travel.',
   /** Label for a line the feed marks `seasonal` past a road's end. The line's words are the feed's. */
   roadsSeasonal: 'Seasonal closure',
   evacHeading: 'Evacuation zones & orders',

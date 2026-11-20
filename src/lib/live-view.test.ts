@@ -681,3 +681,9 @@ test('every card ends on its report on Grid, a folded card on its Grid page, and
   expect(quiet.headline).toContain('No active alerts');
   expect(quiet.html.stream).toContain('1 more report, mostly road incidents.');
 });
+
+test('no road segments is said, not left as an empty section', () => {
+  const view = buildView(snap({}), emptyGrid);
+  expect(view.html.roads).toContain('Road status can’t be reached right now');
+  expect(view.html.roads).not.toContain('class="road ');
+});
