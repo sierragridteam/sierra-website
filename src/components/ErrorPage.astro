@@ -1,0 +1,66 @@
+---
+/**
+ * ErrorPage — the centred page an error status is served with: /404.html (not found) and
+ * /403.html (a request the host refused). The copy is `errorPages` in content.ts.
+ */
+import Section from './Section.astro';
+import Kicker from './Kicker.astro';
+import Button from './Button.astro';
+import { nav } from '@config/site';
+
+interface Props {
+  /** The status code, shown in the kicker. */
+  code: string;
+  kicker: string;
+  title: string;
+  body: string;
+}
+
+const { code, kicker, title, body } = Astro.props;
+---
+
+<Section surface="page">
+  <div class="notfound">
+    <Kicker number={code} mono>
+      {kicker}
+    </Kicker>
+    <h1 class="notfound__title">{title}</h1>
+    <p class="notfound__body">{body}</p>
+    <div class="notfound__links">
+      <Button variant="primary" href="/" arrow>
+        Back to home
+      </Button>
+      {nav.map((item) => (
+        <Button variant="secondary" href={item.href}>
+          {item.label}
+        </Button>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .notfound {
+    max-width: 60ch;
+    margin-inline: auto;
+    text-align: center;
+    padding-block: var(--space-10);
+  }
+  .notfound__title {
+    margin-top: var(--space-4);
+    font-size: var(--fs-h2);
+  }
+  .notfound__body {
+    margin-top: var(--space-4);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--ink-body);
+  }
+  .notfound__links {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+</style>

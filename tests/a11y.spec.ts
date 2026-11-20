@@ -24,6 +24,7 @@ const pages = [
   { name: 'about-dan', path: '/about/dan' },
   { name: 'donate', path: '/donate' },
   { name: 'colophon', path: '/colophon' },
+  { name: 'refused-403', path: '/403.html' },
 ];
 
 for (const pg of pages) {

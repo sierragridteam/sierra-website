@@ -1,19 +1,20 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { copyFileSync } from 'node:fs';
+import { renameSync, rmdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-// S3 with Origin Access Control returns 403 (not 404) for a missing object, and
-// CloudFront serves a status-matched error page. Ship /403.html next to /404.html —
-// the same on-brand "off the grid" page — by copying it at build time (one source).
+// CloudFront answers a refused request (a POST to the static site, for example) with
+// /403.html, and a missing page with /404.html. Astro writes 404.astro to /404.html but
+// any other page to a directory, so move /403/index.html to /403.html after the build.
 /** @type {import('astro').AstroIntegration} */
 const emit403 = {
   name: 'emit-403',
   hooks: {
     'astro:build:done': ({ dir }) => {
       const out = fileURLToPath(dir);
-      copyFileSync(`${out}404.html`, `${out}403.html`);
+      renameSync(`${out}403/index.html`, `${out}403.html`);
+      rmdirSync(`${out}403`);
     },
   },
 };
@@ -51,7 +52,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       // Keep the sitemap honest: only real, indexable pages.
-      filter: (page) => !page.includes('/404'),
+      filter: (page) => !page.includes('/404') && !page.includes('/403'),
     }),
     emit403,
   ],

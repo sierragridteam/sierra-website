@@ -153,3 +153,15 @@ test('404 page returns on-brand not-found content', async ({ page }) => {
   expect(res).toBeTruthy();
   await expect(page.locator('h1')).toContainText(/off the grid/i);
 });
+
+// A refused request (a POST to the static site) is answered with /403.html. It was once a
+// copy of the 404 page and told a reader whose request was refused that the page was missing.
+test('403 page says the request was refused, not that the page is missing', async ({ page }) => {
+  const res = await page.goto('/403.html', { waitUntil: 'domcontentloaded' });
+  expect(res?.ok()).toBeTruthy();
+  await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.locator('h1')).toContainText(/did not go through/i);
+  await expect(page.locator('body')).not.toContainText(/off the grid|could not be found/i);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  await expect(page.locator('.kicker')).toContainText('403');
+});
