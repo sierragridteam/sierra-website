@@ -78,7 +78,13 @@ for (const pg of pages) {
   test(`${pg.name} runs no text into an inline element`, async ({ request }) => {
     const res = await request.get(pg.path);
     expect(res.ok()).toBeTruthy();
-    const html = (await res.text()).replace(/<(script|style)\b[\s\S]*?<\/\1>/g, '');
+    // Script and style bodies are not prose. Removed until nothing is left to remove, so a
+    // block nested in another's text cannot leave a tag behind.
+    let html = await res.text();
+    for (let before = ''; before !== html;) {
+      before = html;
+      html = html.replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '');
+    }
     expect([...(html.match(GLUED_BEFORE) ?? []), ...(html.match(GLUED_AFTER) ?? [])]).toEqual([]);
   });
 }
