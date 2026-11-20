@@ -66,6 +66,38 @@ for (const pg of pages) {
   });
 }
 
+// A word run straight into a link or a bold lead ("Emailinfo@sierragridteam.org"): Astro
+// drops the whitespace between text and an inline element when the source breaks the line
+// there, or when a bare space sits between an expression and an element in a named-slot
+// Fragment. Nothing looks wrong in the source, so the served HTML is what gets checked.
+const INLINE = '(?:a|strong|em|b|i|code|abbr|cite)';
+const GLUED_BEFORE = new RegExp(`[^<>]{0,40}[A-Za-z0-9,;:.?!]<${INLINE}[\\s>][^<]{0,40}`, 'g');
+const GLUED_AFTER = new RegExp(`[^<>]{0,40}</${INLINE}>[A-Za-z0-9][^<]{0,40}`, 'g');
+
+for (const pg of pages) {
+  test(`${pg.name} runs no text into an inline element`, async ({ request }) => {
+    const res = await request.get(pg.path);
+    expect(res.ok()).toBeTruthy();
+    const html = (await res.text()).replace(/<(script|style)\b[\s\S]*?<\/\1>/g, '');
+    expect([...(html.match(GLUED_BEFORE) ?? []), ...(html.match(GLUED_AFTER) ?? [])]).toEqual([]);
+  });
+}
+
+test('the contact pages keep the space before the email address', async ({ page }) => {
+  await page.goto('/contact', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.cform__fallback')).toHaveText(
+    'Prefer to write directly? Email info@sierragridteam.org.'
+  );
+  await page.goto('/contact/thanks', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.page-head__lede')).toContainText(
+    'email us directly at info@sierragridteam.org.'
+  );
+  await page.goto('/about/jay', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.profile__para', { hasText: 'Executive Operations' })).toContainText(
+    'Executive Operations: Jay'
+  );
+});
+
 test('rss feed is valid and lists posts', async ({ request }) => {
   const res = await request.get('/rss.xml');
   expect(res.ok()).toBeTruthy();

@@ -27,7 +27,10 @@ import { site } from '@config/site';
         rest={contact.thanks.headline.rest}
       >
         <Fragment slot="lede">
-          {contact.thanks.body} <a href={`mailto:${site.email}`}>{site.email}</a>.
+          {/* The space is inside the expression: Astro drops a bare one between an
+              expression and an element in a named-slot Fragment ("directly atinfo@…"). */}
+          {`${contact.thanks.body} `}
+          <a href={`mailto:${site.email}`}>{site.email}</a>.
         </Fragment>
       </PageHead>
       <div class="thanks__actions">
