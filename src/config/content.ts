@@ -304,6 +304,25 @@ export const contact = {
   },
 } as const;
 
+/** The pages an error status is served with (ErrorPage): /404.html and /403.html. */
+export const errorPages = {
+  notFound: {
+    kicker: 'Signal lost',
+    title: 'This page is off the grid.',
+    body:
+      'The page you were looking for could not be found. It may have moved, or the link may be ' +
+      'out of date. Try one of these instead:',
+  },
+  // A request the host refused, not a missing page: say so, and say nothing was sent.
+  refused: {
+    kicker: 'Request refused',
+    title: 'That request did not go through.',
+    body:
+      'The site could not accept it, so nothing was sent or saved. If you followed a link, it ' +
+      'may be out of date. Try one of these instead:',
+  },
+} as const;
+
 export const news = {
   kicker: 'News',
   title: 'News from the foothills.',

@@ -1,0 +1,19 @@
+---
+/**
+ * The page a refused request is answered with (a POST to the static site, for example):
+ * CloudFront serves /403.html with the 403. Astro builds this as /403/index.html and the
+ * `emit-403` integration in astro.config.mjs moves it to /403.html. A missing page is a 404.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ErrorPage from '@components/ErrorPage.astro';
+import { errorPages } from '@config/content';
+---
+
+<BaseLayout
+  title="Request refused"
+  description="The site could not accept that request."
+  path="/403"
+  noindex
+>
+  <ErrorPage code="403" {...errorPages.refused} />
+</BaseLayout>

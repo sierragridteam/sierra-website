@@ -66,6 +66,44 @@ for (const pg of pages) {
   });
 }
 
+// A word run straight into a link or a bold lead ("Emailinfo@sierragridteam.org"): Astro
+// drops the whitespace between text and an inline element when the source breaks the line
+// there, or when a bare space sits between an expression and an element in a named-slot
+// Fragment. Nothing looks wrong in the source, so the served HTML is what gets checked.
+const INLINE = '(?:a|strong|em|b|i|code|abbr|cite)';
+const GLUED_BEFORE = new RegExp(`[^<>]{0,40}[A-Za-z0-9,;:.?!]<${INLINE}[\\s>][^<]{0,40}`, 'g');
+const GLUED_AFTER = new RegExp(`[^<>]{0,40}</${INLINE}>[A-Za-z0-9][^<]{0,40}`, 'g');
+
+for (const pg of pages) {
+  test(`${pg.name} runs no text into an inline element`, async ({ request }) => {
+    const res = await request.get(pg.path);
+    expect(res.ok()).toBeTruthy();
+    // Script and style bodies are not prose. Removed until nothing is left to remove, so a
+    // block nested in another's text cannot leave a tag behind.
+    let html = await res.text();
+    for (let before = ''; before !== html;) {
+      before = html;
+      html = html.replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '');
+    }
+    expect([...(html.match(GLUED_BEFORE) ?? []), ...(html.match(GLUED_AFTER) ?? [])]).toEqual([]);
+  });
+}
+
+test('the contact pages keep the space before the email address', async ({ page }) => {
+  await page.goto('/contact', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.cform__fallback')).toHaveText(
+    'Prefer to write directly? Email info@sierragridteam.org.'
+  );
+  await page.goto('/contact/thanks', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.page-head__lede')).toContainText(
+    'email us directly at info@sierragridteam.org.'
+  );
+  await page.goto('/about/jay', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.profile__para', { hasText: 'Executive Operations' })).toContainText(
+    'Executive Operations: Jay'
+  );
+});
+
 test('rss feed is valid and lists posts', async ({ request }) => {
   const res = await request.get('/rss.xml');
   expect(res.ok()).toBeTruthy();
@@ -120,4 +158,16 @@ test('404 page returns on-brand not-found content', async ({ page }) => {
   // Static hosts serve 404.html; status may be 404 or 200 depending on host.
   expect(res).toBeTruthy();
   await expect(page.locator('h1')).toContainText(/off the grid/i);
+});
+
+// A refused request (a POST to the static site) is answered with /403.html. It was once a
+// copy of the 404 page and told a reader whose request was refused that the page was missing.
+test('403 page says the request was refused, not that the page is missing', async ({ page }) => {
+  const res = await page.goto('/403.html', { waitUntil: 'domcontentloaded' });
+  expect(res?.ok()).toBeTruthy();
+  await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.locator('h1')).toContainText(/did not go through/i);
+  await expect(page.locator('body')).not.toContainText(/off the grid|could not be found/i);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  await expect(page.locator('.kicker')).toContainText('403');
 });

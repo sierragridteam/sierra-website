@@ -81,7 +81,11 @@ const profileSchema = {
             {section.heading && <h2 class="profile__heading">{section.heading}</h2>}
             {section.paragraphs.map((para) => (
               <p class="profile__para">
-                {para.lead && <strong class="profile__lead">{para.lead}:</strong>}
+                {para.lead && (
+                  <Fragment>
+                    <strong class="profile__lead">{para.lead}:</strong>{' '}
+                  </Fragment>
+                )}
                 {para.text}
               </p>
             ))}
@@ -203,7 +207,6 @@ const profileSchema = {
   .profile__lead {
     font-weight: var(--fw-semibold);
     color: var(--ink-strong);
-    margin-right: 0.35em;
   }
 
   .profile-cta {
